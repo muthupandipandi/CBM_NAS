@@ -1,0 +1,647 @@
+/** Login Module **/
+.login_Wrapper{
+    border: 1px solid #d0d1d363;
+    max-width: 354px;
+    margin: 10% auto 0;
+    box-shadow: 0 2px 11px 0 #d0c4c4;
+}
+.login_Content{
+    text-align: center;
+    padding: 5%;
+}
+.btn-primary, .btn-primary {
+    color: #fff;
+    background-color: #1e4b99;
+    /* #00a070; */
+    border-color: #15366e;
+    cursor: pointer;
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
+}
+.btn-primary.disabled, .btn-primary:disabled {
+    background-color: #15366e;
+    border-color: #15366e;
+    opacity: 0.5;
+}
+.form-control:focus{
+    border-color: #15366e;
+    box-shadow: none;
+}
+.btn-primary:hover{
+    color: black;
+    background-color: #4869a3;
+    border-color: #4869a3;
+    box-shadow: none;
+}
+.btn-primary:active{
+    background-color: #15366e;
+    border-color: #15366e;
+    box-shadow: none;
+}
+.btn-primary:not(:disabled):not(.disabled):active{
+    background-color: #15366e;
+    border-color: #15366e;
+    box-shadow: none;
+}
+/** dashboard **/
+.sidebarComponentsisOpen{
+    height: 100vh;
+    padding:0;
+    width:180px;
+    background-color: #15366e;
+    background-image: linear-gradient(#15366e, #618bd4);
+    position: fixed;
+}
+.sidebarComponents{
+    height: 100vh;
+    padding:0;
+    width: 60px;
+    background-color: #15366e;
+    background-image: linear-gradient(#15366e, #618bd4);
+    position: fixed;
+}
+
+.sidebarComponents i{
+    font-size: 24px;
+    color: white;
+    text-align: center;
+    padding: 6px;
+    width: 43px;
+}
+.sidebarComponents .fa-power-off{
+    position: absolute;
+    bottom:0;
+    padding-left: 13px;
+}
+.sidebarComponentsisOpen i{
+    color: white;
+    text-align: center;
+    padding: 4px;
+    font-size: 25px;
+    width: 40px;
+}
+.sidebarComponents .nav-link {
+    padding: 4px 0 4px 0;
+    margin: 6px;
+    color:white;
+    border-bottom: 1px solid #f8f9fa;
+} 
+.sidebarComponentsisOpen .nav-link{
+    padding: 10px 0 10px 0;
+    /* margin-top: 6px;
+    margin-bottom: 6px; */
+    color:white;
+    font-weight: bold;    
+}
+.sidebarComponentsisOpen .nav-link:hover{
+    border-right: 4px solid rgb(100, 162, 233);
+    background: rgba(255,255,255,.05);
+}
+.sidebarComponents .nav-link:hover{
+    border-bottom: 4px solid rgb(100, 162, 233) !important;
+    background: rgba(255,255,255,.05);
+}
+.sidebarComponents .nav-link.active{
+    border-bottom: 4px solid rgb(241, 99, 99) !important;
+    background: rgba(51, 38, 230, 0.301);
+}
+.loginHeader{
+    color: #083789;
+    font-weight: bold;
+    font-size: 30px;
+}
+.alignRight{
+    font-weight:bold;
+    float:right;
+    text-align: center;
+}
+.aligncenter {
+    text-align: center;
+}
+.alignLeft{
+    float:left;
+    color: #1e4b99;
+    text-align: center;
+    font-weight:bold;
+    font-size:large;
+}
+.marginBottom{
+    margin-bottom: 10px;
+}
+
+
+.flex-column{
+    clear:both;
+}
+.clearing{
+    clear:both; 
+}
+i{
+  cursor: pointer;
+}
+.app_Content{
+    width:calc(100% - 180px);
+    float:right;
+}
+.app_ContentSmall{
+    width:calc(100% - 60px);
+    float:right;
+}
+.table-responsive thead{
+    background-color: #80808047;
+    text-align: center;
+}
+.table-responsive tbody{
+    text-align: center;
+}
+
+.addCampaign{
+    font-weight:bold
+}
+.addCampaign .row{
+    margin-bottom: 10px;
+}
+.addCampaign .row .col{
+    align-self: center!important;
+    }
+.addCampaign_box {
+    font-weight:bold;
+    background: transparent  !important;
+    border-style: ridge;
+    border-color: #3d89dc;
+    border-radius: 10px;
+    padding: 20px;
+}
+.addCampaign_box .row{
+    margin-bottom: 10px;
+}
+.addCampaign_box .row .col{
+    align-self: center!important;
+}
+.picky__dropdown li:hover {
+    color: #1e4b99;
+    background: transparent  !important;
+    transform: scale(1, 1.1);
+}
+.picky__placeholder {
+    color: #000000 !important; 
+}
+.picky__input {
+    border-width: 0.9px  !important;
+    border-color: #cccccc  !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: white;
+    background-color: #1e4b99;
+}
+.nav-tabs a{
+     color: #1e4b99 ;     /*//#15366e; */
+}
+/* ._7ahQImyV4dj0EpcNOjnwA {
+    color:black !important;
+    background-color: transparent   !important;
+}
+._2hO6ncpWlUNK05lxQ9_UtY ._7ahQImyV4dj0EpcNOjnwA{    
+    position: absolute;
+    font-weight: normal;
+}
+._2OR24XnUXt8OCrysr3G0XI {
+    border: 0.9px solid #cccccc;
+}
+._3vt7_Mh4hRCFbp__dFqBCI li:hover {
+    color: #15366e !important;
+    background: transparent  !important;
+    transform: scale(1, 1.1);
+}
+._3vt7_Mh4hRCFbp__dFqBCI li:active {
+    color: #15366e !important;
+    background: transparent  !important;
+} 
+.lhyQmCtWOINviMz0WG_gr{
+    color: #15366e !important;
+    background: transparent  !important;
+} */
+.modal-title {
+    font-size: 1.3rem;
+}
+
+.updateForm .table-responsive{
+    height:100vh;
+}
+.updateForm .table-responsive .table th {
+    padding :7px;
+}
+.updateForm .table-responsive .table td {
+    padding :7px;
+}
+/* .updateSearch  .react-datepicker-wrapper {
+    width:inherit !important
+}
+.updateSearch  .react-datepicker__input-align-items-center {
+    width:inherit !important
+}*/
+.updateSearch  .picky{
+    width:inherit !important
+} 
+.addON{
+    color:green;
+    margin-right:3px;
+    margin-top:12px
+}
+.marginTop{
+    margin-top:11px;
+    margin-right:10px
+}
+.colorRed{
+    color:red;
+}
+.colorGreen{
+    color:green;
+}
+.colorblue{
+    color:blue;
+    font-weight: 500;
+}
+.colorblack{
+    color:black;
+    font-weight: 500;
+}
+.colorBlue_bold{
+    color:blue; 
+    text-align: center;
+    font-weight:bold;
+}
+.pagination{
+    /* position: fixed; right: 18px;*/
+    bottom: 0;
+    float:right;    
+}
+.pagination .page-link{
+    border-radius: 18px;
+    color: #1e4b99;
+}
+.page-item:first-child .page-link {
+    border-radius: 18px;
+}
+.page-item:last-child .page-link {
+    border-radius: 18px;
+}
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #1e4b99;
+    border-color: #15366e;
+}
+
+.form-control {
+    border: 0.9px solid #cccccc;
+    font-size: small;
+    color: black;
+    /* width: 99% !important; */
+}
+.Editing .nav-link {
+    padding: 0;
+    color: black;
+}
+.Editing .dropdown-toggle::after {
+  display: none;
+}
+.Editing .dropdown-menu {
+  transform: translate3d(-144px, 25px, 0px) !important;
+}
+.Editing .dropdown-item{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+/** Scrollbar **/
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+    height:6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #5486c3; 
+    border-radius: 10px;
+}
+.body {
+    -ms-overflow-style: -ms-autohiding-scrollbar
+}
+.colorBlue{
+    color:#3d89dc
+}
+.text-left{
+    text-align: left;
+}
+
+.spinner{
+    color:red;
+}
+.RedCoring{
+    border-color: red;
+}
+.filterRow td {
+    background-color: white !important;
+    padding: 6px;
+}
+.react-datepicker__input-align-items-center{
+    margin-bottom: 2px;
+}
+
+#picky__button__button{
+    white-space: nowrap !important;
+    width: 99% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.react-datepicker__input-align-items-center  input{
+    border: 0;
+    border: 0.9px solid #cccccc;
+    border-color: #cacaca;
+    border-style: solid;
+    border-radius: 4px;
+    padding: 5px;
+    text-align: left;
+    position: relative;
+    box-sizing: border-box;
+}
+.topHeader {
+    border-bottom: 1px solid #d9dee4;
+    margin-left: 59px;
+    font-weight: bold;
+    font-size: 20px;
+    box-shadow: 5px 0px 5px 0px grey;
+    padding-bottom: 5px;
+    padding-bottom: -5px;
+    padding-top: 10px;
+}
+/* .barsSpan{
+    background-color: #15366e;
+    font-size: 26px !important;
+    width: 40px !important;
+    padding-left: 16px !important;
+    padding-right: 22px;
+    margin: 0;
+    color: white;
+    padding-bottom: 6px;
+    padding-top: 2px;
+} */
+.moduleName{
+    padding-left: 19px;
+    color:#100768;
+}
+.fa-power-off{
+    padding:4px;
+    float:right
+}
+.disabled{
+    pointer-events: none;
+    opacity: 0.5;
+}
+.firstName{
+    color:#1e4b99;
+    font-weight: 500;
+    font-size: 18px;
+    float:right;
+    padding-right: 4px;
+}
+.fa-user-circle{
+    padding-left: 18px !important;
+    font-size: 27px !important;
+}
+#dropdown-menu-align-right{
+    padding-bottom:2px;
+}
+.dropdown-item {
+    font-size: 12px;
+    font-weight: 300;
+}
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #1e4b99;
+}
+.input-group{
+    margin-bottom:10px
+}
+.btn-outline-secondary {
+    color: #1e4b99;
+    border-color: #15366e;
+}
+.modal-header{
+background: #1e4b99;
+color: white;
+}
+.modal-header .close{
+    color: white;
+    opacity: 1
+}
+.borderNone{
+    border: none;
+}
+.wordWrap{
+word-wrap: break-word;
+max-width: 300px;
+}
+.wordWrapCols{
+word-wrap: break-word;
+max-width: 33%;
+}
+.wordWrapView{
+    word-wrap: break-word;
+    max-width: 24%;
+}
+.inlineBlock{
+    display: inline-block;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+	width: 33px;
+    height: 18px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+	height: 11px;
+    width: 12px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked {
+    background-color: #8abf33;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #8abf33;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+  }
+
+  .fileposition{
+    position: absolute;
+  }
+  
+  /* Rounded sliders */
+  .round {
+    border-radius: 100px !important;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  .myContainter > .react-datepicker-wrapper{
+    width:50%
+ } 
+ .react-datepicker-wrapper{
+     width: 100%;
+ } 
+  
+  .react-datepicker__input-align-items-center > input{
+      width:100%;
+      border-radius:4px;
+      border: 1px solid #c1c1c1;
+      height: 35px;
+  } 
+  .marginBottom .react-datepicker__input-align-items-center > input {
+    width: 100%;
+    border-radius: 7px;
+    border-color: #15366e;
+}
+
+.time-picker{
+    /* max-width: 50px; */
+}
+.title_color{
+    background-color: #f9f9fa;
+}
+.btn-danger{
+    color: #fff;
+    background-color:red;
+}
+.btnColormain{
+    
+    text-align: center;
+}
+
+/* CheckBox */
+.status-bar {
+    width: 100%;
+    height: 10px; /* Adjust height as needed */
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    overflow: hidden; /* Ensure progress bar doesn't overflow */
+  }
+  
+  .status-progress-completed {
+    height: 100%;
+    background-color: #4caf50; /* Green color for completed */
+    border-radius: 5px 0 0 5px;
+    float: left;
+  }
+  
+  .status-progress-pending {
+    height: 100%;
+    background-color: #ff9800; /* Orange color for pending */
+    border-radius: 0 5px 5px 0;
+    float: left;
+  }
+  
+  .status-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+  }
+
+  /* .tooltip {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .status-progress-completed:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+  .status-progress-pending:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+  } */
+
+  .myDatePicker {
+    display: inline-block; /* Display as inline-block to make it behave like a text box */
+    width: 200px; /* Adjust width as needed */
+    height: 38px; /* Adjust height as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    padding: 6px 12px; /* Adjust padding as needed */
+    border: 1px solid #ccc; /* Add border */
+    border-radius: 4px; /* Add border radius */
+    box-sizing: border-box; /* Include padding and border in width and height */
+  }
+  
+  /* Style for the calendar icon */
+  .react-datepicker-wrapper {
+    display: inline-block;
+    vertical-align: middle;
+   /* Adjust position of the icon */
+  }
+  
+  
+  
+  /* Style for the calendar icon */
+  .react-datepicker__input-container input::-webkit-calendar-picker-indicator {
+    display: none; /* Hide the default calendar icon */
+  }
+  
+  /* Style for the placeholder text */
+  .react-datepicker__input-container input::placeholder {
+    color: #999; /* Adjust placeholder color */
+  }

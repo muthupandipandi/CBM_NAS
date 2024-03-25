@@ -1,0 +1,36 @@
+.login_container{
+    background-image: url('../images/cbm_bg.png');
+    background-repeat: no-repeat, repeat;
+    background-position: center; /* Center the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+    padding-top: 50px;
+    height: 100vh;
+  }
+  .login-form{
+    background:#efeeee7a;     /*#1a11117a */
+    margin-top: 120px;
+    margin-bottom: 50px;
+    padding: 100px;
+    border-radius: 20px;
+    color: white;
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  }
+  .login-heading{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .container{
+    background-repeat: no-repeat, repeat;
+    background-position: center; /* Center the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+    /* background: #09090a4f; */
+    border-radius: 50px;
+    /* box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.38); */
+  }
+ 
+.form_container{
+    border: 1px solid #d9dee4;
+    border-radius: 5px;
+    padding:10px;
+    box-shadow: 0px 0px 2px #d9dee4;
+}
