@@ -17,6 +17,8 @@ import { Link } from "react-router-dom";
  export default class ViewDisposition extends Component {
 	 constructor(props){
 			super(props)
+			this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 			this.state = {
                 items: props.edit ? props.edit.dispCodeDetailsList : '', // State to hold list of items
       newItem: {
@@ -31,6 +33,21 @@ import { Link } from "react-router-dom";
                 
 	 }
 
+	 componentDidMount() {
+		document.addEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	handleClickOutside(event) {
+		console.log(event)
+		// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+			// Click occurred outside of the modal, prevent modal from closing
+			event.stopPropagation();
+		// }
+	}
 	 handleCallBack = () =>{
 		/// this.props.onCallBack(this.state)
 		 this.props.closeModal()
@@ -126,6 +143,8 @@ import { Link } from "react-router-dom";
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -150,6 +169,7 @@ import { Link } from "react-router-dom";
 										 value={dispostionName}
 										
 										placeholder="Enter Disposition Name"
+										disabled={true}
 										
 										/>
 										
@@ -159,7 +179,8 @@ import { Link } from "react-router-dom";
 								<Col md={3} ><FormControl  type='text' id="descriptions"  
 										 value={descriptions}
 										 
-										placeholder="Enter Disposition Name"
+										placeholder="Enter Description"
+										disabled={true}
 										
 										/>
 										
@@ -205,6 +226,7 @@ import { Link } from "react-router-dom";
                 name='itemName'
                 value={item.itemName}
                 placeholder="Enter Dispostion Name"
+				disabled={true}
                 
               />
 			   </Col>
@@ -216,6 +238,7 @@ import { Link } from "react-router-dom";
                 name='itemName'
                 value={item.itemName}
                 placeholder="Enter Dispostion Name"
+				disabled={true}
 				
               />
 			   </Col>

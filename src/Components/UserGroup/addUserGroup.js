@@ -9,10 +9,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import _, { toInteger } from 'lodash';
 import { Link } from "react-router-dom";
+import MessageShow from '../mesaageShow'
+
  export default class AddUserGroup extends Component {
 	 constructor(props){
 			super(props)
 			this.state = {
+				clearMessage:false,
+				saveMessage:false,
                 items: [{itemName: ''}], // State to hold list of items
       newItem: {
         itemName: '',
@@ -32,14 +36,15 @@ import { Link } from "react-router-dom";
 	   }
 	   userType = () => {
 		
-		let rolesData = [{'id':'inbound','user_type':'Inbound'},{'id':'outbount','user_type':'Outbound'},{'id':'blend','user_type':'Blend'}]
+		let rolesData = [{'id':'Inbound','user_type':'Inbound'},{'id':'Outbound','user_type':'Outbound'},{'id':'Blend','user_type':'Blend'}]
 		return rolesData
 	}
 	  
 	   validateForm() {
 		
 		const {loggedinData} = this.props
-		if (!_.isEmpty(this.state.groupType) &&this.state.groupName?.length > 0 &&this.state.usergroupStatus){
+		
+		if (!_.isEmpty(this.state.groupType) &&this.state.groupName?.length > 0 && this.state.groupDescriptions?.length > 0 &&this.state.usergroupStatus){
 			// if(!_.isEmpty(loggedinData)){
 			// 	if(loggedinData.ldapEnabled){
 					return true
@@ -115,11 +120,41 @@ import { Link } from "react-router-dom";
 		this.setState({ groupType: e[0].user_type})
 		
 	}
+	handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 	handleChange = (event) => {
 		if (parseInt(event.target.maxLength)>=event.target.value.length){
 		this.setState({
 		[event.target.id]: event.target.value
 		});
+		
 	}
 	}
 	render(){
@@ -129,7 +164,7 @@ import { Link } from "react-router-dom";
 		// console.log("creat state", this.state)
 		// console.log("creat props", this.props)
 		
-		const{items, newItem,groupDescriptions,groupName,businessHRView,groupType,usergroupStatus	} = this.state;	
+		const{items, newItem,groupDescriptions,groupName,businessHRView,groupType,usergroupStatus,clearMessage,saveMessage	} = this.state;	
 		const {timesList} = this.props.action	
 		
 		
@@ -156,9 +191,9 @@ import { Link } from "react-router-dom";
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Group Name  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id="groupName"  
 										 value={groupName}
-										 maxLength={50}
+										 maxLength={30}
 										placeholder="Enter Group Name"
-										onChange={this.handleChange}
+										onChange={this.handleAllowCharacters}
 										
 										onBlur={this.checkUsergroupExistence}
 										
@@ -173,7 +208,7 @@ import { Link } from "react-router-dom";
 										 value={groupDescriptions}
 										 maxLength={100}
 										 
-										placeholder="Enter Descriptions"
+										placeholder="Enter Description"
 										onChange={this.handleChange}
 										/>
 										
@@ -231,12 +266,20 @@ import { Link } from "react-router-dom";
                     <Row> <br/> </Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Add Group</Button></Col>
+							<Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Add Group</Button></Col>
 							<Col md={4}></Col>	
 						</Row>
 					</div>
+					{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Create this User Group?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
         </div>
 		)

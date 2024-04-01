@@ -11,9 +11,10 @@ import 'react-picky/dist/picky.css';
  export default class EditUser extends Component {
 	constructor(props) {
 		super(props)
+		console.log(props)
 		this.state = {
 			employeeId: props.edit ? props.edit.userId : '',
-			firstName: props.edit ? props.edit.firstName : '',
+			firstName: props.edit.firstName ? props.edit.firstName : '',
 			lastName: props.edit ? props.edit.lastName : '',
 			password: props.edit ? props.edit.password : '',
 			email: props.edit ? props.edit.emailId : '',
@@ -23,8 +24,8 @@ import 'react-picky/dist/picky.css';
 			business : [{buId: "1", buName: "Retail"}],
 			status: props.edit ? props.edit.status : 'NEW',
 			selectedrole: props.edit ? props.edit.role : '' ,
-			selectedSkillGroup: props.edit ? props.edit.skillSet : '' ,
-			selectedUserGroup:props.edit ? props.edit.userGroup : '',
+			// selectedSkillGroup: props.edit ? props.edit.skillSet : '' ,
+			// selectedUserGroup:props.edit ? props.edit.userGroup : '',
 			
 			selectedAgent: props.edit ? props.edit.agent : '',
 			// selectAgent: '',
@@ -41,16 +42,17 @@ import 'react-picky/dist/picky.css';
 		}
 	}
 	componentDidMount() {
-		let roles = _.find(this.props.rolesData, { 'roleId': this.props.edit.roleId })
-		if (!_.isEmpty(roles)) {
-			this.setState({ selectedrole: [roles] })
-		}
+		// let roles = _.find(this.props.rolesData, { 'roleId': this.props.edit.roleId })
+		// if (!_.isEmpty(roles)) {
+		// 	this.setState({ selectedrole: [roles] })
+		// }
 		console.log(this.props)
 		const selectedValues = this.props.edit.agent.split(',');
-		console.log(selectedValues)
-		console.log(this.agentDatas())
+		if (selectedValues){
+		
 		const selectedOptions = selectedValues.map(value => {
 			// Find option based on label
+			console.log(this.agentDatas())
 			const option = this.agentDatas().find(option => option.value === value);
 			if (option) {
 				return option;
@@ -59,13 +61,46 @@ import 'react-picky/dist/picky.css';
 				return null; // or handle it according to your requirements
 			}
 		});
-		console.log('Selected Options:', selectedOptions);
+		this.setState({ selectedAgent: selectedOptions.filter(option => option !== null) })
+	}
+		
 // Find the corresponding options for each value in the array
 // const selectedOptions = selectedValues.map(value => {
 //     return this.agentDatas().find(option => option.label === value);
 // });
-this.setState({ selectedAgent: selectedOptions.filter(option => option !== null) })
 
+
+	
+		console.log(this.skillDatas())
+		const selectskillName = this.skillDatas().find(dnc => dnc.skillName === this.props.edit.skillSet);
+		console.log(selectskillName)
+		
+		this.setState({selectedSkillGroup:selectskillName})
+		const selectTimezone = this.rolesName().find(dnc => dnc.role === this.props.edit.role);
+		
+		this.setState({selectedrole:selectTimezone})
+		const selectuserGroup = this.userGroup().find(dnc => dnc.usergroupName === this.props.edit.userGroup);
+		
+		this.setState({selectedUserGroup:selectuserGroup})
+		// const selectcountAbandonedSLA = this.typeSLA().find(dnc => dnc.value === this.props.edit.countAbandonedSLA);
+		
+		// this.setState({countAbandoneAgainestSLA:selectcountAbandonedSLA})
+		
+	
+		
+		document.addEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	handleClickOutside(event) {
+		console.log(event)
+		// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+			// Click occurred outside of the modal, prevent modal from closing
+			event.stopPropagation();
+		// }
 	}
 	rolesName = () => {
 		let rolesData = _.cloneDeep(this.props.rolesData)
@@ -79,21 +114,26 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 		
 		return skillData
 	}
+	
 	agentDatas = () => {
 		
 		let agentDataClone = _.cloneDeep(this.props.agentData);
-		let skillData = agentDataClone.concat(this.props.edit.agentDetails);
+		let skillData=agentDataClone
+		console.log(this.props.edit.agentDetails)
+		if (this.props.edit.agentDetails!=null){
+		skillData = agentDataClone.concat(this.props.edit.agentDetails);
+		}
 		console.log(skillData)
 		// skillData.append(this.props.agentDetails)
+		
 		return skillData.map(item => ({
 			label: `${item.firstName} ${item.lastName}`, // Concatenate firstName and lastName
 			value: item.userId // Set valueField to userId
 		  }));
+
 		
 	}
 	
-
-
 	userType = () => {
 		
 		let rolesData = [{'id':'inbound','user_type':'Inbound'},{'id':'outbount','user_type':'Outbound'},{'id':'blend','user_type':'Blend'}]
@@ -143,6 +183,8 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 		{id:'(UTC -12)much of US Minor Outlying Islands',value:'(UTC -12)	much of US Minor Outlying Islands'}]
 		return rolesData
 	}
+
+	
 	handleCallBack = () => {
 		/// this.props.onCallBack(this.state)
 		this.props.closeModal()
@@ -191,23 +233,28 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 				[event.target.id]: event.target.value
 			});
 		}
+		else{
+			this.setState({
+				[event.target.id]: this.state[event.target.id]
+			});
+		}
 	}
 	}
 	handleSelectRoles = (e) => {
 		
-		this.setState({ selectedrole: e['role'] })
+		this.setState({ selectedrole: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
 	handleSelectGroup = (e) => {
 		
-		this.setState({ selectedSkillGroup: e['skillName'] })
+		this.setState({ selectedSkillGroup: e})
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
 	handleSelectUserGroup = (e) => {
 		
-		this.setState({ selectedUserGroup: e['usergroupName'] })
+		this.setState({ selectedUserGroup: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
@@ -353,6 +400,35 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 		this.setState({ userIdIsValid: this.isValidUser(employeeId) })
 		// this.handleOnEntity()
 	}
+	handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+	
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+	
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+	
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 	// handleDomain = (e) => {
 	// 	this.setState({ domain: e })
 	// 	if (!_.isEmpty(e)) {
@@ -364,7 +440,23 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 	// 	this.setState({ business: e })
 	// }
 	   
-	   
+	handleChangeOnlyallowCharacteNum = (e) => {
+        const { value } = e.target;
+
+        // Regular expression to allow only letters and numbers
+        const regex = /^[a-zA-Z0-9]*$/;
+
+        if (regex.test(value) || value === '') {
+            this.setState({
+				[e.target.id]: e.target.value
+			});
+        }
+		else{
+			this.setState({
+				[e.target.id]: this.state[e.target.id]
+			});
+		}
+    };
 	
 
 	render(){
@@ -408,24 +500,24 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 					<Row className='align-items-center'>             
                                  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; First Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='firstName'
-                                    onChange={this.handleChange} value={firstName} maxLength={30}
+                                    onChange={this.handleAllowCharacters} value={firstName} maxLength={30}
                                     placeholder="Enter First Name"
                                     />
                                 </Col>  
 
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Last Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='lastName'
-                                    onChange={this.handleChange} value={lastName} maxLength={20}
+                                    onChange={this.handleAllowCharacters} value={lastName} maxLength={20}
                                     placeholder="Enter Last Name"
                                     />
                                 </Col>  
 						</Row>
 						<Row className='align-items-center'>             
-                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email Id <span className='colorRed'>*</span></Col>
+                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email ID <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='email'
 								onBlur={() => this.setState({ emailIsValid: this.isValidEmailAddress(email) })}
-                                    onChange={this.handleChange} value={email} maxLength={20}
-                                    placeholder="Enter Email Id"
+                                    onChange={this.handleChange} value={email} maxLength={30}
+                                    placeholder="Enter Email ID"
                                     />
                                     {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null}
                                 </Col>  
@@ -439,12 +531,12 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 
 						</Row>
 						<Row className='align-items-center'>             
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User Id  <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
 										onBlur={()=>this.handleUserOnBlur(employeeId)}
-                                        onChange={this.handleChange} value={employeeId} 
-										maxLength={20}
-										placeholder="Enter User Id"
+                                        onChange={this.handleChangeOnlyallowCharacteNum} value={employeeId} 
+										maxLength={30}
+										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
 							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
@@ -463,7 +555,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
         />
         <InputGroup.Append>
 		<InputGroup.Text id="basic-addon2">{this.state.passwordtype === "password" ?     
-                        <i className='fas fa-eye-slash' onClick={()=>this.viewPassword('text')} /> :
+                        <i className='fas fa-eye-slash' onClick={()=>this.viewPassword('password')} /> :
                         <i className='fas fa-eye' onClick={()=>this.viewPassword('password')} /> }</InputGroup.Text>
           {/* <Button variant="outline-secondary" onClick={this.toggleShowPassword}>
             {showPassword ? 'Hide' : 'Show'}
@@ -520,7 +612,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 										options={this.userGroup()}
 										onChange={this.handleSelectUserGroup}
 										open={false}
-										valueKey="usergroupId"
+										valueKey="usergroupName"
 										labelKey="usergroupName"
 										multiple={false}
 										keepOpen={false}
@@ -540,7 +632,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 										options={this.rolesName()}
 										onChange={this.handleSelectRoles}
 										open={false}
-										valueKey="role_id"
+										valueKey="role"
 										labelKey="role"
 										multiple={false}
 										keepOpen={false}
@@ -554,10 +646,10 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 								<Row className='align-items-center'>  
 								{selectedrole && selectedrole !== 'Report' && selectedrole !== 'QA' && (
 									<>
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extn   <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extension<span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='number' id='pbxExtn'
                                     onChange={this.handleAllowNubers} value={pbxExtn} 
-                                    placeholder="Enter mobile Numbe" maxLength={15}
+                                    placeholder="Enter PBX Extension" maxLength={15}
                                     />
                                 </Col>  
 								</>)}
@@ -571,11 +663,11 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 <Col md={4} >
                                    
 									<Picky
-										value={this.state.selectedSkillGroup}
+										values={this.state.selectedSkillGroup}
 										options={this.skillDatas()}
 										onChange={this.handleSelectGroup}
 										open={false}
-										valueKey="skillsetId"
+										valueKey="skillName"
 										labelKey="skillName"
 										multiple={false}
 										keepOpen={false}
@@ -712,7 +804,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                         <Col md={4}></Col>	
                         <Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
                         </Col>
-                        <Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Update User</Button></Col>
+                        <Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.handleSubmit}>Update User</Button></Col>
                         <Col md={4}></Col>	
                     </Row>
 				</div>

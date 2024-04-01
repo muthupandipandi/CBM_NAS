@@ -70,17 +70,7 @@ import 'react-picky/dist/picky.css';
 	}
 	
 
-	handleAllowNubers = (event) => {
-		const { value } = event.target;
-		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
-		if (parseInt(event.target.maxLength)>=event.target.value.length){
-		if (onlyNumbers.test(value) || value === '') {
-			this.setState({
-				[event.target.id]: event.target.value
-			});
-		}
-	}
-	}
+	
 	userType = () => {
 		
 		let rolesData = [{'id':'inbound','user_type':'Inbound'},{'id':'outbount','user_type':'Outbound'},{'id':'blend','user_type':'Blend'}]
@@ -168,20 +158,20 @@ import 'react-picky/dist/picky.css';
 	}
 	handleSelectRoles = (e) => {
 		
-		this.setState({ selectedrole: e[0]['role'] })
+		this.setState({ selectedrole: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
 	handleSelectGroup = (e) => {
 		
-		this.setState({ selectedSkillGroup: e[0]['skillName'] })
+		this.setState({ selectedSkillGroup: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
 	handleSelectUserGroup = (e) => {
 		
 		
-		this.setState({ selectedUserGroup: e[0]['usergroupName'] })
+		this.setState({ selectedUserGroup: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
@@ -286,6 +276,35 @@ import 'react-picky/dist/picky.css';
 			
 		}
 	}
+
+	openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
+	handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
 	handleSubmit = () => {
 		// const { firstName, email, password, mobileNumber, employeeId, lastName, selectedrole, business, domain } = this.state;
 		const { employeeId, firstName, email,selectedUserGroup, mobileNumber,selectedAgent,showPassword,
@@ -306,11 +325,11 @@ console.log(selectedAgent)
 			"userId": employeeId,
 			"mobNum": mobileNumber,
 			"pbxExtn": pbxExtn,
-			"role": selectedrole ,
-			"skillSet": selectedSkillGroup,
+			"role": selectedrole?selectedrole[0].role:'' ,
+			"skillSet": selectedSkillGroup?selectedSkillGroup[0].skillName:'',
 			"password": password,
 			"agent": selectedValues,
-			"userGroup": selectedUserGroup,
+			"userGroup": selectedUserGroup?selectedUserGroup[0].usergroupName:'',
 			
 			// "createdBy": loggedinData.userName
 		}
@@ -353,7 +372,72 @@ console.log(selectedAgent)
 		  showPassword: !prevState.showPassword
 		}));
 	  }
+	  handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+	
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+	
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+	
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
+	  handleChangeOnlyallowCharacteNum = (e) => {
+        const { value } = e.target;
+
+        // Regular expression to allow only letters and numbers
+        const regex = /^[a-zA-Z0-9]*$/;
+
+        if (regex.test(value) || value === '') {
+            this.setState({
+				[e.target.id]: e.target.value
+			});
+        }
+		else{
+			this.setState({
+				[e.target.id]: this.state[e.target.id]
+			});
+		}
+    };
+	handlePaste = (e) => {
+        e.preventDefault(); // Prevent pasting
+    };
+	  handleAllowNubers = (event) => {
+		const { value } = event.target;
+		console.log(event.target.value)
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if (parseInt(event.target.maxLength)>=event.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
+			this.setState({
+				[event.target.id]: event.target.value
+			});
+		}
+		else{
+			this.setState({
+				[event.target.id]: this.state[event.target.id]
+			});
+		}
+	}
+	}
 	render(){
 		const {userEntity,rolesData,loggedinData,groupsData} = this.props
 		const {showMessage,message} = this.props.action
@@ -382,24 +466,24 @@ console.log(selectedAgent)
 					<Row className='align-items-center'>             
                                  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; First Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='firstName' maxLength={30}
-                                    onChange={this.handleChange} value={firstName} 
+                                    onChange={this.handleAllowCharacters} value={firstName} 
                                     placeholder="Enter First Name"
                                     />
                                 </Col>  
 
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Last Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' maxLength={20} id='lastName'
-                                    onChange={this.handleChange} value={lastName} 
+                                    onChange={this.handleAllowCharacters} value={lastName} 
                                     placeholder="Enter Last Name"
                                     />
                                 </Col>  
 						</Row>
 						<Row className='align-items-center'>             
-                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email Id <span className='colorRed'>*</span></Col>
-                                <Col md={4} ><FormControl maxLength={20}  type='text' id='email'
+                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email ID <span className='colorRed'>*</span></Col>
+                                <Col md={4} ><FormControl maxLength={30}  type='text' id='email'
 								onBlur={() => this.setState({ emailIsValid: this.isValidEmailAddress(email) })}
                                     onChange={this.handleChange} value={email} 
-                                    placeholder="Enter Email Id"
+                                    placeholder="Enter Email ID"
                                     />
                                     {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null}
                                 </Col>  
@@ -413,11 +497,11 @@ console.log(selectedAgent)
                                 
 						</Row>
 						<Row className='align-items-center'>             
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User Id  <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
 										onBlur={()=>this.handleUserOnBlur(employeeId)}
-                                        onChange={this.handleChange} value={employeeId} maxLength={20}
-										placeholder="Enter User Id"
+                                        onChange={this.handleChangeOnlyallowCharacteNum} value={employeeId} maxLength={30}
+										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
 							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
@@ -429,6 +513,7 @@ console.log(selectedAgent)
           type={this.state.passwordtype}
           id='password'
           onChange={this.handleChange}
+		  onPaste={this.handlePaste}
           value={password}
           placeholder="Enter Password"
 		  maxLength={20}
@@ -497,10 +582,10 @@ console.log(selectedAgent)
                                         options={this.userGroup()}
                                         labelField='usergroupName'
                                         dropdownPosition='auto'
-                                        valueField='usergroupId'
+                                        valueField='usergroupName'
                                         clearable={false}
                                         className='text-left selectDropDown'
-                                        placeholder="Select Roles"
+                                        placeholder="Select User Group"
                                         onChange={this.handleSelectUserGroup}
                                         closeOnSelect={true}
                                     />
@@ -514,10 +599,10 @@ console.log(selectedAgent)
                                         options={this.rolesName()}
                                         labelField='role'
                                         dropdownPosition='auto'
-                                        valueField='role_id'
+                                        valueField='role'
                                         clearable={false}
                                         className='text-left selectDropDown'
-                                        placeholder="Select Roles"
+                                        placeholder="Select Role"
                                         onChange={this.handleSelectRoles}
                                         closeOnSelect={true}
                                     />
@@ -527,10 +612,10 @@ console.log(selectedAgent)
 								<Row className='align-items-center'>  
 								{selectedrole && selectedrole !== 'Report' && selectedrole !== 'QA' && (
 									<>
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extn   <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extension   <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='pbxExtn'
                                     onChange={this.handleAllowNubers} value={pbxExtn} 
-                                    placeholder="Enter PBX Extn"
+                                    placeholder="Enter PBX Extension"
 									maxLength={15}
                                     />
                                 </Col>  
@@ -548,10 +633,10 @@ console.log(selectedAgent)
                                         options={this.skillDatas()}
                                         labelField='skillName'
                                         dropdownPosition='auto'
-                                        valueField='skillsetId'
+                                        valueField='skillName'
                                         clearable={false}
                                         className='text-left selectDropDown'
-                                        placeholder="Select Skill"
+                                        placeholder="Select Skill Set"
                                         onChange={this.handleSelectGroup}
                                         closeOnSelect={true}
                                     />
@@ -582,13 +667,13 @@ console.log(selectedAgent)
 										 options={this.agentDatas()}
 										 onChange={this.handleSelectAgent}
 										 open={false}
-										 valueKey="value"
+										 valueKey="label"
 										 labelKey="label"
 										 multiple={true}
 										 keepOpen={false}
 										 includeFilter={false}
 										 clearFilterOnClose={true}
-										 placeholder={"Select Agent List"}
+										 placeholder={"Select Agents"}
 										 dropdownHeight={200} 
 										 />
 
@@ -694,7 +779,7 @@ console.log(selectedAgent)
                         <Col md={4}></Col>	
                         <Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
                         </Col>
-                        <Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Add User</Button></Col>
+                        <Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.handleSubmit}>Add User</Button></Col>
                         <Col md={4}></Col>	
                     </Row>
 				</div>

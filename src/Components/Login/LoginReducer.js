@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
         {"moduleName": "Dashboard", "icon": "fas fa-home", "path" :"/dashboard/reportgraph"},
         {"moduleName": "Campaign Management", "icon": "fas fa-rocket", "path" :"/dashboard/campaign"},
         {"moduleName": "User Management", "icon": "fas fa-user-plus", "path" :"/dashboard/users"},
-        {"moduleName": "SkillSet", "icon": "fas fa-user-graduate", "path" :"/dashboard/skillset"},
+        {"moduleName": "Skill Set", "icon": "fas fa-user-graduate", "path" :"/dashboard/skillset"},
         {"moduleName": "Disposition Management", "icon": "fas fa-tasks", "path" :"/dashboard/dispostions"},  
         
         {"moduleName": "DNC", "icon": "fas fa-phone-slash", "path" :"/dashboard/dnc"},  

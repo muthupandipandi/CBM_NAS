@@ -8,12 +8,15 @@ import 'react-times/css/classic/default.css';
 import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import ShowModalLogin from '../showModalLogin';
+import MessageShow from '../mesaageShow'
 import Select from 'react-dropdown-select';
 import {Picky} from 'react-picky';
 
  export default class EditSkillSet extends Component {
 	constructor(props){
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.state = {
 			
 			skillName:props.edit ? props.edit.skillName : '',
@@ -29,10 +32,44 @@ import {Picky} from 'react-picky';
 
 			firstCallResalution:props.edit ? props.edit.firstCallResolution : 0,
 			skillID:props.edit ? props.edit.skillsetId : 0,
-			skillStatus:true
+			skillStatus:true,
+			clearMessage:false,
+				saveMessage:false
 			}; 
 			
  }
+
+ componentDidMount() {
+	
+    const selectlanguage = this.languageLoad().find(dnc => dnc.value === this.props.edit.language);
+	
+	this.setState({language:selectlanguage})
+	const selectTimezone = this.timeZoneData().find(dnc => dnc.value === this.props.edit.timeZone);
+	
+	this.setState({timeZone:selectTimezone})
+	const selectChannel = this.channelType().find(dnc => dnc.value === this.props.edit.channelType);
+	
+	this.setState({channelType:selectChannel})
+	const selectcountAbandonedSLA = this.typeSLA().find(dnc => dnc.value === this.props.edit.countAbandonedSLA);
+	
+	this.setState({countAbandoneAgainestSLA:selectcountAbandonedSLA})
+	
+
+	
+	document.addEventListener('mousedown', this.handleClickOutside);
+}
+
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 
  handleCallBack = () =>{
 	/// this.props.onCallBack(this.state)
@@ -57,7 +94,8 @@ import {Picky} from 'react-picky';
 		console.log(channelType)
 		console.log(timeZone)
 		console.log(skillName)
-	if(skillName && skillName.length > 0 && language && language.length > 0 &&skillStatus
+	if(skillName && skillName.length > 0 && language  && !_.isEmpty(language) &&skillStatus && shortAbandoneThresold &&
+	serviceLevelGoal && abandoneRateThresold && countAbandoneAgainestSLA && firstCallResalution
 		   && !_.isEmpty(channelType)  && !_.isEmpty(timeZone) )
 		{
 					return true
@@ -104,20 +142,20 @@ checkSkillExistence = () => {
   }
   handleSelectTimeZone=(e) => {
 	console.log(e)
-	this.setState({timeZone : e.value})
+	this.setState({timeZone : e})
 	// Update the agentType property of the first object in the updatedAgent array
 	// updatedAgent[0] = { ...updatedAgent[0], timeZone: e[0].value};
 	
 	
 }
 handleSelectChannelType=(e)=>{
-	this.setState({channelType : e.value})
+	this.setState({channelType : e})
 }
 channelType = () => {
 	
 	// let rolesData = [{id:'voice',value:'Voice'},{id:'sms',value:'SMS'},{id:'socialmedia',value:'SocialMedia'},
 	// {id:'message',value:'Message'},{id:'email',value:'Email'},{id:'whatsapp',value:'WhatsApp'}]
-	let rolesData = [{'id':'inbound','value':'Inbound'},{'id':'outbount','value':'Outbound'},{'id':'blend','value':'Blend'}]
+	let rolesData = [{'id':'Inbound','value':'Inbound'},{'id':'Outbound','value':'Outbound'},{'id':'Blend','value':'Blend'}]
 	return rolesData
 	// return rolesData
 }
@@ -162,7 +200,22 @@ timeZoneData = () => {
 	{id:'(UTC -12)much of US Minor Outlying Islands',value:'(UTC -12)	much of US Minor Outlying Islands'}]
 	return rolesData
 }
-
+languageLoad = () => {
+		
+	// let rolesData = [{id:'voice',value:'Voice'},{id:'sms',value:'SMS'},{id:'socialmedia',value:'SocialMedia'},
+	// {id:'message',value:'Message'},{id:'email',value:'Email'},{id:'whatsapp',value:'WhatsApp'}] Arabic
+	let rolesData = [{'id':'English','value':'English'},{'id':'Arabic','value':'Arabic'}]
+	return rolesData
+	// return rolesData
+}
+handleSelectLangage=(e) => {
+	console.log(e)
+	this.setState({language : e})
+	// Update the agentType property of the first object in the updatedAgent array
+	// updatedAgent[0] = { ...updatedAgent[0], timeZone: e[0].value};
+	
+	
+}
    handleSubmit =() => {  
 	   const {loggedinData} = this.props; 	
 	   const { skillName,language,timeZone,channelType,serviceLevelThresold,shortcallThresold,
@@ -176,14 +229,14 @@ timeZoneData = () => {
 		   "skillName" : skillName,
 		   "shortCallThreshold" : shortcallThresold,
 		   "shortAbandonedThreshold" : shortAbandoneThresold,
-		   "countAbandonedSLA" : countAbandoneAgainestSLA,
+		   "countAbandonedSLA" : countAbandoneAgainestSLA?countAbandoneAgainestSLA.value:'',
 		   "abandonedRateThreshold" : abandoneRateThresold,
 		   "serviceLevelThreshold" : serviceLevelThresold,
 		   "serviceLevelGoal": serviceLevelGoal,
 		   "firstCallResolution" : firstCallResalution,
-		   "channelType" : channelType,
-		   "language" : language,
-		   "timeZone": timeZone,
+		   "channelType" : channelType?channelType.value:'',
+			"language" : language?language.value:'',
+			"timeZone": timeZone?timeZone.value:'',
 		   "skillsetId":skillID
 		   
 	   }   
@@ -208,7 +261,7 @@ handleSelectUserType = (e) => {
 }
 handleCountAbandonedAgainstSLAChange = (e) => {
 	console.log(e)
-	this.setState({ countAbandoneAgainestSLA: e.value})
+	this.setState({ countAbandoneAgainestSLA: e})
 	
 }
 handleChange = (event) => {
@@ -218,19 +271,53 @@ handleChange = (event) => {
 	});
 }
 }
-handleSecChange = (event) => {
-	let { value } = event.target;
-	value=toInteger(value)
+openClearMessage = () => {
+		
+	this.setState({clearMessage : true})
+  }
+
+  closeClearMessage = () => {
+	this.setState({clearMessage : false})
+  }
+
+  openSaveClearMessage = () => {
+	
+	this.setState({saveMessage : true})
+  }
+
+  closeSaveClearMessage = () => {
+	this.setState({saveMessage : false})
+  }
+handlePercentageChange = (e) => {
+	const value = e.target.value;
 	console.log(value)
-	// Ensure the value is within the allowed range
-	if (value < 0) {
-		value = 0;
-	} else if (value > 59) {
-		value = 59;
+
+	// const percentageRegex = /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
+	const percentageRegex = /^(100|\d{0,2}(\.\d{0,2})?)$/;
+
+if (percentageRegex.test(value) || value === '') {
+		this.setState({ [e.target.id]: value });
+		// this.setState({ shortAbandoneThresold: value });
 	}
-	// Update the state with the sanitized value
-	console.log(event.target.id)
-	this.setState({ [event.target.id]: value });
+	else if(value===''){
+		this.setState({ [e.target.id]: value });
+	}
+}
+ handleSecChange = (e) => {
+		console.log(e.target.id)
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if(59>=e.target.value){
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
+		   
+		   
+		   this.setState({[e.target.id]:e.target.value})
+		   
+		}
+	
+	}
+	}
 }
 handleRetryValueChange = (e) => {
 	// const {tempHrD} = this.state
@@ -239,6 +326,17 @@ handleRetryValueChange = (e) => {
 	// this.setState({retryDelay:val})
 	
 }
+handleAllowCharacters=(event)=>{
+	const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+	if (onlyLetters.test(event.target.value) || event.target.value === '') {
+		if (parseInt(event.target.maxLength)>=event.target.value.length){
+			this.setState({
+				[event.target.id]: event.target.value})
+			}
+
+	}
+   }
 
 render(){
 	const {isOpen,isPending,showMessage,message} = this.props
@@ -248,7 +346,7 @@ render(){
 	abandoneRateThresold,
 	countAbandoneAgainestSLA,skillID,
 
-	firstCallResalution,newItem, items,businessHRView,skillStatus } = this.state;
+	firstCallResalution,newItem, items,businessHRView,skillStatus,clearMessage,saveMessage } = this.state;
 	
 	// console.log("creat state", this.state)
 	// console.log("creat props", this.props)
@@ -272,6 +370,8 @@ return(
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -294,26 +394,46 @@ return(
 							<Col md={3}> &nbsp;&nbsp;&nbsp;&nbsp; Skill Name  <span className='colorRed'>*</span></Col>
 							<Col md={3} ><FormControl  type='text' id="skillName"  
 									 value={skillName}
-									 onChange={this.handleChange}
-									placeholder="Enter Skill Name"
+									 onChange={this.handleAllowCharacters}
+									placeholder="Enter Skill Set Name"
 									maxLength={50}
 									onBlur={this.checkSkillExistence}
 										/>
-										{(skillStatus === false) ? <span className="colorRed">&nbsp;****Skillset name is already exits****</span>: null}
+										{(skillStatus === false) ? <span className="colorRed">&nbsp;****Skill Set name is already exits****</span>: null}
 										
 									
 									
 							</Col>
 							<Col md={3}> &nbsp;&nbsp;&nbsp;&nbsp; Language <span className='colorRed'>*</span></Col>
-							<Col md={3} ><FormControl  type='text' id="language"  
-									 value={language}
-									 maxLength={20}
-									placeholder="Enter Language"
-									onChange={this.handleChange}
+							<Col md={3} >
+								
+							{/* <Picky
+                                        value={this.state.language}
+                                        options={this.languageLoad()}
+                                        labelField='value'
+                                        dropdownPosition='auto'
+                                        valueField='id'
+                                        clearable={false}
+                                        className='text-left selectDropDown'
+                                        placeholder="Select Language"
+                                        onChange={this.handleSelectLangage}
+                                        closeOnSelect={true}
+                                    /> */}
 									
+									<Picky
+										value={this.state.language}
+										options={this.languageLoad()}
+										onChange={this.handleSelectLangage}
+										open={false}
+										valueKey="value"
+										labelKey="id"
+										multiple={false}
+										keepOpen={false}
+										includeFilter={false}
+										clearFilterOnClose={true}
+										placeholder={"Select Dialer Type"}
+										dropdownHeight={200}
 									/>
-									
-									
 							</Col>
 
 							
@@ -350,7 +470,7 @@ return(
 										keepOpen={false}
 										includeFilter={false}
 										clearFilterOnClose={true}
-										placeholder={"Select"}
+										placeholder={"Select Time Zone"}
 										dropdownHeight={200} 
 									/>	
 								
@@ -387,21 +507,21 @@ return(
 							<Row className='align-items-center'>             
 									<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
-								<FormControl  type='number' id="serviceLevelThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
-										onChange={this.handleSecChange} 
+								<FormControl  type='text' id="serviceLevelThresold"  style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+										onChange={this.handlePercentageChange} 
 										
-										value={serviceLevelThresold.toString().padStart(2, '0')}
+										value={serviceLevelThresold}
 										
 										inputMode="numeric"
-										placeholder="minute"/><span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										/><span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								</Col>
 
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; First Call Resolution <span className='colorRed'>*</span></Col>
 								<Col md={3} >
-								<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='number' id="firstCallResalution" min="0" max="59"
-										onChange={this.handleSecChange} value={firstCallResalution.toString().padStart(2, '0')}
-										placeholder="minute"/>
+								<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='text' id="firstCallResalution" min="0" max="59"
+										onChange={this.handlePercentageChange} value={firstCallResalution}
+										/>
 								<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 							
@@ -421,9 +541,9 @@ return(
 							<Row className='align-items-center'>
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Call Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
-								<FormControl  type='number' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} min="0" max="59"
+								<FormControl  type='text' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} min="0" max="59"
 										onChange={this.handleSecChange} value={shortcallThresold.toString().padStart(2, '0')}
-										placeholder="minute"/>
+										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
@@ -431,9 +551,9 @@ return(
 
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandone Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
-								<FormControl  type='number' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} max="59"
+								<FormControl  type='text' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} max="59"
 										onChange={this.handleSecChange} value={shortAbandoneThresold.toString().padStart(2, '0')}
-										placeholder="minute"/> <span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										/> <span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
 								</Col>  
@@ -441,9 +561,9 @@ return(
 							<Row className='align-items-center'>             
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Goal  <span className='colorRed'>*</span></Col>
 								<Col md={3} >
-								<FormControl  type='number' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+								<FormControl  type='text' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										onChange={this.handleSecChange} value={serviceLevelGoal.toString().padStart(2, '0')}
-										placeholder="minute"/>
+										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
@@ -451,9 +571,9 @@ return(
 
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Abandon Rate Threshold <span className='colorRed'>*</span></Col>
 							<Col md={3} >
-							<FormControl  type='number' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+							<FormControl  type='text' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										onChange={this.handleSecChange} value={abandoneRateThresold.toString().padStart(2, '0')}
-										placeholder="minute"/>
+										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
@@ -471,7 +591,7 @@ return(
 								{/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
 								</Row>
 							<Row className='align-items-center'>  
-								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandon Againest SLA</Col>
+								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
 							<Col md={3} >
 							
 										
@@ -507,12 +627,20 @@ return(
 				<Row> <br/> </Row>
 					<Row className='align-items-center'>
 						<Col md={4}></Col>	
-						<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+						<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 						</Col>
-						<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Update SkillSet</Button></Col>
+						<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>Update Skill Set</Button></Col>
 						<Col md={4}></Col>	
 					</Row>
 				</div>
+				{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this Skill Set?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 		</div> 
 		</Modal.Body>
             </Modal>

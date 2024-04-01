@@ -14,11 +14,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import _, { toInteger } from 'lodash';
 import { Link } from "react-router-dom";
+import MessageShow from '../mesaageShow'
  export default class AddDisposition extends Component {
 	 constructor(props){
 			super(props)
 			this.state = {
 				dispostionsStatus:true,
+				clearMessage:false,
+		saveMessage:false,
                 items: [{code:'001',itemName: ''}], // State to hold list of items
       newItem: {
         code:'001',itemName: '',
@@ -31,6 +34,36 @@ import { Link } from "react-router-dom";
 				}; 
                 
 	 }
+
+	 handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+	
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+	
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+	
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 	 listdatas = () => {
 		console.log(this.props)
 		let rolesData = _.cloneDeep(this.props.userData)
@@ -63,14 +96,20 @@ import { Link } from "react-router-dom";
 		   
 	   }
        handleInputChange = (index, event) => {
-		if (parseInt(event.target.maxLength)>=event.target.value.length){
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
         const { name, value } = event.target;
     const updatedItems = [...this.state.items];
     updatedItems[index] = { ...updatedItems[index], [name]: value };
     this.setState({ items: updatedItems });
+			}
 		}
       }
       handleAddItem = () => {
+		console.log(this.state.items[this.state.items.length - 1].itemName)
+		if (this.state.items[this.state.items.length - 1].itemName!=''){
 		const lastIndex = this.state.items.length > 0 ? parseInt(this.state.items[this.state.items.length - 1].code) : 0;
 		const nextId = (lastIndex + 1).toString().padStart(3, '0'); // Format the ID with leading zeros
 		const newItem = {
@@ -82,6 +121,7 @@ import { Link } from "react-router-dom";
 			items: [...prevState.items, newItem],
 			newItem: { itemName: '' } // Reset newItem after adding
 		}));
+	}
       }
 
 	   handleSubmit =() => {  
@@ -121,7 +161,8 @@ import { Link } from "react-router-dom";
 	  }
 	render(){
 		const {isOpen,isPending,showMessage,message} = this.props
-		const { newItem, items,businessHRView,dispostionsStatus } = this.state;
+		const { newItem, items,businessHRView,dispostionsStatus,clearMessage,
+			saveMessage } = this.state;
 		
 		// console.log("creat state", this.state)
 		// console.log("creat props", this.props)
@@ -154,7 +195,7 @@ import { Link } from "react-router-dom";
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Disposition Name  <span className='colorRed'>*</span></Col>
 								<Col md={3} ><FormControl  type='text' id="dispostionName"  maxLength={100}
 										 value={dispostionName}
-										 onChange={this.handleChange}
+										 onChange={this.handleAllowCharacters}
 										placeholder="Enter Disposition Name"
 										onBlur={this.checkDispositionExistence}
 										
@@ -166,7 +207,7 @@ import { Link } from "react-router-dom";
 								<Col md={3} ><FormControl  type='text' id="descriptions"  maxLength={200}
 										 value={descriptions}
 										 onChange={this.handleChange}
-										placeholder="Enter Disposition Name"
+										placeholder="Enter Description"
 										
 										/>
 										
@@ -203,7 +244,7 @@ import { Link } from "react-router-dom";
           <Row key={index} className='align-items-center'>
              <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; Code </Col>
           <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; {item.code} </Col>
-            <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Item Name <span className='colorRed'>*</span></Col>
+            <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Item Name </Col>
 
 			{index !== items.length - 1 && (
 				 <Col md={3}>
@@ -277,12 +318,20 @@ import { Link } from "react-router-dom";
                     <Row> <br/> </Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Add Dispostion</Button></Col>
+							<Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Add Dispostion</Button></Col>
 							<Col md={4}></Col>	
 						</Row>
 					</div>
+					{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Create this Disposition?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
         </div>
 		)

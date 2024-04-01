@@ -11,6 +11,8 @@ import 'react-picky/dist/picky.css';
  export default class ViewUser extends Component {
 	constructor(props) {
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.state = {
 			employeeId: props.edit ? props.edit.userId : '',
 			firstName: props.edit ? props.edit.firstName : '',
@@ -39,7 +41,23 @@ import 'react-picky/dist/picky.css';
 			
 		}
 	}
+
+	
+	
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	handleClickOutside(event) {
+		console.log(event)
+		// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+			// Click occurred outside of the modal, prevent modal from closing
+			event.stopPropagation();
+		// }
+	}
+
 	componentDidMount() {
+		document.addEventListener('mousedown', this.handleClickOutside);
 		let roles = _.find(this.props.rolesData, { 'roleId': this.props.edit.roleId })
 		if (!_.isEmpty(roles)) {
 			this.setState({ selectedrole: [roles] })
@@ -367,6 +385,8 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -399,11 +419,11 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 </Col>  
 						</Row>
 						<Row className='align-items-center'>             
-                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email Id <span className='colorRed'>*</span></Col>
+                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email ID <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='email'
 								
                                    value={email} 
-                                    placeholder="Enter Email Id"
+                                    placeholder="Enter Email ID"
                                     />
                                     {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null}
                                 </Col>  
@@ -417,10 +437,10 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 
 						</Row>
 						<Row className='align-items-center'>             
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User Id  <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
 										 value={employeeId} 
-										placeholder="Enter User Id"
+										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
 							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
@@ -517,10 +537,10 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 								<Row className='align-items-center'>  
 								{selectedrole && selectedrole !== 'Report' && selectedrole !== 'QA' && (
 									<>
-								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extn   <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extension   <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='number' id='pbxExtn'
                                      value={pbxExtn} 
-                                    placeholder="Enter mobile Numbe"
+                                    placeholder="Enter PBX Extension"
                                     />
                                 </Col>  
 								</>)}

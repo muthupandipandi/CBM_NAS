@@ -9,10 +9,13 @@ import 'react-times/css/classic/default.css';
 import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import {Picky} from 'react-picky';
+import MessageShow from '../mesaageShow'
 
  export default class EditUSerGroup extends Component {
 	constructor(props){
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		console.log(props.edit.usergroupType);
 		this.state = {
 			items: '', // State to hold list of items
@@ -22,11 +25,32 @@ import {Picky} from 'react-picky';
 			groupName:props.edit ? props.edit.usergroupName : '',
 			businessHRView: false,
 			groupType:props.edit ? props.edit.usergroupType : '',
-			group_id:props.edit ? props.edit.usergroupId : ''
+			group_id:props.edit ? props.edit.usergroupId : '',
+			clearMessage:false,
+			saveMessage:false
 			}; 
 			
 			
  }
+ componentDidMount() {
+	
+    const selectgroupType = this.state.groupTypeList.find(dnc => dnc.user_type === this.props.edit.usergroupType);
+	
+	this.setState({groupType:selectgroupType})
+	document.addEventListener('mousedown', this.handleClickOutside);
+}
+
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 
  handleCallBack = () =>{
 	/// this.props.onCallBack(this.state)
@@ -41,7 +65,7 @@ import {Picky} from 'react-picky';
    validateForm() {
 	
 	const {loggedinData} = this.props
-	if (!_.isEmpty(this.state.groupType) &&this.state.groupName?.length > 0 ){
+	if (!_.isEmpty(this.state.groupType) &&this.state.groupName?.length > 0 && this.state.groupDescriptions?.length > 0  ){
 		// if(!_.isEmpty(loggedinData)){
 		// 	if(loggedinData.ldapEnabled){
 				return true
@@ -70,14 +94,30 @@ import {Picky} from 'react-picky';
 	  newItem: { itemName: '' } // Reset newItem after adding
 	}));
   }
+  openClearMessage = () => {
+		
+	this.setState({clearMessage : true})
+  }
 
+  closeClearMessage = () => {
+	this.setState({clearMessage : false})
+  }
+
+  openSaveClearMessage = () => {
+	
+	this.setState({saveMessage : true})
+  }
+
+  closeSaveClearMessage = () => {
+	this.setState({saveMessage : false})
+  }
    handleSubmit =() => {  
 	   const {loggedinData} = this.props; 	
 	   const{items, newItem,groupDescriptions,groupName,businessHRView,groupType,group_id	} = this.state;
 	   let obj={
 		   "usergroupName" : groupName,
 		   "usergroupDesc" : groupDescriptions,
-		   "usergroupType" : groupType,
+		   "usergroupType" : groupType?groupType[0].user_type:'',
 		   "usergroupId":group_id
 		   
 	   }   
@@ -100,6 +140,17 @@ handleSelectUserType = (e) => {
 	this.setState({ groupType: e.user_type})
 	
 }
+handleAllowCharacters=(event)=>{
+	const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+	if (onlyLetters.test(event.target.value) || event.target.value === '') {
+		if (parseInt(event.target.maxLength)>=event.target.value.length){
+			this.setState({
+				[event.target.id]: event.target.value})
+			}
+
+	}
+   }
 handleChange = (event) => {
 	if (parseInt(event.target.maxLength)>=event.target.value.length){
 	this.setState({
@@ -114,7 +165,7 @@ render(){
 	// console.log("creat state", this.state)
 	// console.log("creat props", this.props)
 	
-	const{items, newItem,groupDescriptions,groupName,businessHRView,groupType,groupTypeList,group_id	} = this.state;	
+	const{items, newItem,groupDescriptions,groupName,businessHRView,groupType,groupTypeList,group_id,clearMessage,saveMessage	} = this.state;	
 	const {timesList} = this.props.action	
 	
 	
@@ -133,6 +184,8 @@ return(
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -156,8 +209,8 @@ return(
 							<Col md={4} ><FormControl  type='text' id="groupName"  
 									 value={groupName}
 									placeholder="Enter Group Name"
-									maxLength={50}
-									onChange={this.handleChange}
+									maxLength={30}
+									onChange={this.handleAllowCharacters}
 									/>
 									
 									
@@ -166,7 +219,7 @@ return(
 							<Col md={4} ><FormControl  type='text' id="groupDescriptions"  
 									 value={groupDescriptions}
 									 maxLength={100}
-									placeholder="Enter Descriptions"
+									placeholder="Enter Description"
 									onChange={this.handleChange}
 									/>
 									
@@ -227,12 +280,20 @@ return(
 				<Row> <br/> </Row>
 					<Row className='align-items-center'>
 						<Col md={4}></Col>	
-						<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+						<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 						</Col>
-						<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Update Group</Button></Col>
+						<Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Update Group</Button></Col>
 						<Col md={4}></Col>	
 					</Row>
 				</div>
+				{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this User Group?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 		</div> 
 		</Modal.Body>
             </Modal>

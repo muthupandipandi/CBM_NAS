@@ -109,7 +109,7 @@ class Dashboard extends Component {
             {(isOpen === true) ?
              <div className="sidebarComponentsisOpen">         
               <div className='title'>
-                  <h6><Link to='/Dashboard'><img alt='icon' src={cpm} width='60px' height='58px'/></Link></h6>
+                  <h6><p to='/Dashboard'><img alt='icon' src={cpm} width='60px' height='58px'/></p></h6>
               </div>
             <Nav className="flex-column">
             {this.createSideNavigation(data)}
@@ -118,7 +118,7 @@ class Dashboard extends Component {
             : 
             <div className="sidebarComponents"> 
               <div className='title'>
-                  <h6><Link to='/Dashboard'><img alt='icon' src={cpm} width='60px' height='58px'/></Link></h6>
+                  <h6><p to=''><img alt='icon' src={cpm} width='60px' height='58px'/></p></h6>
               </div>   
             <Nav className="flex-column">
             {this.createSideNavigationIcons(data)}

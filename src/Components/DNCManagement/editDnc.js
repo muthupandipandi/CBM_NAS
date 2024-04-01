@@ -7,17 +7,36 @@ import 'react-times/css/material/default.css';
 import 'react-times/css/classic/default.css';
 import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
-
+import MessageShow from '../mesaageShow'
  export default class EditDnc extends Component {
 	constructor(props){
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.state = {
+			saveMessage:false,
+			clearMessage:false,
 			descriptions:props.edit ? props.edit.description : '',
 			dncName:props.edit ? props.edit.dncName : '',
 			dncid: props.edit.dncid ? props.edit.dncid : '',
 			dncStatus:true
 			}; 
  }
+ componentDidMount() {
+	document.addEventListener('mousedown', this.handleClickOutside);
+}
+
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 
  handleCallBack = () =>{
 	/// this.props.onCallBack(this.state)
@@ -75,7 +94,17 @@ import 'react-picky/dist/picky.css';
 	// rolesData = _.reject(rolesData,['roleId',1])
 	return rolesData
 }
+handleAllowCharacters=(event)=>{
+	const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
+	if (onlyLetters.test(event.target.value) || event.target.value === '') {
+		if (parseInt(event.target.maxLength)>=event.target.value.length){
+			this.setState({
+				[event.target.id]: event.target.value})
+			}
+
+	}
+   }
    checkDNCExistence = () => {
 	const { userData, dncName,dncStatus } = this.state;
 	const dispositionExists = this.listdatas().find(item => item.dncName === dncName);
@@ -88,7 +117,23 @@ import 'react-picky/dist/picky.css';
 	}
 }
 
+openClearMessage = () => {
+		
+	this.setState({clearMessage : true})
+  }
 
+  closeClearMessage = () => {
+	this.setState({clearMessage : false})
+  }
+
+  openSaveClearMessage = () => {
+	
+	this.setState({saveMessage : true})
+  }
+
+  closeSaveClearMessage = () => {
+	this.setState({saveMessage : false})
+  }
 render(){
 	const {isOpen,isPending,showMessage,message} = this.props
 	// const dncStatus = _.cloneDeep(this.props.action.dncStatus) 
@@ -97,7 +142,7 @@ render(){
 	// console.log("creat props", this.props)
 	
 	const {descriptions,
-	dncName,dncStatus} = this.state;	
+	dncName,dncStatus,saveMessage,clearMessage} = this.state;	
 	const {timesList} = this.props.action	
 	
 	
@@ -115,6 +160,8 @@ return(
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -135,7 +182,7 @@ return(
 					<Row className='align-items-center'>             
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; DNC Name  <span className='colorRed'>*</span></Col>
 							<Col md={4} ><FormControl  type='text' id="dncName" maxLength={30}  
-									onChange={this.handleChange} value={dncName}
+									onChange={this.handleAllowCharacters} value={dncName}
 									placeholder="Enter DNC Name"
 									onBlur={this.checkDNCExistence}
 									/>
@@ -146,7 +193,7 @@ return(
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Description <span className='colorRed'>*</span></Col>
 							<Col md={4} ><FormControl  type='text' id="descriptions"  maxLength={200}
 									 value={descriptions}
-									placeholder="Enter Descriptions"
+									placeholder="Enter Description"
 									onChange={this.handleChange}
 									/>
 									
@@ -273,12 +320,20 @@ return(
 				<Row> <br/> </Row>
 					<Row className='align-items-center'>
 						<Col md={4}></Col>	
-						<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+						<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 						</Col>
-						<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Update DNC</Button></Col>
+						<Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Update DNC</Button></Col>
 						<Col md={4}></Col>	
 					</Row>
 				</div>
+				{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this DNC?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 		</div> 
 		</Modal.Body>
             </Modal>

@@ -21,6 +21,7 @@ export default class listDnc extends Component {
     }
   }
 
+  
   componentDidMount(){
     this.props.DNCLoad()
     

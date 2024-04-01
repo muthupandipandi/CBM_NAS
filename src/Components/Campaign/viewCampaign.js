@@ -6,11 +6,14 @@ import ViewContacts from './viewContacts'
 import DatePicker from "react-datepicker";
 import { Link, Switch  } from "react-router-dom";
 import Select from 'react-dropdown-select';
+import MessageShow from '../mesaageShow'
 
 import _, { toInteger } from 'lodash';
  export default class ViewCampaign extends Component {
      constructor(props){
 			super(props)
+			this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 			this.state = {
 				timesList: !_.isEmpty(props.action.timesList) ? props.action.timesList : [],
 				campaignName: props.edit.campaignName ? props.edit.campaignName : '',
@@ -40,6 +43,7 @@ import _, { toInteger } from 'lodash';
 				tempStartDate : '',
 				tempEndDate : '',
 				ftpView : false,
+				clearMessage:false,
 				selectCampaign : props.edit.dailingMode? props.edit.dailingMode: '',  
 				CampaignDailingMode : [{'id' : 6, 'label' : 'Progressive'},
 									//    {'id' : 7, 'label' : 'Predictive'},
@@ -91,7 +95,22 @@ import _, { toInteger } from 'lodash';
 				
 				};
 	 }
+	 componentDidMount() {
+	 document.addEventListener('mousedown', this.handleClickOutside);
+  }
+  
 
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 	 weekdayChecked=(obj)=>{
 		const {weekDaysTime} = this.state
 		const val = _.find(weekDaysTime, {'day':obj })
@@ -178,7 +197,14 @@ import _, { toInteger } from 'lodash';
 		handleCustomerStatusConfqView = () => {
 			this.setState({customerStatusConfqView : !this.state.customerStatusConfqView})
 		}
-
+		openClearMessage = () => {
+		
+			this.setState({clearMessage : true})
+		  }
+	
+		  closeClearMessage = () => {
+			this.setState({clearMessage : false})
+		  }
 	
 	 render(){
 		const {isOpen,isPending,showMessage,message} = this.props
@@ -188,7 +214,7 @@ import _, { toInteger } from 'lodash';
 		const {campaignName,campaignActive,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
 			tempHr,tempMin,tempHrD,tempMinD,tempStartDate,tempEndDate,ftpView,ftpLocation,ftpUsername,ftpPassword, ftpFileName, callBefore,callBeforeList,
 			businessHRView,reminderView,callBackConfqView,customerStatusConfqView,ewt,cbmIVRIncomeNO,language,agentVDN,skillName,queueLimitLength,customeTimeout,cbIntervalTime,selectDialorType,DialorTypeList,
-			busyStatus,busyNoTries,notReached,notReachedNoTries,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue  } = this.state;	
+			busyStatus,busyNoTries,notReached,notReachedNoTries,clearMessage,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue  } = this.state;	
 		const {timesList} = this.props.action	
 		
 	
@@ -204,6 +230,8 @@ import _, { toInteger } from 'lodash';
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -219,7 +247,7 @@ import _, { toInteger } from 'lodash';
 								<Col md={4} ><FormControl  type='text' id="campaignName"  
 										value={campaignName}
 										placeholder="Enter Campaign Name"
-										onBlur={this.checkCampaignStatus}
+										onBlur={this.checkCampaignStatus} disabled={true}
 										/>
 								</Col>
 
@@ -450,7 +478,7 @@ import _, { toInteger } from 'lodash';
 								<Col md={2}>Language <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id="language"  
 										 value={language}
-										placeholder="Enter Language"
+										placeholder="Enter Language" disabled={true}
 										/>
 								</Col>
 
@@ -503,8 +531,8 @@ import _, { toInteger } from 'lodash';
 
 								<Col md={2}>Concurrent Calls<span className='colorRed'></span></Col>
 								<Col >                   
-								<FormControl  type='number' id="concurrentCall"  
-											value={concurrentCall}
+								<FormControl  type='number' id="concurrentCall"  disabled={true}
+											value={concurrentCall} 
 											placeholder="concurrent List"/>
 								</Col>
 
@@ -523,7 +551,7 @@ import _, { toInteger } from 'lodash';
 										</Col>
 										<Col md={3}>
 										<FormControl  type='number' id="maxAHr" min="0" max="12"  
-											 value={tempHr}
+											 value={tempHr} disabled={true}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
@@ -531,7 +559,7 @@ import _, { toInteger } from 'lodash';
 										</Col>
 										<Col md={4}>
 										<FormControl  type='number' id="maxAdvMin" min="0" max="59"
-											 value={tempMin}
+											 value={tempMin} disabled={true}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
@@ -553,7 +581,7 @@ import _, { toInteger } from 'lodash';
 										</Col>
 										<Col md={3}>
 										<FormControl  type='number' id="maxAHr" min="0" max="12"  
-											value={tempHrD}
+											value={tempHrD} disabled={true}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
@@ -561,7 +589,7 @@ import _, { toInteger } from 'lodash';
 										</Col>
 										<Col md={4}>
 										<FormControl  type='number' id="maxAdvMin" min="0" max="59"
-											 value={tempMinD}
+											 value={tempMinD} disabled={true}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
@@ -570,35 +598,13 @@ import _, { toInteger } from 'lodash';
 								<Col md={2}>Retry Count<span className='colorRed'>*</span></Col>
 								<Col>
 								<FormControl  type='text' id="retryCount"  
-											 value={retryCount}
+											 value={retryCount} disabled={true}
 											placeholder="Retry Count"
 
 										/>
 								</Col>
 						</Row>
-						<Row className='align-items-center'>             
-								
-								<Col md={2}>Group<span className='colorRed'></span></Col>
-								<Col md={4}>
-								<Select
-                                        values={this.state.selectedGroup}
-                                        options={this.userGroup()}
-                                        labelField='groupName'
-                                        dropdownPosition='auto'
-                                        valueField='groupName'
-                                        clearable={false}
-                                        className='text-left selectDropDown'
-                                        placeholder="Select Group"
-                                        onChange={this.handleSelectGroup}
-                                        closeOnSelect={true}
-                                    />
-								</Col>
-
-									{/* <Col md={2}>Active<span className='colorRed'></span></Col>
-									<Col md={4}>
-										<input type="checkbox" value="" onClick={this.handleCheck} checked={campaignActive}/>
-									</Col> */}
-						</Row>
+						
 						
 						{/* <Row> <br></br> </Row> */}
 						</>
@@ -1101,6 +1107,10 @@ import _, { toInteger } from 'lodash';
 						<Col md={2}> </Col>
 						<Col md={4}></Col>	
 						</Row>
+						{/* {clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null} */}
 				</div>
             </Modal.Body>
             </Modal> } </div>

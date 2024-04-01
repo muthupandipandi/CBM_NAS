@@ -90,6 +90,7 @@ export default class ViewContacts extends Component {
                     <Row className='align-items-center'>             
                             <Col md={2}>SFTP FileName<span className='colorRed'></span></Col>
                             <Col ><FormControl autoFocus type='text' id="ftpFileName"  
+                            disabled={true}
                                      value={ftpFileName}
                                     placeholder="Enter FileName"
 

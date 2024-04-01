@@ -645,3 +645,7 @@ max-width: 33%;
   .react-datepicker__input-container input::placeholder {
     color: #999; /* Adjust placeholder color */
   }
+
+  .no-cursor {
+    cursor: default !important;
+}

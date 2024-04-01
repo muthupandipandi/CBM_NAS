@@ -14,6 +14,8 @@ import {Picky} from 'react-picky';
  export default class ViewSkillSet extends Component {
 	constructor(props){
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.state = {
 			
 			skillName:props.edit ? props.edit.skillName : '',
@@ -32,7 +34,21 @@ import {Picky} from 'react-picky';
 			}; 
 			
  }
+ componentDidMount() {
+	document.addEventListener('mousedown', this.handleClickOutside);
+}
 
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
  handleCallBack = () =>{
 	/// this.props.onCallBack(this.state)
 	 this.props.closeModal()
@@ -252,10 +268,12 @@ return(
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
-			View SkillSet 
+			View Skill Set 
             </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -275,7 +293,8 @@ return(
 							<Col md={3} ><FormControl  type='text' id="skillName"  
 									 value={skillName}
 									 
-									placeholder="Enter Dispostion Name"
+									placeholder="Enter Name"
+									disabled={true}
 									
 									/>
 									
@@ -284,7 +303,8 @@ return(
 							<Col md={3}> &nbsp;&nbsp;&nbsp;&nbsp; Language <span className='colorRed'>*</span></Col>
 							<Col md={3} ><FormControl  type='text' id="language"  
 									 value={language}
-									placeholder="Enter Dispostion Name"
+									placeholder="Enter  Name"
+									disabled={true}
 									
 									
 									/>
@@ -368,7 +388,7 @@ return(
 								<FormControl  type='number' id="serviceLevelThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										
 										
-										value={serviceLevelThresold.toString().padStart(2, '0')}
+										value={serviceLevelThresold.toString().padStart(2, '0')} disabled={true}
 										
 										inputMode="numeric"
 										placeholder="minute"/><span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
@@ -378,7 +398,7 @@ return(
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; First Call Resalution <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='number' id="firstCallResalution" min="0" max="59"
-										 value={firstCallResalution.toString().padStart(2, '0')}
+										 value={firstCallResalution.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
 								<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -400,7 +420,7 @@ return(
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Call Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='number' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} min="0" max="59"
-										 value={shortcallThresold.toString().padStart(2, '0')}
+										 value={shortcallThresold.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -410,7 +430,7 @@ return(
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandon Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='number' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} max="59"
-										 value={shortAbandoneThresold.toString().padStart(2, '0')}
+										 value={shortAbandoneThresold.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/> <span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
@@ -420,7 +440,7 @@ return(
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Goal  <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='number' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
-										 value={serviceLevelGoal.toString().padStart(2, '0')}
+										 value={serviceLevelGoal.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -430,7 +450,7 @@ return(
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Abandon Rate Threshold <span className='colorRed'>*</span></Col>
 							<Col md={3} >
 							<FormControl  type='number' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
-										 value={abandoneRateThresold.toString().padStart(2, '0')}
+										 value={abandoneRateThresold.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -449,7 +469,7 @@ return(
 								{/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
 								</Row>
 							<Row className='align-items-center'>  
-								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandon Againest SLA</Col>
+								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
 							<Col md={3} >
 							
 										

@@ -14,22 +14,25 @@ import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import _, { toInteger } from 'lodash';
 import { Link } from "react-router-dom";
+import MessageShow from '../mesaageShow'
  export default class EditCampaign extends Component {
 	 constructor(props){
 			super(props)
+			this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 			this.state = {
 				timesList: !_.isEmpty(props.action.timesList) ? props.action.timesList : [],
 				campaignName: props.edit.campaignName ? props.edit.campaignName : '',
 				campaignActive: props.edit.campaignActive ? true : false,
-				startDate : props.edit.startDate ? props.edit.startDate : '',
+				startDate : props.edit.startDate ? moment(new Date(props.edit.startDate)).format('YYYY-MM-DD') : '',
 				startTime : props.edit.startTime? props.edit.startTime : '00:00',
-				endDate : props.edit.endDate? props.edit.endDate : '',
+				endDate : props.edit.endDate? moment(new Date(props.edit.endDate)).format('YYYY-MM-DD'): '',
 				endTime : props.edit.endTime? props.edit.endTime : '00:00',
 				weekDaysTime : props.edit.weekDaysTime? props.edit.weekDaysTime : [{'day': 'Sunday', 'active': false , 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Monday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
 								{'day': 'Tuesday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Wednesday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
 								{'day': 'Thursday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Friday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
 								{'day': 'Saturday', 'active': false, 'startTime':'00:00', 'endTime': '00:00'}],
-				callBeforeList : [{'day' : '0 day'},{'day' : '1 day'},{'day' : '2 days'},{'day' : '3 days'},{'day' : '4 days'},{'day' : '5 days'},{'day' : '6 days'},{'day' : '7 days'}],
+				callBeforeList : [{id:'0','day' : '0 day'},{id:'1','day' : '1 day'},{id:'2','day' : '2 days'},{id:'3','day' : '3 days'},{id:'4','day' : '4 days'},{id:'5','day' : '5 days'},{id:'6','day' : '6 days'},{id:'7','day' : '7 days'}],
 				callBefore : props.edit.callBefore? props.edit.callBefore+" day" : '',
 				maxAdvNotice : props.edit.maxAdvNotice? props.edit.maxAdvNotice : '01:00:00',
 				retryDelay : props.edit.retryDelay? props.edit.retryDelay : '',
@@ -43,10 +46,12 @@ import { Link } from "react-router-dom";
 				tempMin : props.edit.maxAdvNotice? props.edit.maxAdvNotice.split(":")[1] : '',
 				tempHrD : props.edit.retryDelay? toInteger(props.edit.retryDelay/60) : '',
 				tempMinD : props.edit.retryDelay? props.edit.retryDelay%60: '',  
-				tempStartDate : '',
-				tempEndDate : '',
+				tempStartDate : new Date(moment(new Date(props.edit.startDate)).format('YYYY-MM-DD')),
+				tempEndDate : new Date(props.edit.endDate),
 				ftpView : false,
-				selectCampaign : props.edit.dailingMode? props.edit.dailingMode: '',  
+				clearMessage:false,
+				saveMessage:false,
+				// selectCampaign : props.edit.dailingMode? props.edit.dailingMode: '',  
 				CampaignDailingMode : [{'id' : 6, 'label' : 'Progressive'},
 									//    {'id' : 7, 'label' : 'Predictive'},
 									//    {'id' : 8, 'label' : 'Power'},
@@ -54,7 +59,10 @@ import { Link } from "react-router-dom";
 									//    {'id' : 10, 'label' : 'manual'}
 									],
 				 selectCampaignQueue : props.edit.queue? props.edit.queue: '' ,
-				 campaignAssignQueue : [{'id' : 11, 'label' : 'Post Due' },
+				 campaignAssignQueue : [
+					{'id' : 15, 'label' : 'nas-neuro' },
+					{'id' : 11, 'label' : 'Post Due' },
+				 
 										{'id' : 12, 'label' : 'Pre Due' },
 										{'id' : 13, 'label' : 'PTF' },
 										{'id' : 14, 'label' : 'FUP' }], 
@@ -69,7 +77,7 @@ import { Link } from "react-router-dom";
 				{'id' : 9, 'label' : '9' },
 				{'id' : 10, 'label' : '10' }],
 
-				selectDispositionList : props.edit.dispositionID? props.edit.dispositionID: '',  
+				selectDispositionList : {},  
 				selectDNCList:props.edit.dncId? props.edit.dncId: '', 
 				disPositionList : props.dispostionData,
 				dncList : props.dncData,
@@ -106,7 +114,66 @@ import { Link } from "react-router-dom";
 				}; 	
 	 }
 
+ componentDidMount() {
+	const { CampaignDailingMode,selectDispositionList,campaignAssignQueue,concurrrentCalls,callBeforeList } = this.state;
+    const selectDisposition = this.dispostionDatas().find(dnc => dnc.dispId === this.props.edit.dispositionID);
+	
+	this.setState({selectDispositionList:selectDisposition})
 
+	const selectDnc = this.dncDatas().find(dnc => dnc.dncid === this.props.edit.dncId);
+	
+	this.setState({selectDNCList:selectDnc})
+    
+    let selecteddailin = CampaignDailingMode.find(option => option.label === this.props.edit.dailingMode? this.props.edit.dailingMode: '');
+    
+	if (selecteddailin) {
+      this.setState({ selectCampaign: selecteddailin });
+    }
+
+	let selecteQuee = campaignAssignQueue.find(option => option.label === this.props.edit.queue? this.props.edit.queue: '');
+    
+	if (selecteQuee) {
+      this.setState({ selectCampaignQueue: selecteQuee });
+    }
+	let selecteconcurrrentCalls = concurrrentCalls.find(option => option.label === this.props.edit.concurrentCall? this.props.edit.concurrentCall: '');
+    
+	if (selecteconcurrrentCalls) {
+      this.setState({ concurrentCall: selecteconcurrrentCalls });
+    }
+	let call_day=this.props.edit.callBefore? this.props.edit.callBefore+' day': ''
+	console.log(call_day)
+	let selecteconcallBefore = callBeforeList.find(option => option.id === this.props.edit.callBefore? this.props.edit.callBefore: '');
+    console.log(selecteconcallBefore)
+	if (selecteconcallBefore) {
+      this.setState({ callBefore: selecteconcallBefore });
+    }
+
+	
+	
+	// let selectedOPTDnc = this.dncDatas().find(dnc => dnc.dncid === this.props.edit.dncId? this.props.edit.dncId: '')
+    // if (selectedOPTDnc) {
+    //   this.setState({ selectDNCList: selectedOPTDnc });
+    // }
+
+	// const selectDisposition = this.dispostionDatas().find(dnc => dnc.dncid === props.edit.dncId? props.edit.dncId: '')
+    // if (selectedDnc) {
+    //   this.setState({ selectDNCList: selectDisposition });
+    // }
+	document.addEventListener('mousedown', this.handleClickOutside);
+  }
+  
+
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 
 	 handleCallBack = () =>{
 		/// this.props.onCallBack(this.state)
@@ -122,32 +189,33 @@ import { Link } from "react-router-dom";
 		   
 	   }
 	   handleChangeCampaignDailingMode = (e) => {
-		this.setState({selectCampaign : e['label']})
+		this.setState({selectCampaign : e})
 	   }
 	   
 	   handleChangeCampaignAssignQueue = (e) => {
-		this.setState({selectCampaignQueue : e['label']})
+		this.setState({selectCampaignQueue : e})
 	   }
 	   handleChangeconcurrent = (e) => {
-		this.setState({concurrentCall : e['label']})
+		this.setState({concurrentCall : e})
 	   }
 
 	   handleSelectDispositionList = (e) => {
-		this.setState({selectDispositionList : e['dispId']})
+		this.setState({selectDispositionList : e})
 	   }
 	   handleSelectDNCList = (e) => {
-		this.setState({selectDNCList : e['dncid']})
+		this.setState({selectDNCList : e})
 	   }
 	   getSelectedDNCName() {
 		
 		const selectedDNC = this.dncDatas().find(dnc => dnc.dncid === this.state.selectDNCList);
 		return selectedDNC ? selectedDNC.dncName : ""; // Return the name of the selected DNC list, or an empty string if not found
 	}
-	getSelectedDispositionList() {
-		
-		const selectDisposition = this.dispostionDatas().find(dnc => dnc.dispId === this.state.selectDispositionList);
-		return selectDisposition ? selectDisposition.dispositionName : ""; // Return the name of the selected DNC list, or an empty string if not found
-	}
+	// getSelectedDispositionList() {
+	// 	console.log(this.state.selectDispositionList)
+	// 	const selectDisposition = this.dispostionDatas().find(dnc => dnc.dispId === this.props.edit.dispositionID);
+	// 	this.setState({selectDispositionList:selectDisposition})
+	// 	return selectDisposition // Return the name of the selected DNC list, or an empty string if not found
+	// }
 	   isValidPassword = (password) =>{
 		if(!_.isEmpty(password)){
 		 if(password.length>6){
@@ -163,10 +231,11 @@ import { Link } from "react-router-dom";
 			const {campaignStatus} = this.props.action
 	
 			   if(campaignName && campaignName.length > 0 && startDate && startDate.length > 0 && startTime && startTime.length > 0 && 
-				 endDate && endDate.length > 0 && endTime && endTime.length > 0 && !_.isEmpty(weekDaysTime)&& callBefore && callBefore.length > 0 && 
+				 endDate && endDate.length > 0 && endTime && endTime.length > 0 && !_.isEmpty(weekDaysTime)&& callBefore && !_.isEmpty(callBefore) && 
 				 retryDelay && retryCount  &&  campaignStatus === true && selectDNCList && selectDispositionList && selectCampaign &&concurrentCall&& selectCampaignQueue && selectedCampaign )
 				{
-					if(callBefore.split(' ')[0] === '0')  {
+					console.log(callBefore)
+					if(callBefore['day'].split(' ')[0] === '0')  {
 						if(maxAdvNotice && maxAdvNotice.length > 0){
 							return true
 						} else {
@@ -198,52 +267,98 @@ import { Link } from "react-router-dom";
 	   }
 
 	   handleChangeStart=(e)=>{
-		const date = moment(e).format('YYYY-MM-DD'); 
-		this.setState({startDate: date});
-		this.setState({tempStartDate: e});
+		const date = moment(e, 'YYYY-MM-DD', true);
+		// console.log(date.isValid())
+		if (date.isValid()) {
+			const dates = moment(e).format('YYYY-MM-DD');
+		this.setState({startDate: dates});
+		this.setState({tempStartDate: e});}
 	   }
 	   handleChangeEnd=(e)=>{
-		const date = moment(e).format('YYYY-MM-DD'); 
+		const dates = moment(e, 'YYYY-MM-DD', true);
+		if (dates.isValid()) {
+			// const dates = moment(e).format('YYYY-MM-DD');
+		const date = moment(e).format('YYYY-MM-DD');
 		this.setState({endDate: date});
-		this.setState({tempEndDate: e});
+		this.setState({tempEndDate: new Date(date)});
+		this.setState({endTime:this.state.startTime})
+		}
 	   }
 	   handleChangeStartTime=(e)=>{
-		const time = e.label+":00"  
-		this.setState({startTime: time});
+		console.log(e)
+		console.log(this.state.endTime)
+		let time = e.hour+":"+e.minute+" "+e.meridiem
+		// if (this.state.startDate==this.state.endDate){
+		if(e['label']>this.state.endTime['label']){
+			this.setState({endTime:e})
+		}
+	
+		this.setState({startTime: e});
 	   }
 	   handleChangeEndTime=(e)=>{
-		const time = e.label+":00"   
-		this.setState({endTime: time});
+		let time = e.hour+":"+e.minute+" "+e.meridiem
+		if (this.state.startDate==this.state.endDate){
+		if(e['label']>=this.state.startTime['label']){
+		this.setState({endTime: e});
+	}}
+	else{
+		this.setState({endTime: e});
+	}
 	   }
 	   handleChangeDayBefore=(e)=>{
-		this.setState({callBefore: e.day});
+		this.setState({callBefore: e});
 	   }
 	   handleMaxHrChange = (e) => {
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
 		const {tempMin} = this.state
-		let val = e.target.value+":"+tempMin+":00"
+		let val = e.target.value+":"+tempMin
 		this.setState({tempHr:e.target.value})
 		this.setState({maxAdvNotice:val})
+
+		}
+	}
 	   }
 	   handleMaxValueChange = (e) => {
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if(59>=e.target.value){
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
 		   const {tempHr} = this.state
-		   let val = tempHr+":"+e.target.value+":00"
+		   let val = tempHr+":"+e.target.value
 		   this.setState({tempMin:e.target.value})
 		   this.setState({maxAdvNotice:val})
-		   
+
 	   }
+	}
+}}
 	   handleRetryHrChange = (e) => {
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
 		const {tempMinD} = this.state
 		let val = toInteger(e.target.value)*60 + toInteger(tempMinD)
 		this.setState({tempHrD:e.target.value})
 		this.setState({retryDelay:val})
+		}}
 	   }
 	   handleRetryValueChange = (e) => {
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if(59>=e.target.value){
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
 		   const {tempHrD} = this.state
-		   let val = (toInteger(tempHrD)*60)+ toInteger(e.target.value)
+		   let val = (toInteger(tempHrD)*60)+toInteger(e.target.value)
 		   this.setState({tempMinD:e.target.value})
 		   this.setState({retryDelay:val})
-		   
-	   }
+		}}
+	}
+}
 	   handleAllowCharacters=(event)=>{
 		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 		
@@ -256,18 +371,22 @@ import { Link } from "react-router-dom";
 		}
 	   }
 	   handleSecChange = (event) => {
+		const { value } = event.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+
+		if (parseInt(event.target.maxLength)>=event.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
 		let { value } = event.target;
-		value=toInteger(value)
-		console.log(value)
+
 		// Ensure the value is within the allowed range
-		if (value < 0) {
-			value = 0;
-		} else if (value > 5) {
+		 if (value > 5) {
 			value = 5;
 		}
 		// Update the state with the sanitized value
 		console.log(event.target.id)
 		this.setState({ [event.target.id]: value });
+	}
+}
 	}
 
 	   weekdayChecked=(obj)=>{
@@ -279,7 +398,7 @@ import { Link } from "react-router-dom";
 		} else if (val.active === 'false') {
 			check = false
 		} else { check = val.active }
-		
+		console.log(check)
 		return check
 	   }
 
@@ -314,28 +433,37 @@ import { Link } from "react-router-dom";
 		return ret
 		}
 
-	   handleWeeklyTimeStart=(e,obj)=>{
-		   const {weekDaysTime} = this.state
-		   let value = weekDaysTime
-		   _.map(value,(val,i)=>{
-			   if(val.day === obj){
-				   val.startTime = e.label+':00'
-			   }
-		   })
-		   //console.log("EE",e.target.id)
-		   this.setState({weekDaysTime:value})
-	   }
+		handleWeeklyTimeStart=(e,obj)=>{
 
-	   handleWeeklyTimeEnd=(e,obj)=>{
-		const {weekDaysTime} = this.state
-		let value = weekDaysTime
-		_.map(value,(val,i)=>{
-			if(val.day === obj){
-				val.endTime = e.label+':00'
-			}
-		})
-		this.setState({weekDaysTime:value})
+			const {weekDaysTime} = this.state
+			let value = weekDaysTime
+			_.map(value,(val,i)=>{
+				if(val.day === obj){
+				 if (val.endTime>e.label){
+					val.startTime = e.label}
+					else{
+					 val.startTime = e.label
+					val.endTime = e.label
+				}
+			 }
+			})
+ 
+			//console.log("EE",e.target.id)
+			this.setState({weekDaysTime:value})
 		}
+ 
+		handleWeeklyTimeEnd=(e,obj)=>{
+		 const {weekDaysTime} = this.state
+		 let value = weekDaysTime
+		 _.map(value,(val,i)=>{
+			 if(val.day === obj){
+				 console.log(typeof(e.label),typeof(val.startTime))
+				 if (e.label>val.startTime){
+				 val.endTime = e.label}
+			 }
+		 })
+		 this.setState({weekDaysTime:value})
+		 }
 
 		openFtp=()=>{
 			this.setState({ftpView : true})
@@ -377,19 +505,21 @@ import { Link } from "react-router-dom";
 			   obj.endDate = endDate
 			   obj.endTime = endTime
 			   obj.weekDaysTime = weekDaysTime
-			   obj.callBefore = callBefore.split(' ')[0]
+			   obj.callBefore = callBefore['day'].split(' ')[0]
 			   obj.maxAdvNotice = maxAdvNotice
 			   obj.retryDelay = retryDelay
 			   obj.retryCount = retryCount
-			   obj.concurrentCall = concurrentCall
+			   obj.concurrentCall = concurrentCall?concurrentCall['label']:''
 			   obj.ftpLocation =	ftpLocation
 			   obj.ftpUsername =	ftpUsername
 			   obj.ftpPassword =	ftpPassword
 			   obj.fileName = ftpFileName
-			   obj.dispositionID = selectDispositionList
-			   obj.dncId = selectDNCList
-			   obj.queue = selectCampaignQueue
-			   obj.dailingMode = selectCampaign
+			   obj.dispositionID = selectDispositionList?selectDispositionList['dispId']:''
+			   obj.dncId = selectDNCList?selectDNCList['dncid']:''
+			   obj.queue = selectCampaignQueue?selectCampaignQueue['label']:''
+			   obj.dailingMode = selectCampaign?selectCampaign['label']:''
+			//    obj.dispositionID":selectDispositionList?selectDispositionList['dispId']:'',
+			  
 			   //obj.createdBy = loggedinData.roles
 			   //obj.updatedBy  = loggedinData.roles
 		   //}   
@@ -433,7 +563,23 @@ import { Link } from "react-router-dom";
 	   handleCheckIgnoreAA=()=>{
 		this.setState({ignoreAA : !this.state.ignoreAA})
 	   }
-	
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 
 	render(){
 		const {isOpen,isPending,showMessage,message} = this.props
@@ -443,7 +589,7 @@ import { Link } from "react-router-dom";
 		const {campaignName,campaignActive,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
 			tempHr,tempMin,tempHrD,tempMinD,tempStartDate,tempEndDate,ftpView,ftpLocation,ftpUsername,ftpPassword,ftpFileName,callBefore,callBeforeList,
 			businessHRView,reminderView,callBackConfqView,customerStatusConfqView,ewt,cbmIVRIncomeNO,language,agentVDN,skillName,queueLimitLength,customeTimeout,cbIntervalTime,selectDialorType,DialorTypeList,
-			busyStatus,busyNoTries,notReached,notReachedNoTries,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue  } = this.state;
+			busyStatus,busyNoTries,clearMessage,saveMessage,notReached,notReachedNoTries,selectDNCList,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue,selectDispositionList } = this.state;
 		const {timesList} = this.props.action	
 		
 	
@@ -459,6 +605,8 @@ import { Link } from "react-router-dom";
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -475,6 +623,7 @@ import { Link } from "react-router-dom";
 										onChange={this.handleAllowCharacters} value={campaignName}
 										placeholder="Enter Campaign Name"
 										onBlur={this.checkCampaignStatus}
+										disabled={true}
 										/>
 										
 										{(campaignStatus === false) ? <span className="colorRed">&nbsp;****Campaign name is already exits****</span>: null}
@@ -514,13 +663,15 @@ import { Link } from "react-router-dom";
 								<DatePicker
 									selected={tempStartDate}
 									className='myDatePicker'
-									selectsStart
-									showMonthDropdown
-									startDate={tempStartDate}
-									endDate={tempEndDate}
-									onChange={this.handleChangeStart}
-									dateFormat="dd-MM-yyyy"  
-									placeholderText={startDate.toString()}          
+										selectsStart
+										// showMonthDropdown
+										startDate={tempStartDate}
+										endDate={tempEndDate}
+										onChange={this.handleChangeStart}
+										dateFormat="dd-MM-yyyy"
+										minDate={new Date()}
+										placeholderText="Start Date"
+										maxDate={tempEndDate}        
 								/>
 							</Col>
 							<Col md={2}>
@@ -561,7 +712,10 @@ import { Link } from "react-router-dom";
 									onChange={this.handleChangeEnd}
 									minDate={tempStartDate}
 									dateFormat="dd-MM-yyyy" 
+									className='myDatePicker'
+									
 									placeholderText={endDate.toString()}
+									
 								/>
 							</Col>
 							<Col md={2}>
@@ -591,7 +745,7 @@ import { Link } from "react-router-dom";
 
 						</Row>
 						<Row className='align-items-center'>
-						<Col md={2}>DailingMode<span className="colorRed">*</span></Col>
+						<Col md={2}>Dailing Mode<span className="colorRed">*</span></Col>
 								<Col md={4}>
 									<Picky
 									     value={selectCampaign}
@@ -616,7 +770,7 @@ import { Link } from "react-router-dom";
 								<Col md={2}>Disposition<span className="colorRed">*</span></Col>
 								<Col md={4}>
 									<Picky
-									     value={this.getSelectedDispositionList()}
+									     value={selectDispositionList}
 										 options={this.dispostionDatas()}
 										 onChange={this.handleSelectDispositionList}
 										 open={false}
@@ -679,7 +833,7 @@ import { Link } from "react-router-dom";
                                         closeOnSelect={true}
                                     />	 */}
 									<Picky
-									     value={this.getSelectedDNCName()}
+									     value={selectDNCList}
 										 options={this.dncDatas()}
 										 onChange={this.handleSelectDNCList}
 										 open={false}
@@ -778,66 +932,62 @@ import { Link } from "react-router-dom";
 						{/* <Row>
 							<br></br>
 						</Row> */}
-						{ _.toString(callBefore).split(' ')[0] === '0' ?
+						<Row className='align-items-center'>
+							{ _.toString(callBefore.day).split(' ')[0] === '0' ?
 							<>
-							<Row> 
 								<Col md={2}>Max.Adv Notice<span className='colorRed'>*</span></Col>
-								<Col> 
+								<Col md={4}>
 									<Row>
 										<Col md={1}>
 											hr<span className='colorblue'>*</span>
 										</Col>
 										<Col md={3}>
-										<FormControl  type='number' id="maxAHr" min="0" max="12"  
+										<FormControl  type='text' id="maxAHr" maxLength={5}
 											onChange={this.handleMaxHrChange} value={tempHr}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
 											min<span className='colorblue'>*</span>
 										</Col>
-										<Col md={4}>
-										<FormControl  type='number' id="maxAdvMin" min="0" max="59"
+										<Col md={3}>
+										<FormControl  type='text' id="maxAdvMin" maxLength={2}
 											onChange={this.handleMaxValueChange} value={tempMin}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
-									</Row>	               
+									</Row>
 								</Col>
-								<Col md={2}></Col>
-								<Col></Col>
-							</Row>
-							<Row>
-								<br></br>
-							</Row>
-							</> : null }
-						<Row className='align-items-center'>
+								</> : null }
+
+
+
 								<Col md={2}>Retry Delay<span className='colorRed'>*</span></Col>
-								<Col> 
+								<Col md={4}>
 									<Row>
 										<Col md={1}>
 											hr<span className='colorblue'>*</span>
 										</Col>
 										<Col md={3}>
-										<FormControl  type='number' id="maxAHr" min="0" max="12"  
+										<FormControl  type='text' id="maxAHr" maxLength={5}
 											onChange={this.handleRetryHrChange} value={tempHrD}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
 											min<span className='colorblue'>*</span>
 										</Col>
-										<Col md={4}>
-										<FormControl  type='number' id="maxAdvMin" min="0" max="59"
+										<Col md={3}>
+										<FormControl  type='text' id="maxAdvMin" maxLength={2}
 											onChange={this.handleRetryValueChange} value={tempMinD}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
-									</Row>	               
+									</Row>
 								</Col>
 								<Col md={2}>Retry Count<span className='colorRed'>*</span></Col>
-								<Col>
-								<FormControl style={{width:'99%',height:'38px'}} type='number' maxLength={20} min="0" max="5" id="retryCount"  
+								<Col md={4}>
+								<FormControl style={{width:'99%',height:'38px'}} type='text' maxLength={1} id="retryCount"
 											onChange={this.handleSecChange} value={retryCount}
-											placeholder="Retry Count"
+											placeholder="Enter Retry Count"
 
 										/>
 								</Col>
@@ -1020,9 +1170,9 @@ import { Link } from "react-router-dom";
 							</Row>
 							<Row className='align-items-center'>
 									<Col md={2}>Daily Start Time<span className='colorRed'>*</span></Col>
-									<Col>
+									<Col md={9}>
 										<Row>
-											<Col>
+											<Col style={{marginRight:'30px'}} >
 												<Row>
 													<label>Sunday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Sunday")} checked={this.weekdayChecked("Sunday")}/></span></label> 	
 												</Row>
@@ -1039,10 +1189,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[0]['active']==false||weekDaysTime[0]['active']=='false'}
 														/>
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													<label>Monday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Monday")} checked={this.weekdayChecked("Monday")}/></span></label>	
 												</Row>
@@ -1059,10 +1210,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[1]['active']==false||weekDaysTime[1]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													<label>Tuesday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Tuesday")} checked={this.weekdayChecked("Tuesday")}/></span></label>	
 												</Row>
@@ -1079,10 +1231,11 @@ import { Link } from "react-router-dom";
 													includeFilter={false}
 													clearFilterOnClose={true}
 													dropdownHeight={200}
+													disabled={weekDaysTime[2]['active']==false ||weekDaysTime[2]['active']=='false'}
 													/>
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													<label>Wednesday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Wednesday")} checked={this.weekdayChecked("Wednesday")}/></span></label>
 												</Row>
@@ -1099,10 +1252,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[3]['active']==false ||weekDaysTime[3]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													<label>Thursday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Thursday")} checked={this.weekdayChecked("Thursday")}/></span></label>
 												</Row>
@@ -1119,10 +1273,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[4]['active']==false ||weekDaysTime[4]['active']=='false' }
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													<label>Friday <span className='colorRed'><input type="checkbox" onClick={()=>this.handleWeekdaysCheck("Friday")} checked={this.weekdayChecked("Friday")}/></span></label>	
 												</Row>
@@ -1139,6 +1294,7 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[5]['active']==false ||weekDaysTime[5]['active']=='false'}
 														/>
 												</Row>
 											</Col>
@@ -1159,6 +1315,7 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[6]['active']==false || weekDaysTime[6]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
@@ -1169,9 +1326,9 @@ import { Link } from "react-router-dom";
 
 							<Row className='align-items-center'>
 									<Col md={2}>Daily End Time<span className='colorRed'>*</span></Col>
-									<Col>
+									<Col md={9}>
 										<Row>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>
 													
 														
@@ -1189,10 +1346,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[0]['active']==false ||weekDaysTime[0]['active']=='false'}
 														/>
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>	
 												</Row>
 												<Row>
@@ -1208,10 +1366,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[1]['active']==false||weekDaysTime[1]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>	
 												</Row>
 												<Row>
@@ -1227,10 +1386,11 @@ import { Link } from "react-router-dom";
 													includeFilter={false}
 													clearFilterOnClose={true}
 													dropdownHeight={200}
+													disabled={weekDaysTime[2]['active']==false ||weekDaysTime[2]['active']=='false'}
 													/>
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>	
 												</Row>
 												<Row>
@@ -1246,10 +1406,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[3]['active']==false ||weekDaysTime[3]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>	
 												</Row>
 												<Row>
@@ -1265,10 +1426,11 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[4]['active']==false ||weekDaysTime[4]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
-											<Col>
+											<Col style={{marginRight:'30px'}}>
 												<Row>	
 												</Row>
 												<Row>
@@ -1284,6 +1446,7 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[5]['active']==false ||weekDaysTime[5]['active']=='false'}
 														/>
 												</Row>
 											</Col>
@@ -1303,6 +1466,7 @@ import { Link } from "react-router-dom";
 														includeFilter={false}
 														clearFilterOnClose={true}
 														dropdownHeight={200}
+														disabled={weekDaysTime[6]['active']==false ||weekDaysTime[6]['active']=='false'}
 														/>	
 												</Row>
 											</Col>
@@ -1311,11 +1475,12 @@ import { Link } from "react-router-dom";
 									</Col>              
 							</Row>
 							
+							
 						</> : null }
 					</div>
 						<Row> <br/> </Row>
 						<Row className='align-items-center'>
-						<Col><input type="checkbox" value="" onClick={this.handleCheck} checked={campaignActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active  <span className='colorRed'>*</span></Col>
+						<Col><input type="checkbox" value="" onClick={this.handleCheck} checked={campaignActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active</Col>
 						</Row>
 						<Row> <br/> </Row>
 						<Row className='align-items-center'>
@@ -1323,11 +1488,20 @@ import { Link } from "react-router-dom";
 						</Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Update Campaign</Button></Col>
-							<Col md={4}></Col>	
+							<Col md={4}> <Button  variant="primary" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>Update Campaign</Button></Col>
+							<Col md={2}></Col>	
 						</Row>
+
+						{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this Campaign?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 				</div>
             </Modal.Body>
             </Modal> } </div>

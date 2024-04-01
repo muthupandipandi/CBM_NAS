@@ -13,6 +13,8 @@ import {Picky} from 'react-picky';
  export default class ViewUserGroup extends Component {
 	constructor(props){
 		super(props)
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		console.log(props.edit.usergroupType);
 		this.state = {
 			items: '', // State to hold list of items
@@ -27,6 +29,21 @@ import {Picky} from 'react-picky';
 			
 			
  }
+ componentDidMount() {
+	document.addEventListener('mousedown', this.handleClickOutside);
+}
+
+componentWillUnmount() {
+	document.removeEventListener('mousedown', this.handleClickOutside);
+}
+
+handleClickOutside(event) {
+	console.log(event)
+	// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+		// Click occurred outside of the modal, prevent modal from closing
+		event.stopPropagation();
+	// }
+}
 
  handleCallBack = () =>{
 	/// this.props.onCallBack(this.state)
@@ -77,7 +94,7 @@ import {Picky} from 'react-picky';
 	   let obj={
 		   "usergroupName" : groupName,
 		   "usergroupDesc" : groupDescriptions,
-		   "usergroupType" : groupType,
+		   "usergroupType" : groupType?groupType[0].user_type:'',
 		   "usergroupId":group_id
 		   
 	   }   
@@ -132,6 +149,8 @@ return(
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -154,14 +173,14 @@ return(
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Group Name  <span className='colorRed'>*</span></Col>
 							<Col md={4} ><FormControl  type='text' id="groupName"  
 									 value={groupName}
-									placeholder="Enter Group Name"
+									placeholder="Enter Group Name" disabled={true}
 									
 									/>
 									
 									
 							</Col>
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Description <span className='colorRed'>*</span></Col>
-							<Col md={4} ><FormControl  type='text' id="groupDescriptions"  
+							<Col md={4} ><FormControl  type='text' id="groupDescriptions"   disabled={true}
 									 value={groupDescriptions}
 									placeholder="Enter Descriptions"
 									

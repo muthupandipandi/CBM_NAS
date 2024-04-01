@@ -8,6 +8,7 @@ import 'react-times/css/classic/default.css';
 import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import _, { toInteger } from 'lodash';
+import MessageShow from '../mesaageShow'
 import { Link } from "react-router-dom";
  export default class AddSkillSet extends Component {
 	 constructor(props){
@@ -19,14 +20,16 @@ import { Link } from "react-router-dom";
                 timeZone: '',
 				channelType:'',
 				serviceLevelThresold:'',
-				shortcallThresold:0,
-				shortAbandoneThresold:0,
-				serviceLevelGoal:0,
-				abandoneRateThresold:0,
-				countAbandoneAgainestSLA:0,
+				shortcallThresold:'',
+				shortAbandoneThresold:'',
+				serviceLevelGoal:'',
+				abandoneRateThresold:'',
+				countAbandoneAgainestSLA:[{'id':'Yes','value':'Yes'}],
 
-				firstCallResalution:0,
-				skillStatus:true
+				firstCallResalution:'',
+				skillStatus:true,
+				clearMessage:false,
+				saveMessage:false
 				}; 
                 
 	 }
@@ -54,7 +57,8 @@ import { Link } from "react-router-dom";
 			console.log(channelType)
 			console.log(timeZone)
 			console.log(skillName)
-		if(skillName && skillName.length > 0 && language && language.length > 0 &&skillStatus
+		if(skillName && skillName.length > 0 && language && language.length > 0 &&skillStatus && shortAbandoneThresold &&
+			serviceLevelGoal && abandoneRateThresold && countAbandoneAgainestSLA && firstCallResalution
 			   && !_.isEmpty(channelType)  && !_.isEmpty(timeZone) )
 			{
 						return true
@@ -83,20 +87,36 @@ import { Link } from "react-router-dom";
       }
 	  handleSelectTimeZone=(e) => {
 		console.log(e)
-		this.setState({timeZone : e[0].value})
+		this.setState({timeZone : e})
+		// Update the agentType property of the first object in the updatedAgent array
+		// updatedAgent[0] = { ...updatedAgent[0], timeZone: e[0].value};
+		
+		
+	}
+	handleSelectLangage=(e) => {
+		console.log(e)
+		this.setState({language : e})
 		// Update the agentType property of the first object in the updatedAgent array
 		// updatedAgent[0] = { ...updatedAgent[0], timeZone: e[0].value};
 		
 		
 	}
 	handleSelectChannelType=(e)=>{
-		this.setState({channelType : e[0].value})
+		this.setState({channelType : e})
 	}
 	channelType = () => {
 		
 		// let rolesData = [{id:'voice',value:'Voice'},{id:'sms',value:'SMS'},{id:'socialmedia',value:'SocialMedia'},
 		// {id:'message',value:'Message'},{id:'email',value:'Email'},{id:'whatsapp',value:'WhatsApp'}]
-		let rolesData = [{'id':'inbound','value':'Inbound'},{'id':'outbount','value':'Outbound'},{'id':'blend','value':'Blend'}]
+		let rolesData = [{'id':'Inbound','value':'Inbound'},{'id':'Outbound','value':'Outbound'},{'id':'Blend','value':'Blend'}]
+		return rolesData
+		// return rolesData
+	}
+	languageLoad = () => {
+		
+		// let rolesData = [{id:'voice',value:'Voice'},{id:'sms',value:'SMS'},{id:'socialmedia',value:'SocialMedia'},
+		// {id:'message',value:'Message'},{id:'email',value:'Email'},{id:'whatsapp',value:'WhatsApp'}] Arabic
+		let rolesData = [{'id':'English','value':'English'},{'id':'Arabic','value':'Arabic'}]
 		return rolesData
 		// return rolesData
 	}
@@ -155,14 +175,14 @@ import { Link } from "react-router-dom";
 			   "skillName" : skillName,
 			   "shortCallThreshold" : shortcallThresold,
 			   "shortAbandonedThreshold" : shortAbandoneThresold,
-			   "countAbandonedSLA" : countAbandoneAgainestSLA,
+			   "countAbandonedSLA" : countAbandoneAgainestSLA?countAbandoneAgainestSLA[0].value:'',
 			   "abandonedRateThreshold" : abandoneRateThresold,
 			   "serviceLevelThreshold" : serviceLevelThresold,
 			   "serviceLevelGoal": serviceLevelGoal,
 			   "firstCallResolution" : firstCallResalution,
-			   "channelType" : channelType,
-			   "language" : language,
-			   "timeZone": timeZone
+			   "channelType" : channelType?channelType[0].value:'',
+			   "language" : language?language[0].value:'',
+			   "timeZone": timeZone?timeZone[0].value:''
 			   
 		   }   
 		   //console.log("Ad Campaign",obj)     
@@ -186,7 +206,7 @@ import { Link } from "react-router-dom";
 	}
 	handleCountAbandonedAgainstSLAChange = (e) => {
 		console.log(e)
-		this.setState({ countAbandoneAgainestSLA: e[0].value})
+		this.setState({ countAbandoneAgainestSLA: e})
 		
 	}
 	handleChange = (event) => {
@@ -214,20 +234,23 @@ import { Link } from "react-router-dom";
 		}
 		
 	  }
-	handleSecChange = (event) => {
-		let { value } = event.target;
-		value=toInteger(value)
-		console.log(value)
-		// Ensure the value is within the allowed range
-		if (value < 0) {
-			value = 0;
-		} else if (value > 59) {
-			value = 59;
+	  handleSecChange = (e) => {
+		console.log(e.target.id)
+		const { value } = e.target;
+		const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+		if(59>=e.target.value){
+		if (parseInt(e.target.maxLength)>=e.target.value.length){
+		if (onlyNumbers.test(value) || value === '') {
+		   
+		   
+		   this.setState({[e.target.id]:e.target.value})
+		   
 		}
-		// Update the state with the sanitized value
-		console.log(event.target.id)
-		this.setState({ [event.target.id]: value });
+	
 	}
+	}
+}
+	
 	handleRetryValueChange = (e) => {
 		// const {tempHrD} = this.state
 		// let val = (toInteger(tempHrD)*60)+toInteger(e.target.value)
@@ -239,7 +262,10 @@ import { Link } from "react-router-dom";
 		const value = e.target.value;
 		console.log(value)
 
-		if (/^\d+$/.test(value) && !/\./.test(value) && parseInt(value) >= 0 && parseInt(value) <= 100) {
+		// const percentageRegex = /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
+		const percentageRegex = /^(100|\d{0,2}(\.\d{0,2})?)$/;
+
+    if (percentageRegex.test(value) || value === '') {
 			this.setState({ [e.target.id]: value });
 			// this.setState({ shortAbandoneThresold: value });
 		}
@@ -247,6 +273,44 @@ import { Link } from "react-router-dom";
 			this.setState({ [e.target.id]: value });
 		}
 	}
+	// handlePercentageChange = (e) => {
+    //     const inputValue = e.target.value;
+    //     // Regex to match only percentage values
+    //     const percentageRegex = /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
+
+    //     if (percentageRegex.test(inputValue) || inputValue === '') {
+    //         this.setState({ serviceLevelThreshold: inputValue });
+    //     }
+    // };
+
+	openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
+	handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
 
 	render(){
 		const {isOpen,isPending,showMessage,message} = this.props
@@ -256,7 +320,8 @@ import { Link } from "react-router-dom";
 		abandoneRateThresold,
 		countAbandoneAgainestSLA,
 
-		firstCallResalution,newItem, items,businessHRView,skillStatus } = this.state;
+		firstCallResalution,newItem, items,businessHRView,skillStatus,clearMessage,
+		saveMessage } = this.state;
 		
 		// console.log("creat state", this.state)
 		// console.log("creat props", this.props)
@@ -289,22 +354,37 @@ import { Link } from "react-router-dom";
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Skill Name  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id="skillName"  
 										 value={skillName}
-										 onChange={this.handleChange}
-										placeholder="Enter Skill Name"
+										 onChange={this.handleAllowCharacters}
+										placeholder="Enter Skill Set Name"
 										onBlur={this.checkSkillExistence}
-										maxLength={50}
+										maxLength={30}
 										/>
-										{(skillStatus === false) ? <span className="colorRed">&nbsp;****Skillset name is already exits****</span>: null}
+										{(skillStatus === false) ? <span className="colorRed">&nbsp;****Skill Set name is already exits****</span>: null}
 										
 								</Col>
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Language <span className='colorRed'>*</span></Col>
-								<Col md={4} ><FormControl  type='text' id="language"  
+								<Col md={4} >
+									
+									{/* <FormControl  type='text' id="language"  
 										 value={language}
 										placeholder="Enter Language"
-										onChange={this.handleChange}
+										onChange={this.handleAllowCharacters}
 										maxLength={20}
 										
-										/>
+										/> */}
+
+								<Select
+                                        value={this.state.language}
+                                        options={this.languageLoad()}
+                                        labelField='value'
+                                        dropdownPosition='auto'
+                                        valueField='id'
+                                        clearable={false}
+                                        className='text-left selectDropDown'
+                                        placeholder="Select Language"
+                                        onChange={this.handleSelectLangage}
+                                        closeOnSelect={true}
+                                    />
 										
 										
 								</Col>
@@ -328,7 +408,7 @@ import { Link } from "react-router-dom";
                                         valueField='id'
                                         clearable={false}
                                         className='text-left selectDropDown'
-                                        placeholder="Select TimeZone"
+                                        placeholder="Select Time Zone"
                                         onChange={this.handleSelectTimeZone}
                                         closeOnSelect={true}
                                     />
@@ -363,21 +443,21 @@ import { Link } from "react-router-dom";
 								<Row className='align-items-center'>             
 										<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Threshold <span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
-									<FormControl  type='number' id="serviceLevelThresold"  style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+									<FormControl  type='text' id="serviceLevelThresold"  style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 											onChange={this.handlePercentageChange} 
 											
 											value={serviceLevelThresold}
 											
 											inputMode="numeric"
-											placeholder="minute"/><span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}> %
+											/><span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}> %
 											</span>
                                 	</Col>
 
 									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; First Call Resolution <span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
-									<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='number' id="firstCallResalution"
+									<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='text' id="firstCallResalution"
 											onChange={this.handlePercentageChange} value={firstCallResalution}
-											placeholder="minute"/>
+											/>
 									<span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}> %
 											</span>
 								
@@ -397,19 +477,19 @@ import { Link } from "react-router-dom";
 								<Row className='align-items-center'> */}
 								<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Call Threshold <span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
-									<FormControl  type='number' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} min="0" max="59"
-											onChange={this.handleSecChange} value={shortcallThresold.toString().padStart(2, '0')}
-											placeholder="minute"/>
+									<FormControl  type='text' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+											onChange={this.handleSecChange} value={shortcallThresold} maxLength={2}
+											/>
 											<span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}>Sec
 											</span>
 									
                                 	</Col>
 
-									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandone Threshold <span className='colorRed'>*</span></Col>
+									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandone Threshold<span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
-									<FormControl  type='number' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} max="59"
-											onChange={this.handleSecChange} value={shortAbandoneThresold.toString().padStart(2, '0')}
-											placeholder="minute"/> <span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}>Sec
+									<FormControl  type='text' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} 
+											onChange={this.handleSecChange} value={shortAbandoneThresold} maxLength={2}
+											/> <span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'1px' }}>Sec
 											</span>
 									
                                 	</Col>  
@@ -417,9 +497,9 @@ import { Link } from "react-router-dom";
 								<Row className='align-items-center'>             
 									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Goal  <span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
-									<FormControl  type='number' id="serviceLevelGoal" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+									<FormControl  type='text' id="serviceLevelGoal" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 											onChange={this.handlePercentageChange} value={serviceLevelGoal}
-											placeholder="minute"/>
+											/>
 											<span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}> %
 											</span>
 									
@@ -427,9 +507,9 @@ import { Link } from "react-router-dom";
 
 								<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Abandon Rate Threshold <span className='colorRed'>*</span></Col>
                                 <Col md={1} >
-								<FormControl  type='number' id="abandoneRateThresold"  style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
+								<FormControl  type='text' id="abandoneRateThresold"  style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 											onChange={this.handlePercentageChange} value={abandoneRateThresold}
-											placeholder="minute"/>
+											/>
 											<span style={{ display: 'inline',fontWeight: 'normal',marginLeft:'2px' }}> %
 											</span>
 									
@@ -445,12 +525,12 @@ import { Link } from "react-router-dom";
                                     placeholder="Enter Agent Type"
                                     /> */}
                                     {/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
-									<Col md={2} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandon Againest SLA</Col>
+									<Col md={2} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
                                 <Col md={1} >
 								
 											
 										<Select
-                                        value={countAbandoneAgainestSLA}
+                                        values={countAbandoneAgainestSLA}
                                         options={this.typeSLA()}
                                         labelField='value'
                                         dropdownPosition='auto'
@@ -478,12 +558,20 @@ import { Link } from "react-router-dom";
                     <Row> <br/> </Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Add SkillSet</Button></Col>
+							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>Add Skill Set</Button></Col>
 							<Col md={4}></Col>	
 						</Row>
 					</div>
+					{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Create this Skill Set?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
         </div>
 		)

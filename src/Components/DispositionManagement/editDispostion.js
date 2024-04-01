@@ -12,12 +12,18 @@ import 'react-times/css/material/default.css';
 import 'react-times/css/classic/default.css';
 import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
+import MessageShow from '../mesaageShow'
 import _, { toInteger } from 'lodash';
 import { Link } from "react-router-dom";
  export default class EditDisposition extends Component {
 	 constructor(props){
 			super(props)
+			this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 			this.state = {
+
+				clearMessage:false,
+		saveMessage:false,
                 items: props.edit ? props.edit.dispCodeDetailsList : '', // State to hold list of items
       newItem: {
         code:'001',itemName: '',
@@ -32,6 +38,21 @@ import { Link } from "react-router-dom";
                 
 	 }
 
+	 componentDidMount() {
+		document.addEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+	
+	handleClickOutside(event) {
+		console.log(event)
+		// if (this.modalRef && !this.modalRef.current.contains(event.target)) {
+			// Click occurred outside of the modal, prevent modal from closing
+			event.stopPropagation();
+		// }
+	}
 	 handleCallBack = () =>{
 		/// this.props.onCallBack(this.state)
 		 this.props.closeModal()
@@ -76,12 +97,20 @@ import { Link } from "react-router-dom";
 		   
 	   }
        handleInputChange = (index, event) => {
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
+
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
         const { name, value } = event.target;
     const updatedItems = [...this.state.items];
     updatedItems[index] = { ...updatedItems[index], [name]: value };
     this.setState({ items: updatedItems });
+			}
+		}
       }
       handleAddItem = () => {
+		console.log(this.state.items[this.state.items.length - 1].itemName)
+		if (this.state.items[this.state.items.length - 1].itemName!=''){
 		const lastIndex = this.state.items.length > 0 ? parseInt(this.state.items[this.state.items.length - 1].code) : 0;
 		const nextId = (lastIndex + 1).toString().padStart(3, '0'); // Format the ID with leading zeros
 		const newItem = {
@@ -93,8 +122,37 @@ import { Link } from "react-router-dom";
 			items: [...prevState.items, newItem],
 			newItem: { itemName: '' } // Reset newItem after adding
 		}));
+	}
       }
+	  handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+	
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+	
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+	
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 	   handleSubmit =() => {  
 		   const {loggedinData} = this.props; 	
 		   const {descriptions,
@@ -121,9 +179,10 @@ import { Link } from "react-router-dom";
         this.setState({businessHRView : !this.state.businessHRView})
     }
 
+
 	render(){
 		const {isOpen,isPending,showMessage,message} = this.props
-		const { newItem, items,businessHRView,dispostionsStatus } = this.state;
+		const { newItem, items,businessHRView,dispostionsStatus,clearMessage,saveMessage } = this.state;
 		
 		// console.log("creat state", this.state)
 		// console.log("creat props", this.props)
@@ -147,6 +206,8 @@ import { Link } from "react-router-dom";
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -169,7 +230,7 @@ import { Link } from "react-router-dom";
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Disposition Name  <span className='colorRed'>*</span></Col>
 								<Col md={3} ><FormControl  type='text' id="dispostionName"  
 										 value={dispostionName}
-										 onChange={this.handleChange}
+										 onChange={this.handleAllowCharacters}
 										placeholder="Enter Disposition Name"
 										onBlur={this.checkDispositionExistence} maxLength={100}
 										
@@ -230,6 +291,8 @@ import { Link } from "react-router-dom";
                 name='itemName'
                 value={item.itemName}
                 placeholder="Enter Disposition Name"
+				maxLength={30}
+				
                 
               />
 			   </Col>
@@ -241,6 +304,7 @@ import { Link } from "react-router-dom";
                 name='itemName'
                 value={item.itemName}
                 placeholder="Enter Disposition Name"
+				maxLength={30}
 				onChange={(e) => this.handleInputChange(index, e)}
               />
 			   </Col>
@@ -294,12 +358,20 @@ import { Link } from "react-router-dom";
                     <Row> <br/> </Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Edit Dispostion</Button></Col>
-							<Col md={4}></Col>	
+							<Col md={3}> <Button  variant="primary" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Update Dispostion</Button></Col>
+							<Col md={3}></Col>	
 						</Row>
 					</div>
+					{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this Disposition?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
 			</Modal.Body>
             </Modal>

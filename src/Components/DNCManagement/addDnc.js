@@ -14,10 +14,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import 'react-picky/dist/picky.css'; 
 import _, { toInteger } from 'lodash';
 import { Link } from "react-router-dom";
+import MessageShow from '../mesaageShow'
  export default class AddDnc extends Component {
 	 constructor(props){
 			super(props)
 			this.state = {
+				saveMessage:false,
+			clearMessage:false,
 				descriptions:'',
                 dncName:'',
 				userData:props.userData,
@@ -90,8 +93,35 @@ import { Link } from "react-router-dom";
 		   this.props.action.addDNC(obj) 	 
 		   this.props.closeModal()
 	   } 
+	   handleAllowCharacters=(event)=>{
+		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
-	   
+		if (onlyLetters.test(event.target.value) || event.target.value === '') {
+			if (parseInt(event.target.maxLength)>=event.target.value.length){
+				this.setState({
+					[event.target.id]: event.target.value})
+				}
+
+		}
+	   }
+
+	   openClearMessage = () => {
+		
+		this.setState({clearMessage : true})
+	  }
+	
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+	
+	  openSaveClearMessage = () => {
+		
+		this.setState({saveMessage : true})
+	  }
+	
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
 	
 
 	render(){
@@ -102,7 +132,7 @@ import { Link } from "react-router-dom";
 		// console.log("creat props", this.props)
 		
 		const {descriptions,
-        dncName,dncStatus} = this.state;	
+        dncName,dncStatus,clearMessage,saveMessage} = this.state;	
 		const {timesList} = this.props.action	
 		
 		
@@ -126,8 +156,8 @@ import { Link } from "react-router-dom";
 
 						<Row className='align-items-center'>             
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; DNC Name  <span className='colorRed'>*</span></Col>
-								<Col md={4} ><FormControl  type='text' id="dncName"  maxLength={100}
-										onChange={this.handleChange} value={dncName}
+								<Col md={4} ><FormControl  type='text' id="dncName"  maxLength={30}
+										onChange={this.handleAllowCharacters} value={dncName}
 										placeholder="Enter DNC Name"
 										onBlur={this.checkDNCExistence}
 										/>
@@ -136,7 +166,7 @@ import { Link } from "react-router-dom";
 								
 								</Col>
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Description <span className='colorRed'>*</span></Col>
-								<Col md={4} ><FormControl maxLength={200} type='text' id="descriptions"  
+								<Col md={4} ><FormControl maxLength={100} type='text' id="descriptions"  
 										 value={descriptions}
 										placeholder="Enter Description"
 										onChange={this.handleChange}
@@ -265,12 +295,20 @@ import { Link } from "react-router-dom";
                     <Row> <br/> </Row>
 						<Row className='align-items-center'>
 							<Col md={4}></Col>	
-							<Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} onClick={this.handleSubmit}>Add DNC</Button></Col>
+							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>ADD DNC</Button></Col>
 							<Col md={4}></Col>	
 						</Row>
 					</div>
+					{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Create this DNC?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
         </div>
 		)
