@@ -8,10 +8,14 @@ import DatePicker from "react-datepicker";
 import Select from 'react-dropdown-select';
 import moment from "moment";
 import 'react-picky/dist/picky.css'; 
+import MessageShow from '../mesaageShow'
  export default class EditUser extends Component {
 	constructor(props) {
 		super(props)
 		console.log(props)
+		
+		this.modalRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.state = {
 			employeeId: props.edit ? props.edit.userId : '',
 			firstName: props.edit.firstName ? props.edit.firstName : '',
@@ -24,9 +28,10 @@ import 'react-picky/dist/picky.css';
 			business : [{buId: "1", buName: "Retail"}],
 			status: props.edit ? props.edit.status : 'NEW',
 			selectedrole: props.edit ? props.edit.role : '' ,
-			// selectedSkillGroup: props.edit ? props.edit.skillSet : '' ,
-			// selectedUserGroup:props.edit ? props.edit.userGroup : '',
-			
+			userActive:props.edit.status=='ACTIVE' ? true : false,
+			selectedSkillGroup: props.edit ? props.edit.skillSet : '' ,
+			selectedUserGroup:props.edit ? props.edit.userGroup : '',
+			resetPsw:false,
 			selectedAgent: props.edit ? props.edit.agent : '',
 			// selectAgent: '',
 			userstatus: props.edit.status === 'ACTIVE' ? true : false,
@@ -37,32 +42,34 @@ import 'react-picky/dist/picky.css';
 			userGroup:'',
 			selctRoleOpenView: false,
 			passwordIsValid:true,
-			passwordtype:'password'
+			passwordtype:'password',
+			clearMessage:false,
+			saveMessage:false
 			
 		}
+	}
+	resetClick= () => {
+		const {userEntity,rolesData,loggedinData,groupsData} = this.props
+
+
+		if(_.isEqual(loggedinData.roles,"[Admin]")){
+			this.setState({password:''})
+			this.setState({resetPsw:true})
+		}
+		
 	}
 	componentDidMount() {
 		// let roles = _.find(this.props.rolesData, { 'roleId': this.props.edit.roleId })
 		// if (!_.isEmpty(roles)) {
 		// 	this.setState({ selectedrole: [roles] })
+		const {userEntity,rolesData,loggedinData,groupsData} = this.props
 		// }
 		console.log(this.props)
-		const selectedValues = this.props.edit.agent.split(',');
-		if (selectedValues){
+		console.log(!_.isEqual(loggedinData.roles,"[Admin]"))
 		
-		const selectedOptions = selectedValues.map(value => {
-			// Find option based on label
-			console.log(this.agentDatas())
-			const option = this.agentDatas().find(option => option.value === value);
-			if (option) {
-				return option;
-			} else {
-				console.error(`Option with label '${value}' not found.`);
-				return null; // or handle it according to your requirements
-			}
-		});
-		this.setState({ selectedAgent: selectedOptions.filter(option => option !== null) })
-	}
+		console.log(!this.state.resetPsw)
+		const selectedValues = this.props.edit.agent.split(',');
+		
 		
 // Find the corresponding options for each value in the array
 // const selectedOptions = selectedValues.map(value => {
@@ -88,6 +95,22 @@ import 'react-picky/dist/picky.css';
 		
 	
 		
+		
+		if (selectedValues){
+		
+			const selectedOptions = selectedValues.map(value => {
+				// Find option based on label
+				console.log(this.agentDatas())
+				const option = this.agentDatas().find(option => option.value === value);
+				if (option) {
+					return option;
+				} else {
+					console.error(`Option with label '${value}' not found.`);
+					return null; // or handle it according to your requirements
+				}
+			});
+			this.setState({ selectedAgent: selectedOptions.filter(option => option !== null) })
+		}
 		document.addEventListener('mousedown', this.handleClickOutside);
 	}
 	
@@ -218,7 +241,10 @@ import 'react-picky/dist/picky.css';
 	//   this.setState({changePassword:e.target.checked})
 	// }
 	viewPassword = (prop) => {
-		this.setState({ passwordtype: prop })
+		if(_.isEqual(this.props.loggedinData.roles,"[Admin]") && this.state.resetPsw){
+			this.setState({ passwordtype: prop })
+		}
+		
 	}
 	// viewPassword_Old = (prop) => {
 	// 	this.setState({ passwordtype: prop })
@@ -246,15 +272,15 @@ import 'react-picky/dist/picky.css';
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
-	handleSelectGroup = (e) => {
-		
-		this.setState({ selectedSkillGroup: e})
+	handleSelectSkillGroup = (e) => {
+		console.log(e)
+		this.setState({selectedSkillGroup: e})
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
 	handleSelectUserGroup = (e) => {
 		
-		this.setState({ selectedUserGroup: e })
+		this.setState({selectedUserGroup: e })
 		// this.setState({ roleBaseSet: e[0]['rolesName'] })
 		// this.setState({selctRoleOpenView:false})
 	}
@@ -355,7 +381,7 @@ import 'react-picky/dist/picky.css';
 	handleSubmit = () => {
 		// const { firstName, email, password, mobileNumber, employeeId, lastName, selectedrole, business, domain } = this.state;
 		const { employeeId, firstName, email,selectedUserGroup, mobileNumber,selectedAgent,
-			 password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
+			 password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup,userActive, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
 		const {loggedinData} = this.props
 		
 
@@ -371,13 +397,19 @@ import 'react-picky/dist/picky.css';
 			"userId": employeeId,
 			"mobNum": mobileNumber,
 			"pbxExtn": pbxExtn,
-			"role": selectedrole ,
-			"skillSet": selectedSkillGroup,
+			"role": selectedrole?selectedrole.role:'' ,
+			"skillSet": selectedSkillGroup?selectedSkillGroup.skillName:'',
 			// "password": password,
 			"agent": selectedValues,
-			"userGroup": selectedUserGroup,
-			
+			"userGroup": selectedUserGroup?selectedUserGroup.usergroupName:'',
+			"status":userActive?'ACTIVE':'INACTIVE'
 			// "createdBy": loggedinData.userName
+		}
+		
+
+
+		if(this.state.resetPsw){
+			new_user['password'] = password
 		}
 		// if(!_.isEmpty(loggedinData)){
 		// 	if(loggedinData.ldapEnabled){
@@ -396,6 +428,9 @@ import 'react-picky/dist/picky.css';
 	
 		this.props.action.IsEntityNameExists(formdata)
 	}
+	handleCheck=()=>{
+		this.setState({userActive : !this.state.userActive})
+	}
 	handleUserOnBlur = (employeeId) => {
 		this.setState({ userIdIsValid: this.isValidUser(employeeId) })
 		// this.handleOnEntity()
@@ -409,6 +444,9 @@ import 'react-picky/dist/picky.css';
 					[event.target.id]: event.target.value})
 				}
 
+		}
+		else{
+			return false
 		}
 	   }
 
@@ -462,9 +500,10 @@ import 'react-picky/dist/picky.css';
 	render(){
 		const {userEntity,rolesData,loggedinData,groupsData} = this.props
 		const {showMessage,message} = this.props.action
-        const { employeeId, firstName, email,selectedUserGroup, mobileNumber,selectedAgent, password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
+        const { employeeId, firstName, email,selectedUserGroup,clearMessage,
+			saveMessage, mobileNumber,selectedAgent, password,resetPsw,userActive, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
 		
-		
+			
 		
 		
 	return(
@@ -481,6 +520,8 @@ import 'react-picky/dist/picky.css';
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+			backdrop="static"
+    keyboard={false}
             >
             <Modal.Header closeButton>
             <Modal.Title id="example-custom-modal-styling-title">
@@ -501,13 +542,15 @@ import 'react-picky/dist/picky.css';
                                  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; First Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='firstName'
                                     onChange={this.handleAllowCharacters} value={firstName} maxLength={30}
+									disabled={true}
                                     placeholder="Enter First Name"
                                     />
                                 </Col>  
 
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Last Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='lastName'
-                                    onChange={this.handleAllowCharacters} value={lastName} maxLength={20}
+                                    onChange={this.handleAllowCharacters} value={lastName} maxLength={30}
+									disabled={true}
                                     placeholder="Enter Last Name"
                                     />
                                 </Col>  
@@ -523,7 +566,7 @@ import 'react-picky/dist/picky.css';
                                 </Col>  
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Mobile Number  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='mobileNumber'
-                                    onChange={this.handleAllowNubers} value={mobileNumber} maxLength={10}
+                                    onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={mobileNumber} maxLength={10}
                                     placeholder="Enter Mobile Numbe"
                                     />
                                 </Col>  
@@ -534,6 +577,7 @@ import 'react-picky/dist/picky.css';
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
 										onBlur={()=>this.handleUserOnBlur(employeeId)}
+										onPaste={this.handleChangeOnlyallowCharacteNum}
                                         onChange={this.handleChangeOnlyallowCharacteNum} value={employeeId} 
 										maxLength={30}
 										placeholder="Enter User ID"
@@ -541,29 +585,37 @@ import 'react-picky/dist/picky.css';
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
 							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
 								</Col>
-                                <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Password  <span className='colorRed'>*</span></Col>
+								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Password  <span className='colorRed'>*</span></Col>
                                 <Col md={4} >
 								<InputGroup>
-        <FormControl
+        <FormControl disabled={ !resetPsw}
           type={this.state.passwordtype}
           id='password'
-		  maxLength={20}
           onChange={this.handleChange}
+		  onPaste={this.handlePaste}
+		 
           value={password}
           placeholder="Enter Password"
-		  disabled={true}
+		  maxLength={20}
         />
-        <InputGroup.Append>
-		<InputGroup.Text id="basic-addon2">{this.state.passwordtype === "password" ?     
-                        <i className='fas fa-eye-slash' onClick={()=>this.viewPassword('password')} /> :
+        <InputGroup.Append >
+		<InputGroup.Text disabled={!resetPsw } id="basic-addon2">{this.state.passwordtype === "password" ?     
+                        <i className='fas fa-eye-slash' onClick={()=>this.viewPassword('text')} /> :
                         <i className='fas fa-eye' onClick={()=>this.viewPassword('password')} /> }</InputGroup.Text>
           {/* <Button variant="outline-secondary" onClick={this.toggleShowPassword}>
             {showPassword ? 'Hide' : 'Show'}
           </Button> */}
         </InputGroup.Append>
-		{passwordIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide valid Password with minimum 6 characters</span> : null}
+        {passwordIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide valid Password with minimum 6 characters</span> : null}
       </InputGroup>
-								</Col>  
+									{/* <FormControl  type='password' id='password'
+                                    onBlur={() => this.setState({ passwordIsValid: this.isValidPassword(password) })}
+                                    onChange={this.handleChange} value={password} 
+                                    placeholder="Enter Password"
+                                    />
+                                    {passwordIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide valid Password with minimum 6 characters</span> : null} */}
+                                </Col>  
+                                
 
 								{/* <Col md={2}>Campaign Type<span className='colorRed'></span></Col>
 								<Col md={4}>
@@ -644,17 +696,17 @@ import 'react-picky/dist/picky.css';
                                 </Col>  
 								</Row>
 								<Row className='align-items-center'>  
-								{selectedrole && selectedrole !== 'Report' && selectedrole !== 'QA' && (
+								{selectedrole['role'] && selectedrole['role'] !== 'Report' && selectedrole['role'] !== 'QA' && (
 									<>
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extension<span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='number' id='pbxExtn'
-                                    onChange={this.handleAllowNubers} value={pbxExtn} 
+                                    onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={pbxExtn} 
                                     placeholder="Enter PBX Extension" maxLength={15}
                                     />
                                 </Col>  
 								</>)}
 						
-						{selectedrole && selectedrole !== 'Report' && selectedrole !== 'QA' && (
+						{selectedrole && selectedrole['role'] !== 'Report' && selectedrole['role'] !== 'QA' && (
 							<>
 						           
                                  
@@ -662,10 +714,10 @@ import 'react-picky/dist/picky.css';
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Skill Set <span className='colorRed'>*</span></Col>
                                 <Col md={4} >
                                    
-									<Picky
-										values={this.state.selectedSkillGroup}
+								<Picky
+										value={this.state.selectedSkillGroup}
 										options={this.skillDatas()}
-										onChange={this.handleSelectGroup}
+										onChange={this.handleSelectSkillGroup}
 										open={false}
 										valueKey="skillName"
 										labelKey="skillName"
@@ -682,7 +734,7 @@ import 'react-picky/dist/picky.css';
 						</>)}
 						</Row>
 						<Row className='align-items-center'>  
-								{selectedrole && selectedrole === 'Supervisor' && (
+								{selectedrole['role'] && selectedrole['role'] === 'Supervisor' && (
 								<>
 								<Col  md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Agent <span className='colorRed'>*</span></Col>
                                 <Col md={4} >
@@ -707,7 +759,11 @@ import 'react-picky/dist/picky.css';
 								</>
                     )}
 					</Row>
-						
+					<Row className='align-items-center'>
+							
+							<Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" onClick={this.handleCheck} checked={userActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active </Col>
+							
+							</Row>
 						<Row> <br/> </Row>
 						{/* <Row className='align-items-center'>
 						<Col><input type="checkbox" value="" checked={userstatus} onClick={this.onhandleStatusChange}/>&nbsp;&nbsp;&nbsp;&nbsp;Active  <span className='colorRed'>*</span></Col>
@@ -802,12 +858,28 @@ import 'react-picky/dist/picky.css';
 					<br/> <br/>
                     <Row className='align-items-center'>
                         <Col md={4}></Col>	
-                        <Col md={2}> <Button  variant="danger alignRight" onClick={this.props.closeModal}>Close</Button>
+                        <Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
                         </Col>
-                        <Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.handleSubmit}>Update User</Button></Col>
+                        <Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Update User</Button></Col>
+						{_.isEqual(loggedinData.roles,"[Admin]")?
+						
+						<Col md={2}> <Button  variant="primary alignRight" onClick={this.resetClick} disabled={!_.isEqual(loggedinData.roles,"[Admin]")} >Reset Password</Button>
+						
+						</Col>
+	:null}
+                       	
+						{/* <Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.handleSubmit}>Reset Password</Button></Col> */}
                         <Col md={4}></Col>	
                     </Row>
 				</div>
+				{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message='Are you sure you want to Update this User Set?' closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
 			</div> 
 			</Modal.Body>
             </Modal>

@@ -1,4 +1,4 @@
-import {URL_API_LOGIN, URL_API_LOGOUT, URL_API_VALIDATE_OTP,URL_API_CHANGE_PASSWORD} from '../apiList';
+import {URL_API_LOGIN, URL_API_LOGOUT, URL_API_VALIDATE_OTP,URL_API_CHANGE_PASSWORD,USER_FEATURE} from '../apiList';
 import _ from 'lodash';
 const successResponse = [
 {
@@ -208,6 +208,11 @@ export function LoginChangePassword(obj){
   headers.append('Content-Type','application/json');
   headers.append('Accept','application/json');  
   
+      let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+  
   return dispatch => {
     //if((obj.userName === 'Admin' || obj.userName === 'Testuser' || obj.userName === 'sehauser1' || obj.userName === 'sehauser2') && obj.password === 'Welcome@123') {
     // if( _.find(successResponse,{value:{userName:obj.userName}})) {
@@ -229,10 +234,16 @@ export function LoginChangePassword(obj){
       body:JSON.stringify(obj)
     }).then((res) => res.json())
       .then((json) =>{
+        if(json.status===401){
+          window.location.href = '/'
+         }
+         else{
         dispatch(changePasswordActionSuccess(json))
+         }
         
       })
       .catch((error) =>{
+
         dispatch(changePasswordActionSuccess(successResponse))
        
         //dispatch(loginerror(error))       
@@ -291,6 +302,7 @@ export function changePasswordActionSuccess(data){
 //   }
 // }
 export function LogoutAction(history){  
+  window.localStorage.clear()
   let headers = new Headers()
   headers.append('Content-Type','application/json');
   headers.append('Accept','application/json');

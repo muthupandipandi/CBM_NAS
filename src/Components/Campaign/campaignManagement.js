@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { MDBBtn, MDBIcon, MDBRow, MDBCol, MDBTooltip, MDBInput, MDBNotification} from 'mdbreact';
 import _ from 'lodash';
-import {Table, Pagination, Spinner, Button} from 'react-bootstrap';
+import {Table, Pagination, Spinner, Button,Tabs, Tab} from 'react-bootstrap';
 import EditCampaign from './editCampaign';
 import AddCampaign from './addCampaign';
 import ViewCampaign from './viewCampaign';
@@ -16,7 +16,8 @@ export default class campaignManagement extends Component {
       Per_Page:10,
       searchval:'',
       orderBy:'asc',
-      userData:props.userData
+      userData:props.userData,
+      campignRuningStaus:'Start'
     }
   }
 
@@ -25,6 +26,12 @@ export default class campaignManagement extends Component {
     this.props.DNCLoad()
     this.props.DispostionLoad()
   }
+ startviewCampaign=(index,value)=>{
+  this.setState({
+    campignRuningStaus:value
+  })
+
+ }
   componentDidUpdate(prevProps, prevState) {
     console.log(this.props.dispostionData)
     if(!_.isEqual(prevProps.userData,this.props.userData)){
@@ -36,7 +43,7 @@ export default class campaignManagement extends Component {
  
 
   mappingreturnData = (startOffset, startCount, Per_Page ) => {
-    const {searchval, userData}= this.state
+    const {searchval, userData,campignRuningStaus}= this.state
     const {loggedinData} = this.props
     if(!_.isEmpty(userData)){
       return _.map(userData, (val, index) => {
@@ -79,7 +86,37 @@ export default class campaignManagement extends Component {
                 placement="top"
                 >
                 <span><i className="fas fa-eye m-r-20" style={{color:'blue'}}  onClick={()=>this.handleviewCampaign(index)}></i></span>
-                <span>View</span></MDBTooltip>            
+                <span>View</span></MDBTooltip> 
+                {campignRuningStaus==='Start'? 
+                <>  
+        <span title='Start' className='blue-text'>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,'running')} style={{color:'green'}} ></i> 
+        </span>
+        </>:null
+        }
+        {campignRuningStaus==='running' || campignRuningStaus==='stop'? 
+                <>  
+        <span title='Stop' >
+        &nbsp;&nbsp;&nbsp;&nbsp;
+          <i class="fas fa-stop-circle m-r-20" style={{color:'red'}} onClick={()=>this.startviewCampaign(index,'stop')}></i> 
+        </span>
+        </>:null}
+        {campignRuningStaus==='pause'? 
+                <> 
+        <span title='Resume'>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+          <i class="fas fa-play-circle m-r-20" style={{color:'green'}} onClick={()=>this.startviewCampaign(index,'running')}></i> 
+        </span>
+        </>:null}
+        {campignRuningStaus==='running'? 
+        <>
+        <span title='Pause'>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+          <i class="fas fa-pause m-r-20" style={{color:'orange'}} onClick={()=>this.startviewCampaign(index,'pause')}></i> 
+        </span>
+        </>:null}
+             
                   </td>
             </tr>
         )
@@ -167,7 +204,7 @@ export default class campaignManagement extends Component {
 
   render() {
     const {rolesData, loggedinData, fullScreen, showMessage, message,businessType, domainType, isPending, isOpen,dncData,dispostionData} = this.props;
-    const {editIndex, editing, add, activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
+    const {editIndex, editing, add, campignRuningStaus,activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
     let totalPages ;
     if(!_.isEmpty(userData)){
       totalPages = Math.ceil(userData.length/Per_Page)

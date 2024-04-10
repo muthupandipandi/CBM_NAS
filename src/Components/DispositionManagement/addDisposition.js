@@ -107,6 +107,7 @@ import MessageShow from '../mesaageShow'
 			}
 		}
       }
+	  
       handleAddItem = () => {
 		console.log(this.state.items[this.state.items.length - 1].itemName)
 		if (this.state.items[this.state.items.length - 1].itemName!=''){
@@ -193,9 +194,9 @@ import MessageShow from '../mesaageShow'
 
 						<Row className='align-items-center'>             
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Disposition Name  <span className='colorRed'>*</span></Col>
-								<Col md={3} ><FormControl  type='text' id="dispostionName"  maxLength={100}
+								<Col md={3} ><FormControl  type='text' id="dispostionName"  maxLength={30}
 										 value={dispostionName}
-										 onChange={this.handleAllowCharacters}
+										 onChange={this.handleAllowCharacters} onPaste={this.handleAllowCharacters}
 										placeholder="Enter Disposition Name"
 										onBlur={this.checkDispositionExistence}
 										
@@ -204,7 +205,7 @@ import MessageShow from '../mesaageShow'
 										
 								</Col>
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Description <span className='colorRed'>*</span></Col>
-								<Col md={3} ><FormControl  type='text' id="descriptions"  maxLength={200}
+								<Col md={3} ><FormControl  type='text' id="descriptions"  maxLength={100}
 										 value={descriptions}
 										 onChange={this.handleChange}
 										placeholder="Enter Description"
@@ -233,7 +234,7 @@ import MessageShow from '../mesaageShow'
 				    </div>
                     <div className="form_container">
 						<Row>
-							<Col onClick={this.handleBusinessHRView}>{businessHRView ? <i class="fas fa-caret-down fa-lg" /> : <i class="fas fa-caret-right fa-lg"/>}&nbsp;&nbsp;&nbsp;&nbsp;  Agent Dispostion<span className='colorRed'>*</span></Col>
+							<Col onClick={this.handleBusinessHRView}>{businessHRView ? <i class="fas fa-caret-down fa-lg" /> : <i class="fas fa-caret-right fa-lg"/>}&nbsp;&nbsp;&nbsp;&nbsp;  Agent Dispostion</Col>
 						</Row>
 						{businessHRView?
 						<>

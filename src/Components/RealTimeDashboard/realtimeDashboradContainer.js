@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import RealtimeDashboard from "./realtimeDashborad";
-import {RealtimeDashboard_Load,RealtimeDashboarErrorClose,isErrorClose} from './realtimeDashboradAction'
+import {RealtimeDashboard_Load,RealtimeDashboarErrorClose,isErrorClose,AgentRealtimeDashboard_Load} from './realtimeDashboradAction'
 
 const mapStateToProps = (state) => {
   return {
@@ -10,6 +10,7 @@ const mapStateToProps = (state) => {
     isOpen: state.LoginReducer.isOpen,
     isPending:state.realtimeDashboradReducer.isPending,
     userData:state.realtimeDashboradReducer.userData,
+    agentData:state.realtimeDashboradReducer.agentData
     // reportHeader:state.realtimeDasboardReducer.reportHeader,
   }  
 }
@@ -17,6 +18,8 @@ const mapDispatchToProps = (dispatch) => ({
   isErrorClose:() => dispatch(isErrorClose()),
   RealtimeDashboard_Load: () => dispatch(RealtimeDashboard_Load()),
   RealtimeDashboarErrorClose:() => dispatch(RealtimeDashboarErrorClose()),
+  AgentRealtimeDashboard_Load:()=> dispatch(AgentRealtimeDashboard_Load())
+  
    
 })
 

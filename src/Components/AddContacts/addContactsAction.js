@@ -21,7 +21,11 @@ export function generateHistory(obj){
         body: JSON.stringify(obj)
         }).then((res) => res.json())
         .then((json) => {
-            dispatch(generateReportSuccess(json))
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+            dispatch(generateReportSuccess(json))}
         })
         .catch((error) => {
             dispatch(isError(error))
@@ -49,8 +53,13 @@ export function deleteHistory(obj, data){
         body: JSON.stringify(obj)
         }).then((res) => res.json())
         .then((json) => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(isError(json))
             dispatch(generateHistory(data))
+               }
         })
         .catch((error) => {
             dispatch(isError(error))
@@ -91,6 +100,10 @@ export function downloadHistoryReport(obj){
         headers: headers,
         body: JSON.stringify(obj)
         }).then((response) => {
+            if(response.status===401){
+                window.location.href = '/'
+               }
+               else{
         if (response.status === 200) {
             response.blob().then(function (myBlob) {
             window.URL = window.webkitURL || window.URL;
@@ -103,7 +116,9 @@ export function downloadHistoryReport(obj){
         } else {
             dispatch({ type: 'VIEW_CONTACT_ERROR', message: "Not able to Download Report", showerror: true, isPending: false })
         }
-        })
+        }
+    }
+        )
         .catch(error => {
             dispatch(isError(error))
             dispatch({ type: "IS_PENDING", isPending: false })

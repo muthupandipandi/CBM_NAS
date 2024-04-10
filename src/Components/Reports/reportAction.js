@@ -21,7 +21,12 @@ export function generateReport(obj){
         body: JSON.stringify(obj)
         }).then((res) => res.json())
         .then((json) => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(generateReportSuccess(json))
+               }
         })
         .catch((error) => {
             dispatch(isError(error))
@@ -50,7 +55,12 @@ export function generateDetailReport(obj){
         body: JSON.stringify(obj)
         }).then((res) => res.json())
         .then((json) => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(generateReportSuccess(json))
+               }
         })
         .catch((error) => {
             dispatch(isError(error))
@@ -93,6 +103,10 @@ export function downloadReport(obj){
         headers: headers,
         body: JSON.stringify(obj)
         }).then((response) => {
+            if(response.status===401){
+                window.location.href = '/'
+               }
+               else{
         if (response.status === 200) {
             response.blob().then(function (myBlob) {
             window.URL = window.webkitURL || window.URL;
@@ -104,6 +118,7 @@ export function downloadReport(obj){
             dispatch({ type: "IS_PENDING", isPending: false })
         } else {
             dispatch({ type: 'VIEW_ERROR', message: "Not able to Download Report", showerror: true, isPending: false })
+        }
         }
         })
         .catch(error => {
@@ -134,6 +149,10 @@ export function downloadDetailReport(obj){
         headers: headers,
         body: JSON.stringify(obj)
         }).then((response) => {
+            if(response.status===401){
+                window.location.href = '/'
+               }
+               else{
         if (response.status === 200) {
             response.blob().then(function (myBlob) {
             window.URL = window.webkitURL || window.URL;
@@ -146,6 +165,7 @@ export function downloadDetailReport(obj){
         } else {
             dispatch({ type: 'VIEW_ERROR', message: "Not able to Download Report", showerror: true, isPending: false })
         }
+    }
         })
         .catch(error => {
             dispatch(isError(error))
@@ -183,7 +203,12 @@ export function getCampaignName(){
        // body: JSON.stringify(obj)
         }).then((res) => res.json())
         .then((json) => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(getCampaignNameSuccess(json))
+               }
         })
         .catch((error) => {
             dispatch(isError(error))

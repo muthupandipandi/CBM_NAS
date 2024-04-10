@@ -113,7 +113,7 @@ export default class UploadContacts extends Component {
                                         label={fileName}
                                         custom
                                         style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                                        accept=".csv"   
+                                        accept=".xls,.xlsx,.csv"   
                                         capture="environment"
                                         />
                                 </Form.Group>

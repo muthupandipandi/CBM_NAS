@@ -16,7 +16,12 @@ export function SkillSetLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(SkillSetLoadSuccess(json))
+               }
           })
           .catch((error) =>{
             dispatch(SkillSetEditError(error))
@@ -40,12 +45,17 @@ export function addSkillSet(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {       
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{ 
             dispatch(SkillSetEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(SkillSetLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(SkillSetEditError(error))
@@ -68,12 +78,17 @@ export function editSkillSet(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {      
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{  
             dispatch(SkillSetEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(SkillSetLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(SkillSetEditError(error))

@@ -16,7 +16,7 @@ function mapStateToProps(state){
     // LoginAttemptWithOTP: (obj) => dispatch(LoginAttemptWithOTP(obj)),
     LoginAttemptAction: (obj) => dispatch(LoginAttemptAction(obj)),
     closeModalPopUp: () => dispatch(closeModalPopUp()),
-    LoginChangePassword:(a) =>dispatch(LoginChangePassword(a))
+    // LoginChangePassword:(a) =>dispatch(LoginChangePassword(a))
   })
 const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login)
 

@@ -297,7 +297,7 @@ import MessageShow from '../mesaageShow'
 							<Col md={4}></Col>	
 							<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 							</Col>
-							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>ADD DNC</Button></Col>
+							<Col md={2}> <Button  variant="primary alignRight" disabled={!this.validateForm()} style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} onClick={this.openSaveClearMessage}>Add DNC</Button></Col>
 							<Col md={4}></Col>	
 						</Row>
 					</div>

@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import listDnc from './listDnc';
-import { DNCLoad,addDNC,uploadDNC,editDNC,DNCEditErrorClose } from './dncManagementAction';
+import { DNCLoad,addDNC,uploadDNC,editDNC,DNCEditErrorClose,updateDNC,deleteDNC } from './dncManagementAction';
 
 const mapStateToProps = (state) => {
   return {
@@ -20,6 +20,8 @@ const mapDispatchToProps = (dispatch) => ({
   addDNC: (a) => dispatch(addDNC(a)),
   editDNC: (a) => dispatch(editDNC(a)),
   uploadDNC: (a) => dispatch(uploadDNC(a)),
+  updateDNC: (a) => dispatch(updateDNC(a)),
+  deleteDNC: (a) => dispatch(deleteDNC(a)),
   DNCEditErrorClose:() => dispatch(DNCEditErrorClose()),
   
 })

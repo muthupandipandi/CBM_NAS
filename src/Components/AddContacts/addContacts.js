@@ -17,9 +17,9 @@ export default class addContacts extends Component {
     this.state = {
       activePage:1,
       Per_Page:10,
-      startDate : '',
+      startDate :  moment(new Date()).format('YYYY-MM-DD'),
       endDate : '',
-      tempDate : '',
+      tempDate : new Date(),
       tempEndDate : '',
       historyData : [],
       historyView : false,
@@ -64,7 +64,7 @@ export default class addContacts extends Component {
 
   isValidate() {
 		const {campaignName,campaignId,startDate,endDate, generateBtnView, reportId, doctorName, contactNo} = this.state
-        if( startDate && startDate.length > 0 && endDate && endDate.length > 0 )
+        if( startDate  && endDate  )
         {
             return true
         } 
@@ -110,7 +110,24 @@ export default class addContacts extends Component {
         return (<tr><td colSpan="10"><center>No Record Found</center></td></tr>)
       }
     }
+    handleChangeStart=(e)=>{
+      const date = moment(e, 'YYYY-MM-DD', true);
+      // console.log(date.isValid())
+      if (date.isValid()) {
+        const dates = moment(e).format('YYYY-MM-DD');
+      this.setState({startDate: dates});
+      this.setState({tempStartDate: e});}
+       }
 
+       handleChangeEnd=(e)=>{
+      const dates = moment(e, 'YYYY-MM-DD', true);
+      if (dates.isValid()) {
+      const date = moment(e).format('YYYY-MM-DD');
+      this.setState({endDate: date});
+      this.setState({tempEndDate: new Date(date)});
+      this.setState({endTime:this.state.startTime})
+      }
+       }
 
     handleChange = (event) => {
       const {generateBtnView } = this.state
@@ -122,25 +139,25 @@ export default class addContacts extends Component {
       }
     }
 
-    handleChangeStart=(e)=>{
-      const {generateBtnView } = this.state
-  const date = moment(e).format('YYYY-MM-DD'); 
-  this.setState({startDate: date});
-  this.setState({tempDate: e});
-      if(generateBtnView === false) {
-          this.setState({generateBtnView : true})
-      }
-    }
+//     handleChangeStart=(e)=>{
+//       const {generateBtnView } = this.state
+//   const date = moment(e).format('YYYY-MM-DD'); 
+//   this.setState({startDate: date});
+//   this.setState({tempDate: e});
+//       if(generateBtnView === false) {
+//           this.setState({generateBtnView : true})
+//       }
+//     }
 
-    handleChangeEnd = (e) => {
-    const {generateBtnView } = this.state
-const date = moment(e).format('YYYY-MM-DD'); 
-this.setState({endDate: date});
-this.setState({tempEndDate: e});
-    if(generateBtnView === false) {
-        this.setState({generateBtnView : true})
-    }
-    }
+//     handleChangeEnd = (e) => {
+//     const {generateBtnView } = this.state
+// const date = moment(e).format('YYYY-MM-DD'); 
+// this.setState({endDate: date});
+// this.setState({tempEndDate: e});
+//     if(generateBtnView === false) {
+//         this.setState({generateBtnView : true})
+//     }
+//     }
 
     handleGenerate = () => {
         const {startDate,endDate} = this.state
@@ -255,6 +272,7 @@ this.setState({tempEndDate: e});
                       onChange={this.handleChangeStart}
                       dateFormat="dd-MM-yyyy"          
                       //minDate={new Date()}
+                      maxDate={tempEndDate}
                       placeholderText="Choose Date"          
                   />
                 </Col>
@@ -263,6 +281,7 @@ this.setState({tempEndDate: e});
                   <DatePicker
                   selected={tempEndDate}
                   selectsEnd
+                  className='myDatePicker'
                   startDate={tempDate}
                   endDate={tempEndDate}
                   onChange={this.handleChangeEnd}

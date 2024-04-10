@@ -23,11 +23,11 @@ import MessageShow from '../mesaageShow'
 			this.state = {
 				timesList: !_.isEmpty(props.action.timesList) ? props.action.timesList : [],
 				campaignName: props.edit.campaignName ? props.edit.campaignName : '',
-				campaignActive: props.edit.campaignActive ? true : false,
+				campaignActive: props.edit.campaignActive=='true' ? true : false,
 				startDate : props.edit.startDate ? moment(new Date(props.edit.startDate)).format('YYYY-MM-DD') : '',
-				startTime : props.edit.startTime? props.edit.startTime : '00:00',
+				// startTime : props.edit.startTime? props.edit.startTime : '00:00',
 				endDate : props.edit.endDate? moment(new Date(props.edit.endDate)).format('YYYY-MM-DD'): '',
-				endTime : props.edit.endTime? props.edit.endTime : '00:00',
+				// endTime : props.edit.endTime? props.edit.endTime : '00:00',
 				weekDaysTime : props.edit.weekDaysTime? props.edit.weekDaysTime : [{'day': 'Sunday', 'active': false , 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Monday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
 								{'day': 'Tuesday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Wednesday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
 								{'day': 'Thursday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},{'day': 'Friday', 'active': true, 'startTime':'00:00', 'endTime': '00:00'},
@@ -48,6 +48,7 @@ import MessageShow from '../mesaageShow'
 				tempMinD : props.edit.retryDelay? props.edit.retryDelay%60: '',  
 				tempStartDate : new Date(moment(new Date(props.edit.startDate)).format('YYYY-MM-DD')),
 				tempEndDate : new Date(props.edit.endDate),
+				schedulerEnabled:props.edit.schedulerEnabled? props.edit.schedulerEnabled : '',
 				ftpView : false,
 				clearMessage:false,
 				saveMessage:false,
@@ -61,11 +62,8 @@ import MessageShow from '../mesaageShow'
 				 selectCampaignQueue : props.edit.queue? props.edit.queue: '' ,
 				 campaignAssignQueue : [
 					{'id' : 15, 'label' : 'nas-neuro' },
-					{'id' : 11, 'label' : 'Post Due' },
-				 
-										{'id' : 12, 'label' : 'Pre Due' },
-										{'id' : 13, 'label' : 'PTF' },
-										{'id' : 14, 'label' : 'FUP' }], 
+					{'id' : 11, 'label' : 'post-Overdue' },
+										],
 										concurrrentCalls : [{'id' : 1, 'label' : '1' },
 				{'id' : 2, 'label' : '2' },
 				{'id' : 3, 'label' : '3' },
@@ -121,7 +119,15 @@ import MessageShow from '../mesaageShow'
 	this.setState({selectDispositionList:selectDisposition})
 
 	const selectDnc = this.dncDatas().find(dnc => dnc.dncid === this.props.edit.dncId);
-	
+	let st_time=this.state.timesList.find(t=>t.label===this.props.edit.startTime.substring(0, 5))
+	console.log(this.state.timesList)
+	console.log(st_time)
+
+	this.setState({startTime:st_time})
+	let ed_time=this.state.timesList.find(t=>t.label===this.props.edit.endTime.substring(0, 5))
+
+	this.setState({endTime:ed_time})
+
 	this.setState({selectDNCList:selectDnc})
     
     let selecteddailin = CampaignDailingMode.find(option => option.label === this.props.edit.dailingMode? this.props.edit.dailingMode: '');
@@ -141,9 +147,9 @@ import MessageShow from '../mesaageShow'
       this.setState({ concurrentCall: selecteconcurrrentCalls });
     }
 	let call_day=this.props.edit.callBefore? this.props.edit.callBefore+' day': ''
-	console.log(call_day)
+	
 	let selecteconcallBefore = callBeforeList.find(option => option.id === this.props.edit.callBefore? this.props.edit.callBefore: '');
-    console.log(selecteconcallBefore)
+    
 	if (selecteconcallBefore) {
       this.setState({ callBefore: selecteconcallBefore });
     }
@@ -230,8 +236,8 @@ handleClickOutside(event) {
 			ftpLocation, ftpUsername, ftpPassword, ftpFileName, callBefore,selectDNCList,selectDispositionList,selectCampaign,selectCampaignQueue,selectedCampaign } = this.state
 			const {campaignStatus} = this.props.action
 	
-			   if(campaignName && campaignName.length > 0 && startDate && startDate.length > 0 && startTime && startTime.length > 0 && 
-				 endDate && endDate.length > 0 && endTime && endTime.length > 0 && !_.isEmpty(weekDaysTime)&& callBefore && !_.isEmpty(callBefore) && 
+			   if(campaignName && campaignName.length > 0 && startDate && startDate.length > 0 && startTime  && 
+				 endDate && endDate.length > 0 && endTime && !_.isEmpty(weekDaysTime)&& callBefore && !_.isEmpty(callBefore) && 
 				 retryDelay && retryCount  &&  campaignStatus === true && selectDNCList && selectDispositionList && selectCampaign &&concurrentCall&& selectCampaignQueue && selectedCampaign )
 				{
 					console.log(callBefore)
@@ -297,6 +303,7 @@ handleClickOutside(event) {
 	   }
 	   handleChangeEndTime=(e)=>{
 		let time = e.hour+":"+e.minute+" "+e.meridiem
+		console.log(this.state.startTime)
 		if (this.state.startDate==this.state.endDate){
 		if(e['label']>=this.state.startTime['label']){
 		this.setState({endTime: e});
@@ -490,20 +497,24 @@ handleClickOutside(event) {
 		handleCustomerStatusConfqView = () => {
 			this.setState({customerStatusConfqView : !this.state.customerStatusConfqView})
 		}
-
+		handleScheduler=()=>{
+			this.setState({schedulerEnabled : !this.state.schedulerEnabled})
+		}
+	
 
 	   handleSubmit =() => {  
 		   const {loggedinData} = this.props; 	
-		   const{campaignName,campaignActive,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
+		   const{campaignName,campaignActive,schedulerEnabled,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
 				ftpLocation, ftpUsername, ftpPassword,ftpFileName,callBefore,selectDispositionList,selectDNCList,selectCampaignQueue,selectCampaign } = this.state;
 		    let obj = _.cloneDeep(this.props.edit)
 		    //obj = {
 			   obj.campaignName = campaignName
 			   obj.campaignActive = campaignActive	
+			   obj.schedulerEnabled=schedulerEnabled
 			   obj.startDate = startDate
-			   obj.startTime = startTime
+			   obj.startTime = startTime.label
 			   obj.endDate = endDate
-			   obj.endTime = endTime
+			   obj.endTime = endTime.label
 			   obj.weekDaysTime = weekDaysTime
 			   obj.callBefore = callBefore['day'].split(' ')[0]
 			   obj.maxAdvNotice = maxAdvNotice
@@ -589,7 +600,7 @@ handleClickOutside(event) {
 		const {campaignName,campaignActive,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
 			tempHr,tempMin,tempHrD,tempMinD,tempStartDate,tempEndDate,ftpView,ftpLocation,ftpUsername,ftpPassword,ftpFileName,callBefore,callBeforeList,
 			businessHRView,reminderView,callBackConfqView,customerStatusConfqView,ewt,cbmIVRIncomeNO,language,agentVDN,skillName,queueLimitLength,customeTimeout,cbIntervalTime,selectDialorType,DialorTypeList,
-			busyStatus,busyNoTries,clearMessage,saveMessage,notReached,notReachedNoTries,selectDNCList,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue,selectDispositionList } = this.state;
+			busyStatus,busyNoTries,clearMessage,schedulerEnabled,saveMessage,notReached,notReachedNoTries,selectDNCList,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue,selectDispositionList } = this.state;
 		const {timesList} = this.props.action	
 		
 	
@@ -621,6 +632,7 @@ handleClickOutside(event) {
 								<Col md={2}>{reminderView ? <i class="fas fa-caret-down fa-lg" onClick={this.handleReminderView} /> : <i class="fas fa-caret-right fa-lg" onClick={this.handleReminderView}/> } &nbsp;&nbsp;&nbsp;&nbsp; Campaign Name  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' maxLength={100} id="campaignName"  
 										onChange={this.handleAllowCharacters} value={campaignName}
+										onPaste={this.handleAllowCharacters}
 										placeholder="Enter Campaign Name"
 										onBlur={this.checkCampaignStatus}
 										disabled={true}
@@ -977,7 +989,9 @@ handleClickOutside(event) {
 										</Col>
 										<Col md={3}>
 										<FormControl  type='text' id="maxAdvMin" maxLength={2}
-											onChange={this.handleRetryValueChange} value={tempMinD}
+											onChange={this.handleRetryValueChange} 
+											onPaste={this.handleRetryValueChange}
+											value={tempMinD}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
@@ -986,7 +1000,7 @@ handleClickOutside(event) {
 								<Col md={2}>Retry Count<span className='colorRed'>*</span></Col>
 								<Col md={4}>
 								<FormControl style={{width:'99%',height:'38px'}} type='text' maxLength={1} id="retryCount"
-											onChange={this.handleSecChange} value={retryCount}
+											onChange={this.handleSecChange}  onPaste={this.handleSecChange} value={retryCount}
 											placeholder="Enter Retry Count"
 
 										/>
@@ -1481,6 +1495,7 @@ handleClickOutside(event) {
 						<Row> <br/> </Row>
 						<Row className='align-items-center'>
 						<Col><input type="checkbox" value="" onClick={this.handleCheck} checked={campaignActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active</Col>
+						<Col><input type="checkbox" value="" onClick={this.handleScheduler} checked={schedulerEnabled}/>&nbsp;&nbsp;&nbsp;&nbsp;Enable Scheduler</Col>
 						</Row>
 						<Row> <br/> </Row>
 						<Row className='align-items-center'>

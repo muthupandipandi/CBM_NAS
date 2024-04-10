@@ -17,7 +17,12 @@ export function DispostionLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(DispositionLoadSuccess(json))
+               }
           })
           .catch((error) =>{
             dispatch(DispositionEditError(error))
@@ -41,12 +46,17 @@ export function addDisposition(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {     
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{   
             dispatch(DispositionEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(DispostionLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(DispositionEditError(error))
@@ -70,11 +80,16 @@ export function editDisposition(newData){
         body:JSON.stringify(newData)
     }).then((res) => res.json())
         .then(json => {        
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(DispositionEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(DispostionLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(DispositionEditError(error))

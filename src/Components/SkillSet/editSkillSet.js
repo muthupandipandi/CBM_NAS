@@ -395,8 +395,9 @@ return(
 							<Col md={3} ><FormControl  type='text' id="skillName"  
 									 value={skillName}
 									 onChange={this.handleAllowCharacters}
+									 onPaste={this.handleAllowCharacters}
 									placeholder="Enter Skill Set Name"
-									maxLength={50}
+									maxLength={30}
 									onBlur={this.checkSkillExistence}
 										/>
 										{(skillStatus === false) ? <span className="colorRed">&nbsp;****Skill Set name is already exits****</span>: null}
@@ -431,7 +432,7 @@ return(
 										keepOpen={false}
 										includeFilter={false}
 										clearFilterOnClose={true}
-										placeholder={"Select Dialer Type"}
+										placeholder={"Select Language"}
 										dropdownHeight={200}
 									/>
 							</Col>
@@ -542,17 +543,17 @@ return(
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Call Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='text' id="shortcallThresold" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} min="0" max="59"
-										onChange={this.handleSecChange} value={shortcallThresold.toString().padStart(2, '0')}
+										onChange={this.handleSecChange} value={shortcallThresold} maxLength={2}
 										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
 								</Col>
 
-								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandone Threshold <span className='colorRed'>*</span></Col>
+								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandon Threshold <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='text' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} max="59"
-										onChange={this.handleSecChange} value={shortAbandoneThresold.toString().padStart(2, '0')}
+										onChange={this.handleSecChange} value={shortAbandoneThresold} maxLength={2}
 										/> <span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
 								
@@ -562,7 +563,7 @@ return(
 								<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Service Level Goal  <span className='colorRed'>*</span></Col>
 								<Col md={3} >
 								<FormControl  type='text' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
-										onChange={this.handleSecChange} value={serviceLevelGoal.toString().padStart(2, '0')}
+										onChange={this.handleSecChange} value={serviceLevelGoal} maxLength={2}
 										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -572,7 +573,7 @@ return(
 							<Col md={3}>  &nbsp;&nbsp;&nbsp;&nbsp; Abandon Rate Threshold <span className='colorRed'>*</span></Col>
 							<Col md={3} >
 							<FormControl  type='text' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
-										onChange={this.handleSecChange} value={abandoneRateThresold.toString().padStart(2, '0')}
+										onChange={this.handleSecChange} value={abandoneRateThresold} maxLength={2}
 										/>
 										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
 										</span>
@@ -591,7 +592,7 @@ return(
 								{/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
 								</Row>
 							<Row className='align-items-center'>  
-								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
+								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA<span className='colorRed'>*</span></Col>
 							<Col md={3} >
 							
 										

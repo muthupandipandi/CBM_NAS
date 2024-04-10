@@ -176,7 +176,7 @@ handleAddClose = () => {
             <br/>
             <div className='alignRight clearing marginBottom'>
               
-                <Button className="inlineBlock" onClick={this.handleAdd}> <span><i className="fas fa-plus-square m-r-20" ></i> </span> ADD DNC</Button>
+                <Button className="inlineBlock" onClick={this.handleAdd}> <span><i className="fas fa-plus-square m-r-20" ></i> </span> Add DNC</Button>
               
             </div>
             <Table responsive striped bordered hover>

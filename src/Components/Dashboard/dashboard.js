@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Nav, Modal, FormControl, Button, FormGroup, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import {DashboardAction, LogoutAction, LoginAttemptAction ,LoginAttemptWithOTP, showModalLoginModal, makeShowmodalFalse} from '../Login/LoginActions'
+import {DashboardAction, LogoutAction, LoginAttemptAction ,LoginAttemptWithOTP, showModalLoginModal, makeShowmodalFalse,LoginChangePassword} from '../Login/LoginActions'
 import TittleImage from '../../Resources/images/ap_img.jpg';
 import cpm from '../../Resources/images/cpm.png';
 import {Link} from 'react-router-dom'
 import _ from 'lodash';
+import PSWChange from './changePSW'
 
 
 class Dashboard extends Component {
   constructor(props){
     super(props)
     this.state={
-      isOpen:false
+      isOpen:false,
+      add:false
     }
   }
   
   componentDidMount(){    
     //this.setSession()
+    let dd=window.localStorage.getItem('modules')
+    console.log(dd?JSON.parse(dd):[])
   }
 
   setSession(){
@@ -51,6 +55,8 @@ class Dashboard extends Component {
   } 
   createSideNavigationIcons = (data) =>{
     const {active} = this.state
+          
+    console.log(data)
     return  _.map(data, (obj, i) =>{
       return(  
         // <Nav.Link key={i}><Link to={obj.path}>
@@ -84,6 +90,10 @@ class Dashboard extends Component {
       return {isOpen : !prevState.isOpen}
     })
   }
+  LoginChangePasswords=(obj)=>{
+    this.props.LoginChangePassword(obj)
+  }
+
   handleChange = event => {
     this.setState({
       [event.target.id]: event.target.value
@@ -92,6 +102,12 @@ class Dashboard extends Component {
   handleSubmit = event => {
     event.preventDefault();   
   }
+  handleAdd = () => {
+    this.setState({add:true})
+}
+handleAddClose = () => {
+    this.setState({add:false})
+}	
   login = () => {
     let obj = {'username': this.state.id , 'password': this.state.password}
     this.props.action(obj, true)
@@ -101,11 +117,14 @@ class Dashboard extends Component {
   //   this.props.LoginAttemptWithOTP(obj)
   // }
   render(){
-    const {isOpen} = this.state
+    const {isOpen,add} = this.state
     const {data} = this.props
     let x = _.find(data, {'path':this.props.location.pathname})
     return (
-      <div>          
+      <div>      
+        {add === true ? 
+        <PSWChange action={this.props} add={add} closeModal={this.handleAddClose} /> :
+        <div>
             {(isOpen === true) ?
              <div className="sidebarComponentsisOpen">         
               <div className='title'>
@@ -116,7 +135,7 @@ class Dashboard extends Component {
             </Nav> 
             </div>
             : 
-            <div className="sidebarComponents"> 
+            <div style={{ overflow: 'scroll' }} className="sidebarComponents"> 
               <div className='title'>
                   <h6><p to=''><img alt='icon' src={cpm} width='60px' height='58px'/></p></h6>
               </div>   
@@ -127,8 +146,13 @@ class Dashboard extends Component {
             <div className='topHeader'>
             {/* <span><i className="fas fa-bars" onClick={this.changeState}></i></span> */}
             <span className='moduleName'>{x ?  x.moduleName.toUpperCase() : null}</span>
+            
+              
+            
+              
+            
             <span><i className="fas fa-power-off"  onClick={()=>this.props.logout(this.props.history)}></i></span>
-            <span className=" firstName">{this.props.loggedinData.userName}</span>
+            <span className=" firstName"><Button variant="light" style={{color:'#1e4b99',padding: '0px',height: '29px',marginRight:'5px'}}  className="inlineBlock" onClick={this.handleAdd}> <span><i className="fas fa-plus-square m-r-20" ></i> </span> Change Password</Button>{this.props.loggedinData.userName}</span>
             </div>
             <div>
 
@@ -177,14 +201,23 @@ class Dashboard extends Component {
           </Modal>
          : null} 
         </div>
-      </div>)
+      </div>
+      }
+      </div>
+      )
   }
 }
 function mapStateToProps(state){
+  console.log(state)
+  let dd=window.localStorage.getItem('modules')
+    
   return{
    loggedinData: state.LoginReducer.loggedinData,
-   data: state.LoginReducer.modules,
+   data: dd?JSON.parse(dd):[],
    showModalLogin:state.LoginReducer.showModalLogin,
+   showerror:state.LoginReducer.showerror,
+   showMessage:state.LoginReducer.showerror,
+   message:state.LoginReducer.errorMessage
   }
 }
 
@@ -193,7 +226,7 @@ const mapDispatchToProps = (dispatch) => ({
    DashboardAction:  (obj) =>dispatch(DashboardAction(obj)), 
    logout:  (a) =>dispatch(LogoutAction(a)), 
    showModalLoginModal:  () =>dispatch(showModalLoginModal()), 
-  //  LoginAttemptWithOTP: (obj) => dispatch(LoginAttemptWithOTP(obj)),
+   LoginChangePassword: (obj) => dispatch(LoginChangePassword(obj)),
    makeShowmodalFalse:() => dispatch(makeShowmodalFalse())
 })
 

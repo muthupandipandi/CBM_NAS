@@ -17,7 +17,8 @@ import _, { toInteger } from 'lodash';
 			this.state = {
 				timesList: !_.isEmpty(props.action.timesList) ? props.action.timesList : [],
 				campaignName: props.edit.campaignName ? props.edit.campaignName : '',
-				campaignActive: props.edit.campaignActive ? true : false,
+				campaignActive: props.edit.campaignActive=='true' ? true : false,
+				schedulerEnabled:props.edit.schedulerEnabled? props.edit.schedulerEnabled : '',
 				startDate : props.edit.startDate ? props.edit.startDate : '',
 				startTime : props.edit.startTime? props.edit.startTime : '00:00',
 				endDate : props.edit.endDate? props.edit.endDate : '',
@@ -52,10 +53,10 @@ import _, { toInteger } from 'lodash';
 									//    {'id' : 10, 'label' : 'manual'}
 									],
 				 selectCampaignQueue : props.edit.queue? props.edit.queue: '' ,
-				 campaignAssignQueue : [{'id' : 11, 'label' : 'Post Due' },
-										{'id' : 12, 'label' : 'Pre Due' },
-										{'id' : 13, 'label' : 'PTF' },
-										{'id' : 14, 'label' : 'FUP' }], 
+				 campaignAssignQueue : [
+					{'id' : 15, 'label' : 'nas-neuro' },
+					{'id' : 11, 'label' : 'Post-Overdue' },
+										],
 
 				selectDispositionList : props.edit.dispositionID? props.edit.dispositionID: '',  
 				selectDNCList:props.edit.dncId? props.edit.dncId: '', 
@@ -211,7 +212,7 @@ handleClickOutside(event) {
 		const empStatus = _.cloneDeep(this.props.action.employeeIdStatus) 
 		// console.log("this state", this.state)
 		// console.log("this props", this.props)
-		const {campaignName,campaignActive,startDate,startTime,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
+		const {campaignName,campaignActive,startDate,startTime,schedulerEnabled,endDate,endTime,weekDaysTime,maxAdvNotice,retryDelay,retryCount,concurrentCall,
 			tempHr,tempMin,tempHrD,tempMinD,tempStartDate,tempEndDate,ftpView,ftpLocation,ftpUsername,ftpPassword, ftpFileName, callBefore,callBeforeList,
 			businessHRView,reminderView,callBackConfqView,customerStatusConfqView,ewt,cbmIVRIncomeNO,language,agentVDN,skillName,queueLimitLength,customeTimeout,cbIntervalTime,selectDialorType,DialorTypeList,
 			busyStatus,busyNoTries,notReached,notReachedNoTries,clearMessage,noResponse,noResponseNoTries,defaultTries,maxRetries, selectedCampaign,campaignType,ignoreAA,selectCampaign,CampaignDailingMode,selectCampaignQueue,campaignAssignQueue  } = this.state;	
@@ -1095,6 +1096,7 @@ handleClickOutside(event) {
 							<Row> <br/> </Row>
 							<Row className='align-items-center'>
 							<Col><input disabled={true} type="checkbox" value="" checked={campaignActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active  <span className='colorRed'>*</span></Col>
+							<Col><input type="checkbox" value="" onClick={this.handleScheduler} checked={schedulerEnabled}/>&nbsp;&nbsp;&nbsp;&nbsp;Enable Scheduler</Col>
 							</Row>
 							<Row> <br/> </Row>
 							<Row className='align-items-center'>

@@ -16,7 +16,12 @@ export function UserGroupLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(UserGroupLoadSuccess(json))
+               }
           })
           .catch((error) =>{
             dispatch(UserGroupEditError(error))
@@ -39,12 +44,17 @@ export function addUserGroup(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {  
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{      
             dispatch(UserGroupEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(UserGroupLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(UserGroupEditError(error))
@@ -67,12 +77,17 @@ export function editUserGroup(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {  
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{      
             dispatch(UserGroupEditError(json))
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(UserGroupLoad())
             }
+        }
         })
         .catch(error => {
             dispatch(UserGroupEditError(error))

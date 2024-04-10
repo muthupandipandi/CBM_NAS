@@ -20,6 +20,7 @@ import 'react-picky/dist/picky.css';
 			password: props.edit ? props.edit.password : '',
 			email: props.edit ? props.edit.emailId : '',
 			mobileNumber: props.edit ? props.edit.mobNum : '',
+			userActive:props.edit.status=='ACTIVE' ? true : false,
 			pbxExtn: props.edit ? props.edit.pbxExtn : '',
 			domain: [{domainId: "1", domainName: "Banking"}],
 			business : [{buId: "1", buName: "Retail"}],
@@ -366,7 +367,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 	render(){
 		const {userEntity,rolesData,loggedinData,groupsData} = this.props
 		const {showMessage,message} = this.props.action
-        const { employeeId, firstName, email,selectedUserGroup, mobileNumber,selectedAgent, password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
+        const { employeeId, firstName, email,selectedUserGroup,userActive, mobileNumber,selectedAgent, password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
 		
 		
 		
@@ -407,6 +408,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; First Name  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='firstName'
                                      value={firstName} 
+									 disabled={true}
                                     placeholder="Enter FirstName"
                                     />
                                 </Col>  
@@ -415,13 +417,14 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 <Col md={4} ><FormControl  type='text' id='lastName'
                                     value={lastName} 
                                     placeholder="Enter LastName"
+									disabled={true}
                                     />
                                 </Col>  
 						</Row>
 						<Row className='align-items-center'>             
                                  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Email ID <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='email'
-								
+								disabled={true}
                                    value={email} 
                                     placeholder="Enter Email ID"
                                     />
@@ -430,6 +433,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Mobile Number  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='number' id='mobileNumber'
                                      value={mobileNumber} 
+									 disabled={true}
                                     placeholder="Enter mobile Numbe"
                                     />
                                 </Col>  
@@ -440,6 +444,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
 										 value={employeeId} 
+										 disabled={true}
 										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
@@ -449,6 +454,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 <Col md={4} ><FormControl  type='password' id='password'
                                    
                                     value={password} 
+									disabled={true}
                                     placeholder="Enter Password"
                                     />
                                     {passwordIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide valid Password with minimum 6 characters</span> : null}
@@ -541,6 +547,7 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
                                 <Col md={4} ><FormControl  type='number' id='pbxExtn'
                                      value={pbxExtn} 
                                     placeholder="Enter PBX Extension"
+									disabled={true}
                                     />
                                 </Col>  
 								</>)}
@@ -600,6 +607,11 @@ this.setState({ selectedAgent: selectedOptions.filter(option => option !== null)
 								</>
                     )}
 					</Row>
+					<Row className='align-items-center'>
+							
+							<Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" checked={userActive}/>&nbsp;&nbsp;&nbsp;&nbsp;Active </Col>
+							
+							</Row>
 						
 						<Row> <br/> </Row>
 						{/* <Row className='align-items-center'>

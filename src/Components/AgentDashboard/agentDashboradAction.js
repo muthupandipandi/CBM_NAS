@@ -1,4 +1,4 @@
-import {RealTime_Dashboard,RealTime_Dashboard_ALL,Agent_Dashboard   } from '../apiList';
+import {Agent_Dashboard   } from '../apiList';
 import _ from 'lodash';
 import axios from 'axios';
 export function RealtimeDashboard_Load(){
@@ -10,12 +10,12 @@ export function RealtimeDashboard_Load(){
         headers.append("Authorization",tokenType+ ' ' +token);
         let user_group = window.localStorage.getItem('userGroup')
       let url=''
-    if (user_group ==null || user_group ==''){
-        url=RealTime_Dashboard_ALL
-                }
-      else{
-        url=RealTime_Dashboard+'?userGroup='+user_group
-      }
+    // if (user_group ==null || user_group ==''){
+    //     url=RealTime_Dashboard_ALL
+    //             }
+    //   else{
+    //     url=RealTime_Dashboard+'?userGroup='+user_group
+    //   }
     //   const token = getState().LoginReducer.accessToken; 
     //   const token = JSON.parse(window.localStorage.getItem('cbi_c_b_m_s_t'))
     //   headers.append("Authorization",token);
@@ -23,7 +23,7 @@ export function RealtimeDashboard_Load(){
     //   headers.append('Accept','application/json');
 //     axios.get(RealTime_Dashboard)
 // //   .then(response => {
-      fetch(url, {
+      fetch(Agent_Dashboard, {
         method: 'GET',
         headers:headers
       })
@@ -41,46 +41,6 @@ export function RealtimeDashboard_Load(){
         })   
       }
 }
-export function AgentRealtimeDashboard_Load(){
-  return (dispatch,getState) => {
-    let headers = new Headers()
-    let token = window.localStorage.getItem('accessToken')
-      const tokenType = window.localStorage.getItem('tokenType')
-      // console.log("LO STATE",  getState().LoginReducer)
-      headers.append("Authorization",tokenType+ ' ' +token);
-      let user_group = window.localStorage.getItem('userGroup')
-    let url=''
-  // if (user_group ==null || user_group ==''){
-  //     url=RealTime_Dashboard_ALL
-  //             }
-  //   else{
-  //     url=RealTime_Dashboard+'?userGroup='+user_group
-  //   }
-  //   const token = getState().LoginReducer.accessToken; 
-  //   const token = JSON.parse(window.localStorage.getItem('cbi_c_b_m_s_t'))
-  //   headers.append("Authorization",token);
-  //   headers.append('Content-Type','application/json');
-  //   headers.append('Accept','application/json');
-//     axios.get(RealTime_Dashboard)
-// //   .then(response => {
-    fetch(Agent_Dashboard, {
-      method: 'GET',
-      headers:headers
-    })
-    .then((res) => res.json())
-      .then((json) =>{
-        if(json.status===401){
-          window.location.href = '/'
-         }
-         else{
-        dispatch(AgentRealtimeDashboardSuccess(json))
-         }
-      })
-      .catch((error) =>{
-        dispatch(RealtimeDashboardError(error))
-      })   
-    }
-}
 export function RealtimeDashboardSuccess(data){
 if(data.status === 200){  
     return{
@@ -93,18 +53,6 @@ if(data.status === 200){
     return (RealtimeDashboardError(data))    
 }
 }
-export function AgentRealtimeDashboardSuccess(data){
-  if(data.status === 200){  
-      return{
-      type:'AgentRealTime_LOAD',
-      // message: error.message,
-      agentData:data.value,
-      isPending:false 
-      }
-  } else {
-      return (RealtimeDashboardError(data))    
-  }
-  }
 
 export function RealtimeDashboardError(error){ 
     return{

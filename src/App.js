@@ -15,6 +15,7 @@ import dispostionsContainer from './Components/DispositionManagement/dispostions
 import usergroupContainer from './Components/UserGroup/usergroupContainer';
 import skillsetContainer from './Components/SkillSet/skillsetContainer';
 import dncManagementContainer from './Components/DNCManagement/dncManagementContainer';
+import agentDashboradContainer from './Components/AgentDashboard/agentDashboradContainer'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path ="/dashboard/customercall" component={pbxCallContainer} />
           <Route path ="/dashboard/reportgraph" component={Graph} />
           <Route path ="/dashboard/realtimedashboard" component={realtimeDashboardContainer} />
+          <Route path ="/dashboard/agentdashboard" component={agentDashboradContainer} />
           <Route path ="/dashboard/users" component={UserContainer} />
           <Route path ="/dashboard/dispostions" component={dispostionsContainer} />
           <Route path ="/dashboard/usergroup" component={usergroupContainer} />

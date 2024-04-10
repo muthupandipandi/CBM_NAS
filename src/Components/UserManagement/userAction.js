@@ -24,11 +24,16 @@ export function UserDataLoad(){
         body: JSON.stringify()
       }).then((res) => res.json())
         .then((json) =>{
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
           if(json.status === 401){
             console.log("hi")
             // window.location.href = '/'
           }
           dispatch(UserDataLoadSuccess(json))
+        }
         })
         .catch((error) =>{
           dispatch(UserError(error))
@@ -52,7 +57,12 @@ export function SkillSetLoad(){
         
       }).then((res) => res.json())
         .then((json) =>{
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
           dispatch(UserSkilldataSuccess(json))
+           }
         })
         .catch((error) =>{
           dispatch(UserError(error))
@@ -87,7 +97,12 @@ export function AgentLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+              window.location.href = '/'
+             }
+             else{
             dispatch(AgentdataSuccess(json))
+             }
           })
           .catch((error) =>{
             dispatch(UserError(error))
@@ -134,7 +149,12 @@ export function UserRoleData(){
         body: JSON.stringify()
       }).then((res) => res.json())
         .then((json) =>{
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
           dispatch(UserRoleDataSuccess(json))
+           }
         })
         .catch((error) =>{
           dispatch(UserError(error))
@@ -170,7 +190,12 @@ export function UserGroupsData(){
       body: JSON.stringify()
     }).then((res) => res.json())
       .then((json) =>{
+        if(json.status===401){
+          window.location.href = '/'
+         }
+         else{
         dispatch(UserGroupDataSuccess(json))
+         }
       })
       .catch((error) =>{
         dispatch(UserError(error))
@@ -211,11 +236,16 @@ export function addnewUser(newData){
         body:JSON.stringify(newData)
     }).then((res) => res.json())
         .then(json => {
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
             dispatch(UserError(json))
             dispatch(UserDataLoad())
             dispatch(AgentLoad())
             if(json.status === 1001){
               dispatch(ApproveUser(json.value))
+            }
             }
         })
         .catch(error => {
@@ -238,13 +268,18 @@ export function editUser(newData){
         body:JSON.stringify(newData)
     }).then((res) => res.json())
         .then(json => {
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
             dispatch(UserError(json))
             //dispatch(UserDataLoad())
-            if(json.status === 1001){
+            if(json.status === 200){
               dispatch(ApproveUser(json.value))
               dispatch(UserDataLoad())
             dispatch(AgentLoad())
             }
+          }
         })
         .catch(error => {
             dispatch(UserError(error))
@@ -268,11 +303,16 @@ export function DisableUser(data) {
         })
         .then(res=>res.json())
         .then(json => {
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
             dispatch(UserError(json))
             // dispatch(UserDataLoad())
             if(json.status === 1001){
               dispatch(ApproveUser(json.value))
             }
+          }
         })
         .catch  (error => {
         })
@@ -299,8 +339,13 @@ export function ApproveUser(obj) {
       body: JSON.stringify(obj)
     }).then((res) => res.json())
       .then((json) => {
+        if(json.status===401){
+          window.location.href = '/'
+         }
+         else{
         //dispatch(UserError(json))
         dispatch(UserDataLoad())
+         }
       })
       .catch((error) => {
         dispatch(UserError(error))
@@ -325,8 +370,13 @@ export function RejectUser(obj) {
       body: JSON.stringify(obj)
     }).then((res) => res.json())
       .then((json) => {
+        if(json.status===401){
+          window.location.href = '/'
+         }
+         else{
         dispatch(UserError(json))
         dispatch(UserDataLoad())
+        }
       })
       .catch((error) => {
         dispatch(UserError(error))
@@ -352,7 +402,12 @@ export function IsEntityNameExists(obj) {
         body: obj
       }).then((res) => res.json())
         .then((json) => {
+          if(json.status===401){
+            window.location.href = '/'
+           }
+           else{
           dispatch(IsEntityNameExistsSuccess(json))
+           }
         })
         .catch((error) => {
           dispatch(UserError(error))

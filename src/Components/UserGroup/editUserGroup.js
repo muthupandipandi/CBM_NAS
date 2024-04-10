@@ -117,7 +117,7 @@ handleClickOutside(event) {
 	   let obj={
 		   "usergroupName" : groupName,
 		   "usergroupDesc" : groupDescriptions,
-		   "usergroupType" : groupType?groupType[0].user_type:'',
+		   "usergroupType" : groupType?groupType.user_type:'',
 		   "usergroupId":group_id
 		   
 	   }   
@@ -137,7 +137,7 @@ handleClickOutside(event) {
 }
 handleSelectUserType = (e) => {
 	console.log(e)
-	this.setState({ groupType: e.user_type})
+	this.setState({ groupType: e})
 	
 }
 handleAllowCharacters=(event)=>{

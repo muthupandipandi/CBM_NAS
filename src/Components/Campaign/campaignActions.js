@@ -27,9 +27,16 @@ url=CAMPAIGN_INFO_LOAD_ALL
         body: JSON.stringify()
       }).then((res) => res.json())
         .then((json) =>{
-          dispatch(CampaignLoadSuccess(json))
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+                dispatch(CampaignLoadSuccess(json))
+               }
+          
         })
         .catch((error) =>{
+            console.log(error)
           dispatch(CampaignEditError(error))
         })   
       }
@@ -62,7 +69,12 @@ export function UserGroupsData(){
         body: JSON.stringify()
       }).then((res) => res.json())
         .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
           dispatch(UserGroupDataSuccess(json))
+               }
         })
         .catch((error) =>{
           dispatch(CampaignEditError(error))
@@ -100,9 +112,14 @@ export function addnewCampaign(newData){
         headers : headers,
         body:JSON.stringify(newData)
     }).then((res) => res.json())
-        .then(json => {        
+        .then(json => {   
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{     
             dispatch(CampaignEditError(json))
             dispatch(CampaignLoad())
+               }
         })
         .catch(error => {
             dispatch(CampaignEditError(error))
@@ -125,8 +142,13 @@ export function editCampaign(newData){
         body:JSON.stringify(newData)
     }).then((res) => res.json())
         .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(CampaignEditError(json))
             dispatch(CampaignLoad())
+               }
         })
         .catch(error => {
             dispatch(CampaignEditError(error))
@@ -150,12 +172,16 @@ export function checkCampaignStatus(obj){
         body:JSON.stringify(obj)
     }).then((res) => res.json())
         .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             if(json.status === 200) {
                 dispatch({type : "CAMPAIGN_STATUS_CHECK", campaignStatus : json.value})
             } else {
                 dispatch(CampaignEditError(json))
             }
-            
+        }
         })
         .catch(error => {
             dispatch(CampaignEditError(error))
@@ -178,9 +204,15 @@ export function DNCLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(DNCLoadSuccess(json))
+               }
           })
           .catch((error) =>{
+            
             dispatch(CampaignEditError(error))
           })   
         }
@@ -213,7 +245,12 @@ export function DispostionLoad(){
           
         }).then((res) => res.json())
           .then((json) =>{
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(DispositionLoadSuccess(json))
+               }
           })
           .catch((error) =>{
             dispatch(CampaignEditError(error))
@@ -248,8 +285,13 @@ export function uploadContacts(obj){
         body: obj
     }).then((res) => res.json())
         .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
             dispatch(CampaignEditError(json))
             dispatch(CampaignLoad())
+               }
         })
         .catch(error => {
             dispatch(CampaignEditError(error))

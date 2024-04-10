@@ -4,36 +4,36 @@ const initialState = {
 	message:'',
 	userData:[],
 	
+	
+	
+
+
   }
   export default (state = initialState, action) => {
     switch (action.type) {
-      	case "DNC_ERROR":
+      	case "RealTime_ERROR":
 				return Object.assign({}, state, {
 					isPending: action.isPending,
 					showMessage: action.showerror,
 					message: action.message,
 				})
-                case "DNC_VIEW_ERROR_CLOSE":
+				case "RealTime_ERROR_CLOSE":
 				return Object.assign({}, state, {
 					showMessage: action.showerror,
 					message:action.message,
 					isPending: false,
 				})
-				case "DNC_LOAD":
-                    console.log(action)
+				case "RealTime_LOAD":
 				return Object.assign({}, state, {
-					isPending: false,
-                    userData:action.userData
+					userData: action.userData,
+					isPending: action.isPending,
 				})
-
-				case "UPDATEDNC_LOAD":
-                    console.log(action)
-				return Object.assign({}, state, {
-					isPending: false,
-					showMessage: action.showerror,
-					message:action.message,
-                    
-				})
+				// case "RealTime_ERROR_CLOSE":
+				// 	return Object.assign({}, state, {
+				// 		showMessage: action.showerror,
+				// 		message:action.message,
+				// 		isPending: false,
+				// 	})
 				
 			default:
 			return state

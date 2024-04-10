@@ -5,7 +5,7 @@ import ShowModalLogin from '../showModalLogin';
 import '../../Resources/css/loggedIn.css';
 import '../../Resources/css/loginback.css';
 import { JSEncrypt } from 'jsencrypt';
-import PSWChange from './changePSW'
+// import PSWChange from './changePSW'
 //import royal from '../../Resources/images/royal.png';
 import _ from 'lodash'
 
@@ -30,7 +30,7 @@ import _ from 'lodash'
     // }    
   }
 validateForm() {
-    if(this.state.id && this.state.id.length > 0 && this.state.password.length > 0)
+    if(this.state.id && this.state.id.length > 0 && this.state.password.length > 4 &&this.state.password.length > 0)
     return true;
 }
 UNSAFE_componentWillReceiveProps(nextProps){
@@ -40,9 +40,11 @@ UNSAFE_componentWillReceiveProps(nextProps){
 }
 
 handleChange = event => {
+  if (parseInt(event.target.maxLength)>=event.target.value.length){
   this.setState({
     [event.target.id]: event.target.value
   });
+}
 }
 
 handleSubmit = event => {
@@ -88,8 +90,8 @@ loginattempt = () =>{
       <div>{showerror}
         {(showerror === true) ?
         <ShowModalLogin action={this.props} message={errorMessage} falseShowModalPopUp={this.props.closeModalPopUp}/> : null}
-      {add === true ? 
-        <PSWChange action={this.props} add={add} closeModal={this.handleAddClose} /> :
+      {/* {add === true ? 
+        <PSWChange action={this.props} add={add} closeModal={this.handleAddClose} /> : */}
         <div className="login_container">
           <div className="container">
             <div className="row">
@@ -107,6 +109,7 @@ loginattempt = () =>{
                         value={this.state.id}
                         onChange={this.handleChange}
                         placeholder="UserName"
+                        maxLength={30}
                       />
                     </FormGroup>
                     <FormGroup controlId="password">
@@ -115,6 +118,8 @@ loginattempt = () =>{
                           value={this.state.password}
                           onChange={this.handleChange}
                           type={this.state.passwordtype}
+                          minLength={5}
+                          maxLength={20}
                           placeholder="Password"
                         />
                         {!_.isEmpty(this.state.password) && (
@@ -133,11 +138,11 @@ loginattempt = () =>{
                     </Button>
                   </form>
                   <br></br>
-                  <div className='alignRight clearing marginBottom'>
+                  {/* <div className='alignRight clearing marginBottom'>
                     <Button className="inlineBlock" onClick={this.handleAdd}>
                       <span><i className="fas fa-plus-square m-r-20" ></i></span> Change Password
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -146,7 +151,7 @@ loginattempt = () =>{
             <ShowModalLogin message={this.props.errorMessage} falseShowModalPopUp={this.props.closeModalPopUp} />
           )} */}
         </div>
-      }
+      
     </div>
   );
 }

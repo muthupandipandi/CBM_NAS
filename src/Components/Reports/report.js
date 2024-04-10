@@ -19,9 +19,9 @@ export default class Report extends Component {
             Per_Page:10,
             campaignName : [],
             campaignId : '',
-            startDate : '',
+            startDate : moment(new Date()).format('YYYY-MM-DD'),
             endDate : '',
-            tempDate : '',
+            tempDate : new Date(),
             tempEndDate : '',
             reportView : false,
             reportCardView : false,
@@ -153,14 +153,16 @@ export default class Report extends Component {
 
       isValidate() {
 		const {campaignName,campaignId,startDate,endDate, generateBtnView, reportId, doctorName, contactNo} = this.state
+        console.log(campaignName , !_.isEmpty(campaignName) > 0 , campaignId , campaignId.length > 0 , startDate  , endDate 
+        , generateBtnView === true)
             if(reportId === '1'){
-                if(campaignName && !_.isEmpty(campaignName) > 0 && campaignId && campaignId.length > 0 && startDate && startDate.length > 0 && endDate && endDate.length > 0 
+                if(campaignName && !_.isEmpty(campaignName) > 0 && campaignId && campaignId.length > 0 && startDate  && endDate 
                     && generateBtnView === true)
                     {
                        return true
                     } 
             } else if (reportId === '2'){
-                if(campaignName && !_.isEmpty(campaignName) > 0 && campaignId && campaignId.length > 0 && startDate && startDate.length > 0 && endDate && endDate.length > 0 
+                if(campaignName && !_.isEmpty(campaignName) > 0 && campaignId && campaignId.length > 0 && startDate && endDate 
                     && generateBtnView === true)
                     {
                        return true
@@ -180,16 +182,25 @@ export default class Report extends Component {
       }
 
       handleChangeStart=(e)=>{
+        const dates = moment(e, 'YYYY-MM-DD', true);
+		// console.log(date.isValid())
+		if (dates.isValid()) {
         const {generateBtnView } = this.state
 		const date = moment(e).format('YYYY-MM-DD'); 
+        
 		this.setState({startDate: date});
 		this.setState({tempDate: e});
         if(generateBtnView === false) {
             this.setState({generateBtnView : true})
         }
+    
+}
 	   }
 
        handleChangeEnd = (e) => {
+        const dates = moment(e, 'YYYY-MM-DD', true);
+		// console.log(date.isValid())
+		if (dates.isValid()) {
         const {generateBtnView } = this.state
 		const date = moment(e).format('YYYY-MM-DD'); 
 		this.setState({endDate: date});
@@ -197,6 +208,8 @@ export default class Report extends Component {
         if(generateBtnView === false) {
             this.setState({generateBtnView : true})
         }
+    }
+
        }
 
        handleGenerate = () => {
@@ -271,8 +284,8 @@ export default class Report extends Component {
 
        handleReport = (e) => {
             this.setState({reportName : e, reportId : e.id})
-            this.setState({campaignName : [], startDate : '', endDate : '',
-            tempDate : '', tempEndDate : '', doctorName : [], contactNo : '',                
+            this.setState({campaignName : [], startDate : moment(new Date()).format('YYYY-MM-DD'), endDate : '',
+            tempDate : new Date(), tempEndDate : '', doctorName : [], contactNo : '',                
             patientName : '', callerChoice : '', callerLabel : []})
             this.setState({reportView : false, })
        }
@@ -407,14 +420,17 @@ export default class Report extends Component {
                                 <DatePicker
                                     selected={tempDate}
                                     className='myDatePicker'
+                                    
                                     selectsStart
-                                    showMonthDropdown
+                                    
                                     startDate={tempDate}
                                     endDate={tempEndDate}
                                     onChange={this.handleChangeStart}
-                                    dateFormat="dd-MM-yyyy"          
+                                    dateFormat="dd-MM-yyyy"   
+                                       
                                     //minDate={new Date()}
-                                    placeholderText="Choose Date"          
+                                    placeholderText="Choose Date"        
+                                    maxDate={tempEndDate}  
                                 />
                                 </Col>
                                 <Col>
@@ -424,12 +440,14 @@ export default class Report extends Component {
                                 <DatePicker
                                 selected={tempEndDate}
                                 selectsEnd
+                                className='myDatePicker'
                                 startDate={tempDate}
                                 endDate={tempEndDate}
                                 onChange={this.handleChangeEnd}
                                 minDate={tempDate}
                                 dateFormat="dd-MM-yyyy" 
                                 placeholderText="Choose Date"
+                                
                                 />
                                 </Col>
                                 <Col > 
@@ -492,7 +510,7 @@ export default class Report extends Component {
                                     <DatePicker
                                         selected={tempEndDate}
                                         selectsEnd
-                                        startDate={tempDate}
+                                        startDate={tempEndDate}
                                         endDate={tempEndDate}
                                         onChange={this.handleChangeEnd}
                                         minDate={tempDate}

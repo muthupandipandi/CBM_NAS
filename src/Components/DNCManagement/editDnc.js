@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Modal, Button, Row,FormControl, Col} from 'react-bootstrap';
+import {Modal, Button, Row,FormControl, Col,Form} from 'react-bootstrap';
 import _, { toInteger } from 'lodash';
 //import TimePicker from 'react-time-picker';
 import ShowModalLogin from '../showModalLogin';
@@ -19,7 +19,10 @@ import MessageShow from '../mesaageShow'
 			descriptions:props.edit ? props.edit.description : '',
 			dncName:props.edit ? props.edit.dncName : '',
 			dncid: props.edit.dncid ? props.edit.dncid : '',
-			dncStatus:true
+			dncStatus:true,
+			selectedOption:'',
+			insertNumber:'',
+		 deleteNumber:''
 			}; 
  }
  componentDidMount() {
@@ -57,6 +60,12 @@ handleClickOutside(event) {
  
 	const {descriptions,dncName,dncStatus} = this.state
 	if (descriptions &&descriptions?.length > 0 &&dncName &&dncName?.length > 0 && dncStatus){
+		if (this.state.selectedOption!==''){
+		if (this.state.insertNumber && this.state.insertNumber?.length>0 || (this.state.deleteNumber && this.state.deleteNumber?.length>0)){
+			return true
+		}
+		}
+		else{
 		// if(!_.isEmpty(loggedinData)){
 		// 	if(loggedinData.ldapEnabled){
 				return true
@@ -67,13 +76,36 @@ handleClickOutside(event) {
 			}
 	
    }
+}
+
 
    checkDncStatus = () => {
 	const {dncName} = this.state
 	const obj = {'dncName': dncName}
 	this.props.action.checkDncStatus(obj)
 }
-
+addDncclick=()=>{
+	const {loggedinData} = this.props; 	
+	const {descriptions,dncName,dncid} = this.state
+	let obj={
+		"contactNumber":this.state.insertNumber,
+		"dncid":dncid
+		
+	}   
+	//console.log("Ad Campaign",obj)     
+	this.props.action.updateDNC(obj) 	 
+}
+deleteDncclick=()=>{
+	const {loggedinData} = this.props; 	
+	const {descriptions,dncName,dncid} = this.state
+	let obj={
+		"contactNumber":this.state.deleteNumber,
+		"dncid":dncid
+		
+	}   
+	//console.log("Ad Campaign",obj)     
+	this.props.action.deleteDNC(obj) 	 
+}
    handleSubmit =() => {  
 	   const {loggedinData} = this.props; 	
 	   const {descriptions,dncName,dncid} = this.state
@@ -130,6 +162,27 @@ openClearMessage = () => {
 	
 	this.setState({saveMessage : true})
   }
+  handleOptionChange=(event)=>{
+	this.setState({selectedOption : event.target.value})
+
+  }
+  handleAllowNubers = (event) => {
+	const { value } = event.target;
+	console.log(event.target.value)
+	const onlyNumbers = /^[0-9]*$/; // Regular expression to allow only numbers
+	if (parseInt(event.target.maxLength)>=event.target.value.length){
+	if (onlyNumbers.test(value) || value === '') {
+		this.setState({
+			[event.target.id]: event.target.value
+		});
+	}
+	else{
+		this.setState({
+			[event.target.id]: this.state[event.target.id]
+		});
+	}
+}
+}
 
   closeSaveClearMessage = () => {
 	this.setState({saveMessage : false})
@@ -142,7 +195,7 @@ render(){
 	// console.log("creat props", this.props)
 	
 	const {descriptions,
-	dncName,dncStatus,saveMessage,clearMessage} = this.state;	
+	dncName,dncStatus,saveMessage,clearMessage,selectedOption,insertNumber,deleteNumber} = this.state;	
 	const {timesList} = this.props.action	
 	
 	
@@ -183,6 +236,7 @@ return(
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; DNC Name  <span className='colorRed'>*</span></Col>
 							<Col md={4} ><FormControl  type='text' id="dncName" maxLength={30}  
 									onChange={this.handleAllowCharacters} value={dncName}
+									onPaste={this.handleAllowCharacters}
 									placeholder="Enter DNC Name"
 									onBlur={this.checkDNCExistence}
 									/>
@@ -206,6 +260,50 @@ return(
 								<Col md={4}>
 									<input type="checkbox" value="" onClick={this.handleCheck} checked={campaignActive}/>
 								</Col> */}
+					</Row>
+				
+					
+					<Row className='align-items-center'>
+						
+						
+	  {/* {selectedOption && selectedOption === 'Insert_Number' && (
+									<> */}
+	  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Insert Number  </Col>
+							<Col md={3} ><FormControl  type='text' id="insertNumber" maxLength={10}  
+									onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={insertNumber}
+									placeholder="Enter Insert Number"
+									
+									/>
+									
+									
+								
+							
+							</Col>
+							<Col md={1}>
+							<Button  variant="primary alignRight" style={{ cursor: this.state.insertNumber.length >9 ? 'auto' : 'not-allowed' }} disabled={!this.state.insertNumber || this.state.insertNumber.length <10} onClick={this.addDncclick}>Add</Button>
+							</Col>
+							
+							{/* </>)} */}
+
+	  {/* {selectedOption && selectedOption !== 'Insert_Number' && (
+							<> */}
+
+							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Delete Number </Col>
+							<Col md={3} ><FormControl  type='text' id="deleteNumber"  maxLength={10}
+									 value={deleteNumber}
+									placeholder="Enter Delete Number"
+									
+									onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers}
+									/>
+									
+									
+							</Col>
+							<Col md={1}>
+							<Button  variant="primary alignRight" style={{ cursor: this.state.deleteNumber.length >9 ? 'auto' : 'not-allowed' }} disabled={!this.state.deleteNumber || this.state.deleteNumber.length <10} onClick={this.deleteDncclick}>Delete</Button>
+							</Col>
+							{/* </>)} */}
+
+
 					</Row>
 					{/* <Row className='align-items-center'>             
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Item Name  <span className='colorRed'>*</span></Col>
@@ -322,6 +420,7 @@ return(
 						<Col md={4}></Col>	
 						<Col md={2}> <Button  variant="danger alignRight" onClick={this.openClearMessage}>Close</Button>
 						</Col>
+						
 						<Col md={2}> <Button  variant="primary alignRight" style={{ cursor: this.validateForm() ? 'auto' : 'not-allowed' }} disabled={!this.validateForm()} onClick={this.openSaveClearMessage}>Update DNC</Button></Col>
 						<Col md={4}></Col>	
 					</Row>

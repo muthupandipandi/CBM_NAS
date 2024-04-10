@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 				shortAbandoneThresold:'',
 				serviceLevelGoal:'',
 				abandoneRateThresold:'',
-				countAbandoneAgainestSLA:[{'id':'Yes','value':'Yes'}],
+				countAbandoneAgainestSLA:'',
 
 				firstCallResalution:'',
 				skillStatus:true,
@@ -355,6 +355,7 @@ import { Link } from "react-router-dom";
 								<Col md={4} ><FormControl  type='text' id="skillName"  
 										 value={skillName}
 										 onChange={this.handleAllowCharacters}
+										 onPaste={this.handleAllowCharacters}
 										placeholder="Enter Skill Set Name"
 										onBlur={this.checkSkillExistence}
 										maxLength={30}
@@ -485,7 +486,7 @@ import { Link } from "react-router-dom";
 									
                                 	</Col>
 
-									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandone Threshold<span className='colorRed'>*</span></Col>
+									<Col md={2}>  &nbsp;&nbsp;&nbsp;&nbsp; Short Abandon Threshold<span className='colorRed'>*</span></Col>
                                 	<Col md={1} >
 									<FormControl  type='text' id="shortAbandoneThresold" min="0" style={{ display: 'inline', width: '70%',appearance: 'textfield' }} 
 											onChange={this.handleSecChange} value={shortAbandoneThresold} maxLength={2}
@@ -525,12 +526,12 @@ import { Link } from "react-router-dom";
                                     placeholder="Enter Agent Type"
                                     /> */}
                                     {/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
-									<Col md={2} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
+									<Col md={2} style={{ padding:'0' }}>  Count Abandoned Againest SLA <span className='colorRed'>*</span></Col>
                                 <Col md={1} >
 								
 											
 										<Select
-                                        values={countAbandoneAgainestSLA}
+                                        value={countAbandoneAgainestSLA}
                                         options={this.typeSLA()}
                                         labelField='value'
                                         dropdownPosition='auto'

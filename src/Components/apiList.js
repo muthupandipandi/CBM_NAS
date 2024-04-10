@@ -13,6 +13,7 @@ export const URL_API_VALIDATE_OTP= context_user + '/api/login/validateOTP';
 
 //user Management
 export const USER_INFO_LOAD = context_url + '/usermanagement/getUserDetail';
+export const USER_FEATURE = context_url + '/usermanagement/features';
 export const USER_INFO_LOAD_ALL = context_url + '/usermanagement/getUserDetailAll';
 export const USER_INFO_ADD = context_url + '/usermanagement/createUser';
 export const USER_INFO_EDIT = context_url + '/usermanagement/updateUser'; 
@@ -59,6 +60,8 @@ export const EDIT_DNC = context_url + '/campaign/updateDNS';
 export const LIST_DNC = context_url + '/campaign/getdnsValue';
 
 export const UPLOAD_DNC = context_url + '/campaign/uploadDncDetail'; 
+export const DNC_CONTACT_UPDATE = context_url + '/campaign/updateContact'; 
+export const DNC_CONTACT_DELETE = context_url + '/campaign/DeleteContact'; 
 
 //Report
 
@@ -77,6 +80,9 @@ export const DOWNLOAD_GENERATE_HISTORY = context_url +'';
 //Realtime Dashboard
 export const RealTime_Dashboard = context_url +'/campaign/getRealTimeDashboard';
 export const RealTime_Dashboard_ALL = context_url +'/campaign/getRealTimeDashboardAll';
+//Realtime Dashboard
+export const Agent_Dashboard = context_url +'/usermanagement/getAgentRealTimeDashboard';
+// export const RealTime_Dashboard_ALL = context_url +'/campaign/getRealTimeDashboardAll';
 // export const DELETE_HISTORY = context_url +'/campaign/deleteContactByHistory';
 // export const DOWNLOAD_GENERATE_HISTORY = context_url +'';
 

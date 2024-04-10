@@ -3,6 +3,7 @@ const initialState = {
 	showMessage:false,
 	message:'',
 	userData:[],
+	agentData:[]
 	
 	
 	
@@ -26,6 +27,11 @@ const initialState = {
 				case "RealTime_LOAD":
 				return Object.assign({}, state, {
 					userData: action.userData,
+					isPending: action.isPending,
+				})
+				case "AgentRealTime_LOAD":
+				return Object.assign({}, state, {
+					agentData: action.agentData,
 					isPending: action.isPending,
 				})
 				// case "RealTime_ERROR_CLOSE":

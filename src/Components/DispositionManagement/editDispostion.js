@@ -232,7 +232,7 @@ import { Link } from "react-router-dom";
 										 value={dispostionName}
 										 onChange={this.handleAllowCharacters}
 										placeholder="Enter Disposition Name"
-										onBlur={this.checkDispositionExistence} maxLength={100}
+										onBlur={this.checkDispositionExistence} maxLength={30}
 										
 										/>
 										{(dispostionsStatus === false) ? <span className="colorRed">&nbsp;****Disposition name is already exits****</span>: null}
@@ -245,7 +245,7 @@ import { Link } from "react-router-dom";
 										 value={descriptions}
 										 onChange={this.handleChange}
 										placeholder="Enter Disposition Name"
-										maxLength={200}
+										maxLength={100}
 										
 										/>
 										
@@ -271,7 +271,7 @@ import { Link } from "react-router-dom";
 				    </div>
                     <div className="form_container">
 						<Row>
-							<Col onClick={this.handleBusinessHRView}>{businessHRView ? <i class="fas fa-caret-down fa-lg" /> : <i class="fas fa-caret-right fa-lg"/>}&nbsp;&nbsp;&nbsp;&nbsp;  Agent Dispostion<span className='colorRed'>*</span></Col>
+							<Col onClick={this.handleBusinessHRView}>{businessHRView ? <i class="fas fa-caret-down fa-lg" /> : <i class="fas fa-caret-right fa-lg"/>}&nbsp;&nbsp;&nbsp;&nbsp;  Agent Dispostion</Col>
 						</Row>
 						{businessHRView?
 						<>
@@ -280,9 +280,9 @@ import { Link } from "react-router-dom";
 							</Row>
 							{items.map((item, index) => (
           <Row key={index} className='align-items-center'>
-             <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; Code <span className='colorRed'>*</span></Col>
-          <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; {item.code} <span className='colorRed'>*</span></Col>
-            <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Item Name <span className='colorRed'>*</span></Col>
+             <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; Code </Col>
+          <Col md={2}>&nbsp;&nbsp;&nbsp;&nbsp; {item.code} </Col>
+            <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Item Name </Col>
 
 			{index !== items.length - 1 && (
 				 <Col md={3}>

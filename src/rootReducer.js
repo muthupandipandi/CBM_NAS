@@ -10,6 +10,7 @@ import dispostionReducer from './Components/DispositionManagement/dispostionRedu
 import usergroupReducer from './Components/UserGroup/usergroupReducer'
 import skillsetReducer from './Components/SkillSet/skillsetReducer'
 import dncManagementReducer from './Components/DNCManagement/dncManagementReducer'
+import agentDashboradReducer from './Components/AgentDashboard/agentDashboradReducer'
 const appReducer = combineReducers({
   LoginReducer,
   campaignReducer,
@@ -21,7 +22,9 @@ const appReducer = combineReducers({
   dispostionReducer,
   usergroupReducer,
   skillsetReducer,
-  dncManagementReducer
+  dncManagementReducer,
+  agentDashboradReducer
+
   
 });
 

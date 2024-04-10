@@ -66,10 +66,8 @@ import { withWidth } from "@material-ui/core";
 				 selectCampaignQueue : [],
 				 campaignAssignQueue : [
 					{'id' : 15, 'label' : 'nas-neuro' },
-					{'id' : 11, 'label' : 'Post Due' },
-										{'id' : 12, 'label' : 'Pre Due' },
-										{'id' : 13, 'label' : 'PTF' },
-										{'id' : 14, 'label' : 'FUP' }],
+					{'id' : 11, 'label' : 'post-Overdue' },
+										],
 
 				concurrrentCalls : [{'id' : 1, 'label' : '1' },
 				{'id' : 2, 'label' : '2' },
@@ -294,7 +292,7 @@ import { withWidth } from "@material-ui/core";
 		if (parseInt(e.target.maxLength)>=e.target.value.length){
 		if (onlyNumbers.test(value) || value === '') {
 		const {tempMin} = this.state
-		let val = e.target.value+":"+tempMin
+		let val = e.target.value+":"+tempMin?tempMin:'00'
 		this.setState({tempHr:e.target.value})
 		this.setState({maxAdvNotice:val})
 
@@ -308,7 +306,7 @@ import { withWidth } from "@material-ui/core";
 		if (parseInt(e.target.maxLength)>=e.target.value.length){
 		if (onlyNumbers.test(value) || value === '') {
 		   const {tempHr} = this.state
-		   let val = tempHr+":"+e.target.value
+		   let val = tempHr?tempHr:'00'+":"+e.target.value
 		   this.setState({tempMin:e.target.value})
 		   this.setState({maxAdvNotice:val})
 
@@ -443,9 +441,9 @@ import { withWidth } from "@material-ui/core";
 			   "campaignActive" : campaignActive,
 			   "schedulerEnabled": schedulerEnabled,
 			   "startDate" : startDate,
-			   "startTime" : startTime.label+":00",
+			   "startTime" : startTime.label+"",
 			   "endDate" : endDate,
-			   "endTime" : endTime.label+":00",
+			   "endTime" : endTime.label+"",
 			   "weekDaysTime": weekDaysTime,
 			   "callBefore" : callBefore.day.split(' ')[0],
 			   "maxAdvNotice" : maxAdvNotice+":00",
@@ -547,7 +545,9 @@ import { withWidth } from "@material-ui/core";
 	  closeSaveClearMessage = () => {
 		this.setState({saveMessage : false})
 	  }
-
+	  filterOptions = (option, searchValue) => {
+        return option.label.toLowerCase().includes(searchValue.toLowerCase());
+    };
 	render(){
 		const {isOpen,isPending,showMessage,message} = this.props
 		const campaignStatus = _.cloneDeep(this.props.action.campaignStatus)
@@ -584,7 +584,9 @@ import { withWidth } from "@material-ui/core";
 						<Row className='align-items-center'>
 								<Col md={2}>{reminderView ? <i class="fas fa-caret-down fa-lg" onClick={this.handleReminderView} /> : <i class="fas fa-caret-right fa-lg" onClick={this.handleReminderView}/> } &nbsp;&nbsp;&nbsp;&nbsp; Campaign Name  <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl style={{width:'99%',height:'38px'}} maxLength={30} type='text' id="campaignName"
-										onChange={this.handleAllowCharacters} value={campaignName}
+										onChange={this.handleAllowCharacters}
+										onPaste={this.handleAllowCharacters}
+										value={campaignName}
 										placeholder="Enter Campaign Name"
 										onBlur={this.checkCampaignStatus}
 										/>
@@ -663,6 +665,7 @@ import { withWidth } from "@material-ui/core";
 									clearFilterOnClose={true}
 									placeholder="Start Time"
 									dropdownHeight={200}
+									hideRadio={false}
 								/>
 								</Col>
 								<Col md={1}></Col>
@@ -804,6 +807,7 @@ import { withWidth } from "@material-ui/core";
 										 multiple={false}
 										 keepOpen={false}
 										 includeFilter={false}
+										
 										 clearFilterOnClose={true}
 										 placeholder={"Select DNC List"}
 										 dropdownHeight={200}
@@ -905,7 +909,9 @@ import { withWidth } from "@material-ui/core";
 										</Col>
 										<Col md={3}>
 										<FormControl  type='text' id="maxAHr" maxLength={5}
-											onChange={this.handleMaxHrChange} value={tempHr}
+											onChange={this.handleMaxHrChange} 
+											onPaste={this.handleMaxHrChange}
+											value={tempHr}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
@@ -913,7 +919,9 @@ import { withWidth } from "@material-ui/core";
 										</Col>
 										<Col md={3}>
 										<FormControl  type='text' id="maxAdvMin" maxLength={2}
-											onChange={this.handleMaxValueChange} value={tempMin}
+											onChange={this.handleMaxValueChange} 
+											
+											onPaste={this.handleMaxValueChange} value={tempMin}
 											placeholder="minute"/>
 										</Col>
 										<Col md={3}></Col>
@@ -931,7 +939,9 @@ import { withWidth } from "@material-ui/core";
 										</Col>
 										<Col md={3}>
 										<FormControl  type='text' id="maxAHr" maxLength={5}
-											onChange={this.handleRetryHrChange} value={tempHrD}
+											onChange={this.handleRetryHrChange}
+											
+											onPaste={this.handleRetryHrChange} value={tempHrD}
 											placeholder="hr"/>
 										</Col>
 										<Col md={1}>
@@ -939,6 +949,7 @@ import { withWidth } from "@material-ui/core";
 										</Col>
 										<Col md={3}>
 										<FormControl  type='text' id="maxAdvMin" maxLength={2}
+										onPaste={this.handleRetryValueChange}
 											onChange={this.handleRetryValueChange} value={tempMinD}
 											placeholder="minute"/>
 										</Col>
@@ -948,7 +959,7 @@ import { withWidth } from "@material-ui/core";
 								<Col md={2}>Retry Count<span className='colorRed'>*</span></Col>
 								<Col md={4}>
 								<FormControl style={{width:'99%',height:'38px'}} type='text' maxLength={1} id="retryCount"
-											onChange={this.handleSecChange} value={retryCount}
+											onChange={this.handleSecChange} onPaste={this.handleSecChange}  value={retryCount}
 											placeholder="Enter Retry Count"
 
 										/>

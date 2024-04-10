@@ -26,6 +26,7 @@ export default (state = initialState, action) => {
         {"moduleName": "DNC", "icon": "fas fa-phone-slash", "path" :"/dashboard/dnc"},  
         {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
+        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
       ]
@@ -35,6 +36,7 @@ export default (state = initialState, action) => {
         {"moduleName": "Dashboard", "icon": "fas fa-home", "path" :"/dashboard/reportgraph"},
         {"moduleName": "Campaign Management", "icon": "fas fa-rocket", "path" :"/dashboard/campaign"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
+        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         // {"moduleName": "Dashboard", "icon": "fas fa-home", "path" :"/dashboard/reportgraph"},
         // {"moduleName": "Campaign Management", "icon": "fas fa-rocket", "path" :"/dashboard/campaign"},
         // {"moduleName": "User Management", "icon": "fas fa-user-plus", "path" :"/dashboard/users"},
@@ -60,6 +62,7 @@ export default (state = initialState, action) => {
         {"moduleName": "DNC", "icon": "fas fa-phone-slash", "path" :"/dashboard/dnc"},  
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
+        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -76,6 +79,7 @@ export default (state = initialState, action) => {
         
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
+        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -91,6 +95,7 @@ export default (state = initialState, action) => {
         
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
+        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         // {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -102,6 +107,7 @@ export default (state = initialState, action) => {
 
     }
   }
+
   switch (action.type) {
     case 'LOGIN_ACTION_PENDING':
       return Object.assign({}, state, {
@@ -109,6 +115,7 @@ export default (state = initialState, action) => {
       })
     case 'LOGIN_ACTION_SUCCESS':
       console.log(action)
+      window.localStorage.setItem('modules',JSON.stringify(moduledata))
       return Object.assign({}, state, {      
         loggedinData: action.loggedinData,
         accessToken: action.accessToken,
