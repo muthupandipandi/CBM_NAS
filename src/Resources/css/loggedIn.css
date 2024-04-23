@@ -105,9 +105,14 @@
     background: rgba(51, 38, 230, 0.301);
 }
 .loginHeader{
-    color: #083789;
-    font-weight: bold;
+    color: #00a3e4;
+    /* font-weight: bold; */
     font-size: 30px;
+}
+.loginHeader-psw{
+    color: #00a3e4;
+    /* font-weight: bold; */
+    font-size: 28px;
 }
 .alignRight{
     font-weight:bold;

@@ -8,6 +8,10 @@ const initialState = {
     agentData:[],
     userGroupsData:[],
     userEntity:false,
+    userPhoneStatus:true,
+    userIdStatus:true,
+    userExtnStatus:true,
+    userEmailStatus:true
   }
   export default (state = initialState, action) => {
     switch (action.type) {
@@ -57,6 +61,22 @@ const initialState = {
             case 'USER_ENTITY_CHECK':
             return Object.assign({}, state, {
                 userEntity: action.userEntity,
+            })
+            case 'USER_ID_CHECK':
+            return Object.assign({}, state, {
+                userIdStatus: action.userIdStatus,
+            })
+            case 'USER_EXTN_CHECK':
+            return Object.assign({}, state, {
+                userExtnStatus: action.userExtnStatus,
+            })
+            case 'USER_PHONE_CHECK':
+            return Object.assign({}, state, {
+                userPhoneStatus: action.userPhoneStatus,
+            })
+            case 'USER_Email_CHECK':
+            return Object.assign({}, state, {
+                userEmailStatus: action.userEmailStatus,
             })
 			default:
 			return state

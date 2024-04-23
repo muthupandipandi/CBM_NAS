@@ -1,4 +1,5 @@
-import { USER_INFO_LOAD,Agent_LIST,USER_INFO_LOAD_ALL,SKILLSET_LIST, USER_INFO_ADD, USER_INFO_EDIT, USER_INFO_ROLES, DISABLE_USER, ENTITY_EXISTS_FIND_USER,GROUP_LIST, APPROVE_USER, REJECT_USER  } from '../apiList';
+import { USER_INFO_LOAD,Agent_LIST,USER_INFO_LOAD_ALL,SKILLSET_LIST, USER_INFO_ADD, USER_INFO_EDIT, USER_INFO_ROLES,
+  VALIDATE_USER,VALIDATE_USEREXTN,VALIDATE_USEREMAIL,VALIDATE_USEREPHON, DISABLE_USER, ENTITY_EXISTS_FIND_USER,GROUP_LIST, APPROVE_USER, REJECT_USER  } from '../apiList';
 import _ from 'lodash';
 
 export function UserDataLoad(){
@@ -203,8 +204,134 @@ export function UserGroupsData(){
     }
 }
 
-
-
+export function checkUserStatus(obj){  
+  return (dispatch, getState)  => {
+      let headers = new Headers()
+      let token = window.localStorage.getItem('accessToken')
+      const tokenType = window.localStorage.getItem('tokenType')
+      // console.log("LO STATE",  getState().LoginReducer)
+      headers.append("Authorization",tokenType+ ' ' +token);
+      //headers.append("Authorization",token);
+      headers.append('Content-Type','application/json');
+      headers.append('Accept','application/json');
+  fetch(VALIDATE_USER, {
+      method: 'POST',
+      headers : headers,
+      body:JSON.stringify(obj)
+  }).then((res) => res.json())
+      .then(json => {
+          if(json.status===401){
+              window.location.href = '/'
+             }
+             else{
+          if(json.status === 200) {
+              dispatch({type : "USER_ID_CHECK", userIdStatus : json.value})
+          } else {
+              dispatch(UserError(json))
+          }
+      }
+      })
+      .catch(error => {
+          dispatch(UserError(error))
+      })
+  }
+}
+export function checkUserPhoneStatus(obj){  
+  return (dispatch, getState)  => {
+      let headers = new Headers()
+      let token = window.localStorage.getItem('accessToken')
+      const tokenType = window.localStorage.getItem('tokenType')
+      // console.log("LO STATE",  getState().LoginReducer)
+      headers.append("Authorization",tokenType+ ' ' +token);
+      //headers.append("Authorization",token);
+      headers.append('Content-Type','application/json');
+      headers.append('Accept','application/json');
+  fetch(VALIDATE_USEREPHON, {
+      method: 'POST',
+      headers : headers,
+      body:JSON.stringify(obj)
+  }).then((res) => res.json())
+      .then(json => {
+          if(json.status===401){
+              window.location.href = '/'
+             }
+             else{
+          if(json.status === 200) {
+              dispatch({type : "USER_PHONE_CHECK", userPhoneStatus : json.value})
+          } else {
+              dispatch(UserError(json))
+          }
+      }
+      })
+      .catch(error => {
+          dispatch(UserError(error))
+      })
+  }
+}
+export function checkUserExtnStatus(obj){  
+  return (dispatch, getState)  => {
+      let headers = new Headers()
+      let token = window.localStorage.getItem('accessToken')
+      const tokenType = window.localStorage.getItem('tokenType')
+      // console.log("LO STATE",  getState().LoginReducer)
+      headers.append("Authorization",tokenType+ ' ' +token);
+      //headers.append("Authorization",token);
+      headers.append('Content-Type','application/json');
+      headers.append('Accept','application/json');
+  fetch(VALIDATE_USEREXTN, {
+      method: 'POST',
+      headers : headers,
+      body:JSON.stringify(obj)
+  }).then((res) => res.json())
+      .then(json => {
+          if(json.status===401){
+              window.location.href = '/'
+             }
+             else{
+          if(json.status === 200) {
+              dispatch({type : "USER_EXTN_CHECK", userExtnStatus : json.value})
+          } else {
+              dispatch(UserError(json))
+          }
+      }
+      })
+      .catch(error => {
+          dispatch(UserError(error))
+      })
+  }
+}
+export function checkUserEmailStatus(obj){  
+  return (dispatch, getState)  => {
+      let headers = new Headers()
+      let token = window.localStorage.getItem('accessToken')
+      const tokenType = window.localStorage.getItem('tokenType')
+      // console.log("LO STATE",  getState().LoginReducer)
+      headers.append("Authorization",tokenType+ ' ' +token);
+      //headers.append("Authorization",token);
+      headers.append('Content-Type','application/json');
+      headers.append('Accept','application/json');
+  fetch(VALIDATE_USEREMAIL, {
+      method: 'POST',
+      headers : headers,
+      body:JSON.stringify(obj)
+  }).then((res) => res.json())
+      .then(json => {
+          if(json.status===401){
+              window.location.href = '/'
+             }
+             else{
+          if(json.status === 200) {
+              dispatch({type : "USER_Email_CHECK", userEmailStatus : json.value})
+          } else {
+              dispatch(UserError(json))
+          }
+      }
+      })
+      .catch(error => {
+          dispatch(UserError(error))
+      })
+  }
+}
 export function UserGroupDataSuccess(data){
   if(data.status === 200){
     console.log(data.value)
@@ -273,6 +400,7 @@ export function editUser(newData){
            }
            else{
             dispatch(UserError(json))
+            dispatch(UserDataLoad())
             //dispatch(UserDataLoad())
             if(json.status === 200){
               dispatch(ApproveUser(json.value))

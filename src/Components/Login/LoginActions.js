@@ -166,6 +166,7 @@ export function LoginAttemptAction(obj){
       .then((json) =>{
         dispatch(LoginAttemptActionSuccess(json))
         dispatch(makeShowmodalFalse())
+        dispatch(LoginFeatures())
       })
       .catch((error) =>{
         dispatch(LoginAttemptActionSuccess(successResponse))
@@ -188,6 +189,7 @@ export function LoginAttemptActionSuccess(data){
     
     window.localStorage.setItem('userGroup', data.value['userGroupName'])
     window.localStorage.setItem('role',data.value['roles'])
+    window.localStorage.setItem('userData',JSON.stringify(data.value))
     // window.localStorage.setItem('email', JSON.stringify(input.email))
     return{
       type:'LOGIN_ACTION_SUCCESS',
@@ -249,6 +251,76 @@ export function LoginChangePassword(obj){
         //dispatch(loginerror(error))       
       })   
     }
+}
+export function LoginFeatures(obj){
+  let headers = new Headers()
+  headers.append('Content-Type','application/json');
+  headers.append('Accept','application/json');  
+  
+      let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+  
+  return dispatch => {
+    //if((obj.userName === 'Admin' || obj.userName === 'Testuser' || obj.userName === 'sehauser1' || obj.userName === 'sehauser2') && obj.password === 'Welcome@123') {
+    // if( _.find(successResponse,{value:{userName:obj.userName}})) {
+    //   let logindata = _.find(successResponse,{value:{userName:obj.userName}})
+    //   if(logindata.value.password === obj.password) {
+    //     dispatch(LoginAttemptActionSuccess(logindata))  
+    //   } else {
+    //       const error = {'message' : 'Login Failed. Plese Enter valid Password'}
+    //       dispatch(loginerror(error))
+    //   } 
+    // } else {
+    //   const error = {'message' : 'Login Failed. Plese Enter valid Username'}
+    //   dispatch(loginerror(error))
+    // }
+    
+    fetch(USER_FEATURE, {
+      method: 'GET',
+      headers : headers,
+      
+    }).then((res) => res.json())
+      .then((json) =>{
+        if(json.status===401){
+          window.location.href = '/'
+         }
+         else{
+        dispatch(futureActionSuccess(json))
+         }
+        
+      })
+      .catch((error) =>{
+
+        dispatch(futureActionSuccess(successResponse))
+       
+        //dispatch(loginerror(error))       
+      })   
+    }
+}
+
+export function futureActionSuccess(data){
+  // console.log(data.value['accessToken'])
+  console.log(data)
+  if(data.status === 200){  
+   
+    window.localStorage.setItem('dashboard', data.value.dashboard)
+    let dd=window.localStorage.getItem('modules')
+    if (data.value.dashboard!==false){
+    let val=dd?JSON.parse(dd):[]
+    val = val.filter(item => item.moduleName !== "Realtime Dashboard");
+    window.localStorage.setItem('modules',JSON.stringify(val))
+    }
+
+
+    return{
+      type:'FUTURE',
+      isPending:false,     
+    }
+  } else {
+    return (loginerror(data))    
+  }
 }
 export function changePasswordActionSuccess(data){
   // console.log(data.value['accessToken'])
@@ -325,6 +397,14 @@ export function LogoutAction(history){
       .catch((error) =>{dispatch(LogoutActionSuccess(error))
       })   
     }
+}
+export function setNavOpen(val){
+  console.log('TESTTTt')
+  return {
+    type:"NAVOPEN",
+    navOpen:val,
+
+  }
 }
 export function LogoutActionSuccess(){
   return {

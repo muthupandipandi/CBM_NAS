@@ -1,4 +1,5 @@
-import {CAMPAIGN_INFO_LOAD,CAMPAIGN_INFO_LOAD_ALL,USER_GROUP,DISPOSTION_LIST,LIST_DNC, CAMPAIGN_INFO_ADD, CAMPAIGN_INFO_EDIT, CAMPAIGN_INFO_CHECK, UPLOAD_CONTACTS_CAMPAIGN} from '../apiList';
+import {CAMPAIGN_INFO_LOAD,CAMPAIGN_INFO_LOAD_ALL,USER_GROUP,DISPOSTION_LIST,LIST_DNC, CAMPAIGN_INFO_ADD,
+    CAMPAIGN_START,CAMPAIGN_STOP,CAMPAIGN_PAUSE,CAMPAIGN_RESUME, CAMPAIGN_INFO_EDIT, CAMPAIGN_INFO_CHECK, UPLOAD_CONTACTS_CAMPAIGN} from '../apiList';
 import _ from 'lodash';
 
 export function CampaignLoad(){
@@ -188,6 +189,147 @@ export function checkCampaignStatus(obj){
         })
     }
 }
+
+export function startRunCampaignStatus(obj){  
+    return (dispatch, getState)  => {
+        let headers = new Headers()
+        let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+        //headers.append("Authorization",token);
+        headers.append('Content-Type','application/json');
+        headers.append('Accept','application/json');
+    fetch(CAMPAIGN_START+'?campaignId='+obj, {
+        method: 'POST',
+        headers : headers,
+        body:JSON.stringify(obj)
+    }).then((res) => res.json())
+        .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+            if(json.status === 200) {
+                dispatch(CampaignLoad())
+                dispatch({type : "CAMPAIGN_RUN"})
+            } else {
+                dispatch(CampaignEditError(json))
+            }
+        }
+        })
+        .catch(error => {
+            dispatch(CampaignEditError(error))
+        })
+    }
+}
+
+
+export function stopRunCampaignStatus(obj){  
+    return (dispatch, getState)  => {
+        let headers = new Headers()
+        let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+        //headers.append("Authorization",token);
+        headers.append('Content-Type','application/json');
+        headers.append('Accept','application/json');
+    fetch(CAMPAIGN_STOP+'?campaignId='+obj, {
+        method: 'POST',
+        headers : headers,
+        body:JSON.stringify(obj)
+    }).then((res) => res.json())
+        .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+            if(json.status === 200) {
+                dispatch(CampaignLoad())
+                dispatch({type : "CAMPAIGN_RUN"})
+            } else {
+                dispatch(CampaignEditError(json))
+            }
+        }
+        })
+        .catch(error => {
+            dispatch(CampaignEditError(error))
+        })
+    }
+}
+
+
+
+export function pauseRunCampaignStatus(obj){  
+    return (dispatch, getState)  => {
+        let headers = new Headers()
+        let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+        //headers.append("Authorization",token);
+        headers.append('Content-Type','application/json');
+        headers.append('Accept','application/json');
+    fetch(CAMPAIGN_PAUSE+'?campaignId='+obj, {
+        method: 'POST',
+        headers : headers,
+        body:JSON.stringify(obj)
+    }).then((res) => res.json())
+        .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+            if(json.status === 200) {
+                dispatch(CampaignLoad())
+                dispatch({type : "CAMPAIGN_RUN"})
+            } else {
+                dispatch(CampaignEditError(json))
+            }
+        }
+        })
+        .catch(error => {
+            dispatch(CampaignEditError(error))
+        })
+    }
+}
+
+
+export function resumeRunCampaignStatus(obj){  
+    return (dispatch, getState)  => {
+        let headers = new Headers()
+        let token = window.localStorage.getItem('accessToken')
+        const tokenType = window.localStorage.getItem('tokenType')
+        // console.log("LO STATE",  getState().LoginReducer)
+        headers.append("Authorization",tokenType+ ' ' +token);
+        //headers.append("Authorization",token);
+        headers.append('Content-Type','application/json');
+        headers.append('Accept','application/json');
+    fetch(CAMPAIGN_RESUME+'?campaignId='+obj, {
+        method: 'POST',
+        headers : headers,
+        body:JSON.stringify(obj)
+    }).then((res) => res.json())
+        .then(json => {
+            if(json.status===401){
+                window.location.href = '/'
+               }
+               else{
+            if(json.status === 200) {
+                dispatch(CampaignLoad())
+                dispatch({type : "CAMPAIGN_RUN"})
+            } else {
+                dispatch(CampaignEditError(json))
+            }
+        }
+        })
+        .catch(error => {
+            dispatch(CampaignEditError(error))
+        })
+    }
+}
+
 export function DNCLoad(){
     return (dispatch,getState) => {
         let headers = new Headers()

@@ -514,7 +514,7 @@ return(
 										value={serviceLevelThresold}
 										
 										inputMode="numeric"
-										/><span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										/><span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								</Col>
 
@@ -523,7 +523,7 @@ return(
 								<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='text' id="firstCallResalution" min="0" max="59"
 										onChange={this.handlePercentageChange} value={firstCallResalution}
 										/>
-								<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+								<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 							
 								
@@ -565,7 +565,7 @@ return(
 								<FormControl  type='text' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										onChange={this.handleSecChange} value={serviceLevelGoal} maxLength={2}
 										/>
-										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								
 								</Col>
@@ -575,7 +575,7 @@ return(
 							<FormControl  type='text' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										onChange={this.handleSecChange} value={abandoneRateThresold} maxLength={2}
 										/>
-										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								
 							</Col>
@@ -592,7 +592,7 @@ return(
 								{/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
 								</Row>
 							<Row className='align-items-center'>  
-								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA<span className='colorRed'>*</span></Col>
+								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Against SLA<span className='colorRed'>*</span></Col>
 							<Col md={3} >
 							
 										

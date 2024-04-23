@@ -63,6 +63,7 @@ import MessageShow from '../mesaageShow'
 				 campaignAssignQueue : [
 					{'id' : 15, 'label' : 'nas-neuro' },
 					{'id' : 11, 'label' : 'post-Overdue' },
+					{'id' : 12, 'label' : 'Ezdan' }
 										],
 										concurrrentCalls : [{'id' : 1, 'label' : '1' },
 				{'id' : 2, 'label' : '2' },
@@ -670,7 +671,7 @@ handleClickOutside(event) {
 							<br></br>
 						</Row> */}
 						<Row className='align-items-center'>
-							<Col md={2}>Start Date-Time<span className='colorRed'>*</span></Col>
+							<Col md={2}>Schedule Date-Time<span className='colorRed'>*</span></Col>
 							<Col md={2}> 
 								<DatePicker
 									selected={tempStartDate}
@@ -713,7 +714,7 @@ handleClickOutside(event) {
 								dropdownHeight={200}
 							/>
 							</Col>
-							<Col md={2}>End Date-Time<span className='colorRed'>*</span></Col>
+							<Col md={2}>Schedule End Date-Time<span className='colorRed'>*</span></Col>
 							<Col md={2}>
 
 								<DatePicker

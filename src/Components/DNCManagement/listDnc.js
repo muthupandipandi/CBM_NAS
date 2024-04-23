@@ -24,7 +24,10 @@ export default class listDnc extends Component {
   
   componentDidMount(){
     this.props.DNCLoad()
-    
+    let log_da=window.localStorage.getItem('userData')
+    if(this.props.loggedinDat===null){
+    this.props.loggedinDat=log_da?JSON.parse(log_da):[]
+    }
     // this.props.UserGroupsData()
   }
   handleEdit = (index) => {
@@ -56,8 +59,8 @@ export default class listDnc extends Component {
           return(
               <tr key={index}>
                 
-								<td className='text-center'><span className='colorblack '>{val.dncName}</span></td>
-                <td className='text-center'><span className='colorblack '>{val.description}</span></td>
+								<td className='text-left'><span className='colorblack '>{val.dncName}</span></td>
+                <td className='text-left'><span className='colorblack '>{val.description}</span></td>
 								
 								<td>
                 {/* {_.isEqual(loggedinData.role,"admin") || _.isEqual(loggedinData.role,"subadmin")?  */}

@@ -391,7 +391,7 @@ return(
 										value={serviceLevelThresold.toString().padStart(2, '0')} disabled={true}
 										
 										inputMode="numeric"
-										placeholder="minute"/><span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										placeholder="minute"/><span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								</Col>
 
@@ -400,7 +400,7 @@ return(
 								<FormControl style={{ display: 'inline', width: '70%',appearance: 'textfield' }}  type='number' id="firstCallResalution" min="0" max="59"
 										 value={firstCallResalution.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
-								<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+								<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 							
 								
@@ -442,7 +442,7 @@ return(
 								<FormControl  type='number' id="serviceLevelGoal" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										 value={serviceLevelGoal.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
-										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								
 								</Col>
@@ -452,7 +452,7 @@ return(
 							<FormControl  type='number' id="abandoneRateThresold" min="0" max="59" style={{ display: 'inline', width: '70%',appearance: 'textfield' }}
 										 value={abandoneRateThresold.toString().padStart(2, '0')} disabled={true}
 										placeholder="minute"/>
-										<span style={{ display: 'inline',fontWeight: 'normal' }}>Sec
+										<span style={{ display: 'inline',fontWeight: 'normal' }}>%
 										</span>
 								
 							</Col>
@@ -469,7 +469,7 @@ return(
 								{/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
 								</Row>
 							<Row className='align-items-center'>  
-								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Againest SLA</Col>
+								<Col md={3} style={{ padding:'0' }}>  &nbsp;&nbsp;&nbsp;&nbsp; Count Abandoned Against SLA</Col>
 							<Col md={3} >
 							
 										

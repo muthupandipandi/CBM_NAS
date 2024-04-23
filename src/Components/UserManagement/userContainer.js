@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import user from "./user";
-import { UserDataLoad, addnewUser,SkillSetLoad,AgentLoad, editUser, UserRoleData,UserGroupsData, IsEntityNameExists, DisableUser, UserErrorClose } from './userAction';
+import { UserDataLoad, addnewUser,SkillSetLoad,AgentLoad,checkUserEmailStatus,checkUserStatus,checkUserPhoneStatus,checkUserExtnStatus, editUser, UserRoleData,UserGroupsData, IsEntityNameExists, DisableUser, UserErrorClose } from './userAction';
 
 const mapStateToProps = (state) => {
   return {
@@ -17,6 +17,10 @@ const mapStateToProps = (state) => {
     userEntity:state.userReducer.userEntity,
     skillData:state.userReducer.skillData,
     agentData:state.userReducer.agentData,
+    userIdStatus:state.userReducer.userIdStatus,
+    userExtnStatus:state.userReducer.userExtnStatus,
+    userPhoneStatus:state.userReducer.userPhoneStatus,
+    userEmailStatus:state.userReducer.userEmailStatus,
     
   }  
 }
@@ -30,6 +34,10 @@ const mapDispatchToProps = (dispatch) => ({
     AgentLoad: () => dispatch(AgentLoad()),
     DisableUser: (a) => dispatch(DisableUser(a)),
     IsEntityNameExists: (a) => dispatch(IsEntityNameExists(a)),
+    checkUserStatus: (a) => dispatch(checkUserStatus(a)),
+    checkUserPhoneStatus: (a) => dispatch(checkUserPhoneStatus(a)),
+    checkUserExtnStatus: (a) => dispatch(checkUserExtnStatus(a)),
+    checkUserEmailStatus: (a) => dispatch(checkUserEmailStatus(a)),
     UserErrorClose:() => dispatch(UserErrorClose()),
 })
 

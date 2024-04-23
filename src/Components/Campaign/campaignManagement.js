@@ -17,7 +17,8 @@ export default class campaignManagement extends Component {
       searchval:'',
       orderBy:'asc',
       userData:props.userData,
-      campignRuningStaus:'Start'
+      campignRuningStaus:'Start',
+      loggedinData:this.props.loggedinData
     }
   }
 
@@ -25,11 +26,32 @@ export default class campaignManagement extends Component {
     this.props.CampaignLoad()
     this.props.DNCLoad()
     this.props.DispostionLoad()
+    let log_da=window.localStorage.getItem('userData')
+    console.log(this.state.loggedinData)
+    if (Object.entries(this.state.loggedinData).length === 0) {
+      console.log(log_da)
+    this.setState({loggedinData:log_da?JSON.parse(log_da):{}})
+    }
   }
- startviewCampaign=(index,value)=>{
-  this.setState({
-    campignRuningStaus:value
-  })
+ startviewCampaign=(index,id)=>{
+  
+			// const obj = {'campaignId': id}
+			this.props.startRunCampaignStatus(id)
+
+ }
+ stopviewCampaign=(index,id)=>{
+  // const obj = {'campaignId': id}
+			this.props.stopRunCampaignStatus(id)
+
+ }
+ resumetviewCampaign=(index,id)=>{
+  // const obj = {'campaignId': id}
+			this.props.resumeRunCampaignStatus(id)
+
+ }
+ pauseviewCampaign=(index,id)=>{
+  const obj = {'campaignId': id}
+			this.props.pauseRunCampaignStatus(id)
 
  }
   componentDidUpdate(prevProps, prevState) {
@@ -43,12 +65,20 @@ export default class campaignManagement extends Component {
  
 
   mappingreturnData = (startOffset, startCount, Per_Page ) => {
-    const {searchval, userData,campignRuningStaus}= this.state
-    const {loggedinData} = this.props
+    const {searchval, userData,campignRuningStaus,loggedinData}= this.state
+    // const {loggedinData} = this.props
     if(!_.isEmpty(userData)){
       return _.map(userData, (val, index) => {
         if(index >= startOffset & startCount < Per_Page){
           startCount++;
+          const endDate = new Date(val.endDate);
+
+    // Set time part to midnight for both dates
+    const currentDate = new Date();
+    endDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+    console.log(currentDate ,endDate)
+    console.log(currentDate >=endDate)
           return(
               <tr key={index}>
                 <td><span className='colorblack'>{val.campaignId}</span></td>
@@ -60,8 +90,13 @@ export default class campaignManagement extends Component {
                 <td>{val.retryDelay}<span className='colorblue'> min</span></td>
 								<td>{val.retryCount}</td>
                 {/* <td>{val.ftpLocation}</td> */}
-                <td>{(val.campaignActive === "true")? "YES" : "NO"}</td>
-								<td>
+                <td>{(val.campaignActive === "true")? "YES" : "NO"}
+              
+                </td>
+                <td>{(val.frontstatus === "notready")? "Created" : "File Uploaded"}
+              
+              </td>
+								<td className='actiontd text-left'>
                 {_.isEqual(loggedinData.roles,"[Admin]") || _.isEqual(loggedinData.roles,"[Supervisor]")? 
                 <>
                 <MDBTooltip
@@ -69,14 +104,15 @@ export default class campaignManagement extends Component {
                 tag="span"
                 placement="top"
                 >
-                <span className='blue-text'><i className="fas fa-edit m-r-20" style={{color:'red'}}  onClick={()=>this.handleEdit(index)}></i></span>
+                <span  className='blue-text action_move'><i className="fas fa-edit m-r-20" style={{color:'red'}}  onClick={()=>this.handleEdit(index)}></i></span>
                 <span>Edit</span></MDBTooltip>&nbsp;&nbsp;&nbsp;&nbsp; 
                 <MDBTooltip
                 domElement
                 tag="span"
                 placement="top"
+                disabled={val.campaignActive === "false"&& endDate>= currentDate}
                 >
-                <span className='blue-text'><i className="fas fa-upload m-r-20" style={{color:'grey'}}  onClick={()=>this.handleUpload(index)}></i></span>
+                <span className='blue-text'><i className="fas fa-upload m-r-20" style={{color:'grey'}}   onClick={()=>this.handleUpload(index,val.campaignActive)}></i></span>
                 <span>Upload</span></MDBTooltip>&nbsp;&nbsp;&nbsp;&nbsp;
                 </>
                 : null}
@@ -87,33 +123,42 @@ export default class campaignManagement extends Component {
                 >
                 <span><i className="fas fa-eye m-r-20" style={{color:'blue'}}  onClick={()=>this.handleviewCampaign(index)}></i></span>
                 <span>View</span></MDBTooltip> 
-                {campignRuningStaus==='Start'? 
+                
+                {val.frontstatus==='Start' && val.campaignActive !== "false" && endDate>= currentDate? 
                 <>  
         <span title='Start' className='blue-text'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,'running')} style={{color:'green'}} ></i> 
+          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,val.campaignId)} style={{color:'green'}} ></i> 
         </span>
         </>:null
         }
-        {campignRuningStaus==='running' || campignRuningStaus==='stop'? 
+        {(val.frontstatus==='notready' || val.campaignActive === "false" || val.frontstatus==='Completed') || currentDate > endDate && val.frontstatus!=='Stop'? 
+                <>  
+        <span title='Start' className='blue-text'>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,val.campaignId)} style={{color:'grey'}} ></i> 
+        </span>
+        </>:null
+        }
+        {(val.frontstatus==='Running' || val.frontstatus==='Stop') && val.campaignActive !== "false" && (endDate >= currentDate || val.frontstatus!=='Running')? 
                 <>  
         <span title='Stop' >
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-stop-circle m-r-20" style={{color:'red'}} onClick={()=>this.startviewCampaign(index,'stop')}></i> 
+          <i class="fas fa-stop-circle m-r-20" style={{color:'red'}} onClick={()=>this.stopviewCampaign(index,val.campaignId)}></i> 
         </span>
         </>:null}
-        {campignRuningStaus==='pause'? 
+        {val.frontstatus==='Pause' && val.campaignActive !== "false" && endDate>= currentDate? 
                 <> 
         <span title='Resume'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-play-circle m-r-20" style={{color:'green'}} onClick={()=>this.startviewCampaign(index,'running')}></i> 
+          <i class="fas fa-play-circle m-r-20" style={{color:'green'}} onClick={()=>this.resumetviewCampaign(index,val.campaignId)}></i> 
         </span>
         </>:null}
-        {campignRuningStaus==='running'? 
+        {val.frontstatus==='Running' && val.campaignActive !== "false" && endDate>= currentDate? 
         <>
         <span title='Pause'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-pause m-r-20" style={{color:'orange'}} onClick={()=>this.startviewCampaign(index,'pause')}></i> 
+          <i class="fas fa-pause m-r-20" style={{color:'orange'}} onClick={()=>this.pauseviewCampaign(index,val.campaignId)}></i> 
         </span>
         </>:null}
              
@@ -138,21 +183,28 @@ export default class campaignManagement extends Component {
   }
 	handleEdit = (index) => {
 		this.setState({editing:true, editIndex:index})
+    window.localStorage.setItem('isaddOpen',true)
   } 
-  handleUpload = (index) => {
+  handleUpload = (index,val) => {
+    if(val!=='false'){
     this.setState({uploadContact:true, editIndex:index})
+    }
   }
   handleUploadClose = () => {
     this.setState({uploadContact:false, editIndex:''})
   }
   handleEditingClose = () => {
 		this.setState({editing:false, editIndex:''})
+    window.localStorage.setItem('isaddOpen',false)
   }
 	handleAdd = () => {
+    this.props.setNavOpen(false)
 		this.setState({add:true})
+    window.localStorage.setItem('isaddOpen',true)
   }
   handleAddClose = () => {
 		this.setState({add:false})
+    window.localStorage.setItem('isaddOpen',false)
   }	
   handleviewCampaign = (index) => {
 		this.setState({view:true, editIndex:index})
@@ -203,8 +255,8 @@ export default class campaignManagement extends Component {
   }
 
   render() {
-    const {rolesData, loggedinData, fullScreen, showMessage, message,businessType, domainType, isPending, isOpen,dncData,dispostionData} = this.props;
-    const {editIndex, editing, add, campignRuningStaus,activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
+    const {rolesData, fullScreen, showMessage, message,businessType, domainType, isPending, isOpen,dncData,dispostionData} = this.props;
+    const {editIndex,loggedinData, editing, add, campignRuningStaus,activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
     let totalPages ;
     if(!_.isEmpty(userData)){
       totalPages = Math.ceil(userData.length/Per_Page)
@@ -263,6 +315,7 @@ export default class campaignManagement extends Component {
                     <th>Retry Count</th>
                     {/* <th>SFTP Location</th> */}
                     <th>Active</th> 
+                    <th>Status</th> 
                     <th>Actions</th>
                   </tr>
                 </thead>

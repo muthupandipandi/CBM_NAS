@@ -385,6 +385,7 @@ import { Link } from "react-router-dom";
                                         placeholder="Select Language"
                                         onChange={this.handleSelectLangage}
                                         closeOnSelect={true}
+										searchable={false}
                                     />
 										
 										
@@ -412,6 +413,7 @@ import { Link } from "react-router-dom";
                                         placeholder="Select Time Zone"
                                         onChange={this.handleSelectTimeZone}
                                         closeOnSelect={true}
+										searchable={false}
                                     />
 									
                                 </Col>
@@ -429,6 +431,7 @@ import { Link } from "react-router-dom";
                                         placeholder="Select Channel Type"
                                         onChange={this.handleSelectChannelType}
                                         closeOnSelect={true}
+										searchable={false}
                                     />
 									
                                 </Col>  
@@ -526,7 +529,7 @@ import { Link } from "react-router-dom";
                                     placeholder="Enter Agent Type"
                                     /> */}
                                     {/* {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null} */}
-									<Col md={2} style={{ padding:'0' }}>  Count Abandoned Againest SLA <span className='colorRed'>*</span></Col>
+									<Col md={2} style={{ padding:'0' }}>  Count Abandoned Against SLA <span className='colorRed'>*</span></Col>
                                 <Col md={1} >
 								
 											

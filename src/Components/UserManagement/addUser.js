@@ -40,7 +40,8 @@ import MessageShow from '../mesaageShow'
 			showPassword: false,
 			clearMessage:false,
 			saveMessage:false,
-			userActive:true
+			userActive:true,
+			useridStatus:false
 		}
 	}
 	componentDidMount() {
@@ -150,6 +151,9 @@ import MessageShow from '../mesaageShow'
 	}
 	isValidEmailAddress = (address) => {
 		if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+			const {email} = this.state
+		const obj = {'emailId': email}
+		this.props.action.checkUserEmailStatus(obj)
 			return true
 		} else {
 			return false
@@ -460,6 +464,26 @@ console.log(selectedAgent)
 		}
 	}
 	}
+	checkUserStatus = () => {
+		const {employeeId} = this.state
+		const obj = {'userId': employeeId}
+		this.props.action.checkUserStatus(obj)
+	  }
+	  checkUserphoneStatus = () => {
+		const {mobileNumber} = this.state
+		const obj = {'mobNum': mobileNumber}
+		this.props.action.checkUserPhoneStatus(obj)
+	  }
+	  checkUseremailStatus = () => {
+		const {email} = this.state
+		const obj = {'emailId': email}
+		this.props.action.checkUserEmailStatus(obj)
+	  }
+	  checkUserExtnStatus = () => {
+		const {pbxExtn} = this.state
+		const obj = {'pbxExtn': pbxExtn}
+		this.props.action.checkUserExtnStatus(obj)
+	  }
 	customInput = ({ ...props }) => {
 		return (
 		  <input
@@ -469,12 +493,13 @@ console.log(selectedAgent)
 		  />
 		);
 	  };
+
 	render(){
 		const {userEntity,rolesData,loggedinData,groupsData} = this.props
 		const {showMessage,message} = this.props.action
         const { employeeId, firstName,clearMessage,inputValue,
 			saveMessage, email,selectedUserGroup,showPassword,userActive, mobileNumber,selectedAgent, password, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
-		
+			const {userIdStatus,userExtnStatus,userEmailStatus,userPhoneStatus} = _.cloneDeep(this.props.action)
 		
 		
 		
@@ -516,14 +541,19 @@ console.log(selectedAgent)
 								onBlur={() => this.setState({ emailIsValid: this.isValidEmailAddress(email) })}
                                     onChange={this.handleChange}  value={email} 
                                     placeholder="Enter Email ID"
+									
                                     />
                                     {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null}
-                                </Col>  
+									{(!userEmailStatus && email?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **Email ID already exists**</span> : null }
+								</Col>  
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Mobile Number  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='mobileNumber' maxLength={10}
                                     onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={mobileNumber} 
+
+									onBlur={()=>this.checkUserphoneStatus()}
                                     placeholder="Enter mobile Number"
                                     />
+									{(!userPhoneStatus && mobileNumber?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **Mobile Number already exists**</span> : null }
                                 </Col>  
 
                                 
@@ -531,13 +561,13 @@ console.log(selectedAgent)
 						<Row className='align-items-center'>             
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; User ID <span className='colorRed'>*</span></Col>
 								<Col md={4} ><FormControl  type='text' id='employeeId'
-										onBlur={()=>this.handleUserOnBlur(employeeId)}
+										onBlur={()=>this.checkUserStatus()}
 										onPaste={this.handleChangeOnlyallowCharacteNum}
                                         onChange={this.handleChangeOnlyallowCharacteNum} value={employeeId} maxLength={30}
 										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
-							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
+							            {(!userIdStatus && employeeId?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
 								</Col>
                                 <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Password  <span className='colorRed'>*</span></Col>
                                 <Col md={4} >
@@ -614,10 +644,6 @@ console.log(selectedAgent)
                                         values={this.state.selectedUserGroup}
                                         options={this.userGroup()}
 										
-                					onInputChange={this.handleInputChange}
-										
-										
-										
                                         labelField='usergroupName'
                                         dropdownPosition='auto'
                                         valueField='usergroupName'
@@ -626,8 +652,9 @@ console.log(selectedAgent)
                                         placeholder="Select User Group"
                                         onChange={this.handleSelectUserGroup}
                                         closeOnSelect={true}
-										isSearchable
+										
 										maxLength={10}
+										searchable={false}
 										
                                     />
 
@@ -645,7 +672,7 @@ console.log(selectedAgent)
                                         className='text-left selectDropDown'
                                         placeholder="Select Role"
                                         onChange={this.handleSelectRoles}
-										
+										searchable={false}
                                         closeOnSelect={true}
 										maxLength={30} 
                                     />
@@ -657,11 +684,13 @@ console.log(selectedAgent)
 									<>
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; PBX Extension   <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='pbxExtn'
+								onBlur={()=>this.checkUserExtnStatus()}
                                     onChange={this.handleAllowNubers} value={pbxExtn}  onPaste={this.handleAllowNubers}
                                     placeholder="Enter PBX Extension"
 									maxLength={15}
 
                                     />
+									{(!userExtnStatus && pbxExtn?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **PBX Extension already exists**</span> : null }
                                 </Col>  
 								</>)}
 						

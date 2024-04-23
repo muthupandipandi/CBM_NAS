@@ -18,6 +18,7 @@ export default class user extends Component {
       userData:props.userData,
       skillData:props.skillData,
       agentData:props.agentData,
+      loggedinData:this.props.loggedinData
       
     }
   }
@@ -28,6 +29,12 @@ export default class user extends Component {
     this.props.AgentLoad()
     this.props.UserRoleData()
     this.props.UserGroupsData()
+    let log_da=window.localStorage.getItem('userData')
+    console.log(this.state.loggedinData)
+    if (Object.entries(this.state.loggedinData).length === 0) {
+      console.log(log_da)
+    this.setState({loggedinData:log_da?JSON.parse(log_da):{}})
+    }
     
     
   }
@@ -44,9 +51,9 @@ export default class user extends Component {
  
 
   mappingreturnData = (startOffset, startCount, Per_Page ) => {
-    const {searchval, userData}= this.state
+    const {searchval, userData,loggedinData}= this.state
     console.log(userData)
-    const {loggedinData} = this.props
+    // const {loggedinData} = this.state
     if(!_.isEmpty(userData)){
       return _.map(userData, (val, index) => {
         if(index >= startOffset & startCount < Per_Page){
@@ -164,10 +171,11 @@ export default class user extends Component {
       activePage: activePage+1,
     });
   }
+  
 
   render() {
-    const {rolesData,skillData,agentData,userGroupsData, loggedinData, userEntity, showMessage, message,isPending, isOpen} = this.props;
-    const {editIndex, editing, add, activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
+    const {rolesData,skillData,agentData,userGroupsData, userEntity, showMessage, message,isPending, isOpen} = this.props;
+    const {editIndex, editing, add, activePage, Per_Page,loggedinData, view,searchval, userData, disableUser, uploadContact} = this.state;
     let totalPages ;
     if(!_.isEmpty(userData)){
       totalPages = Math.ceil(userData.length/Per_Page)
@@ -216,13 +224,13 @@ export default class user extends Component {
               <Table responsive striped bordered hover>
                 <thead>
                   <tr>   
-                    <th className='text-left'>User Id</th>         
+                    <th className='text-left'>User ID</th>         
                     <th className='text-left'>User Name</th>
-                    <th className='text-left'>Email Id</th>
+                    <th className='text-left'>Email ID</th>
                     <th className='text-left'>Mobile</th>
                     <th className='text-left'>Role</th>
-                    <th className='text-left'>PbxExtn</th>
-                    <th className='text-left'>SkillSet</th>
+                    <th className='text-left'>PBX Extension</th>
+                    <th className='text-left'>Skill Set</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

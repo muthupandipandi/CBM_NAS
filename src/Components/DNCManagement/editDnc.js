@@ -141,7 +141,7 @@ handleAllowCharacters=(event)=>{
 	const { userData, dncName,dncStatus } = this.state;
 	const dispositionExists = this.listdatas().find(item => item.dncName === dncName);
 	console.log(dispositionExists)
-	if (dispositionExists){
+	if (dispositionExists  && this.props.edit.dncName!==dncName){
 		
 		this.setState({dncStatus : false})
 	} else{
@@ -269,7 +269,7 @@ return(
 	  {/* {selectedOption && selectedOption === 'Insert_Number' && (
 									<> */}
 	  <Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Insert Number  </Col>
-							<Col md={3} ><FormControl  type='text' id="insertNumber" maxLength={10}  
+							<Col md={3} ><FormControl  type='text' id="insertNumber" maxLength={15}  
 									onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={insertNumber}
 									placeholder="Enter Insert Number"
 									
@@ -289,7 +289,7 @@ return(
 							<> */}
 
 							<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Delete Number </Col>
-							<Col md={3} ><FormControl  type='text' id="deleteNumber"  maxLength={10}
+							<Col md={3} ><FormControl  type='text' id="deleteNumber"  maxLength={15}
 									 value={deleteNumber}
 									placeholder="Enter Delete Number"
 									

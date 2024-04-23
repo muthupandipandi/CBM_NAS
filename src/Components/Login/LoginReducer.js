@@ -6,7 +6,8 @@ const initialState = {
   message:"",
   modules:[],
   isOpen:false,
-  accessToken : ''
+  accessToken : '',
+  navOpen:true
 }
 export default (state = initialState, action) => { 
   let moduledata = []
@@ -26,7 +27,7 @@ export default (state = initialState, action) => {
         {"moduleName": "DNC", "icon": "fas fa-phone-slash", "path" :"/dashboard/dnc"},  
         {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
-        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
+      
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
       ]
@@ -36,7 +37,7 @@ export default (state = initialState, action) => {
         {"moduleName": "Dashboard", "icon": "fas fa-home", "path" :"/dashboard/reportgraph"},
         {"moduleName": "Campaign Management", "icon": "fas fa-rocket", "path" :"/dashboard/campaign"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
-        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
+   
         // {"moduleName": "Dashboard", "icon": "fas fa-home", "path" :"/dashboard/reportgraph"},
         // {"moduleName": "Campaign Management", "icon": "fas fa-rocket", "path" :"/dashboard/campaign"},
         // {"moduleName": "User Management", "icon": "fas fa-user-plus", "path" :"/dashboard/users"},
@@ -62,7 +63,7 @@ export default (state = initialState, action) => {
         {"moduleName": "DNC", "icon": "fas fa-phone-slash", "path" :"/dashboard/dnc"},  
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
-        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
+        
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -79,7 +80,7 @@ export default (state = initialState, action) => {
         
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
-        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
+     
         {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -95,7 +96,7 @@ export default (state = initialState, action) => {
         
         // {"moduleName": "User Group", "icon": "fas fa-users", "path" :"/dashboard/usergroup"},
         {"moduleName": "Realtime Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/realtimedashboard"},
-        {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
+        // {"moduleName": "Agent Dashboard", "icon": "fas fa-tachometer-alt", "path" :"/dashboard/agentdashboard"},
         // {"moduleName": "List Upload History", "icon": "fas fa-clipboard-list", "path" :"/dashboard/contacts"},
         {"moduleName": "Reports", "icon": "fas fa-file-invoice", "path" :"/dashboard/reports"},
        
@@ -116,6 +117,7 @@ export default (state = initialState, action) => {
     case 'LOGIN_ACTION_SUCCESS':
       console.log(action)
       window.localStorage.setItem('modules',JSON.stringify(moduledata))
+      window.localStorage.setItem('isaddOpen',false)
       return Object.assign({}, state, {      
         loggedinData: action.loggedinData,
         accessToken: action.accessToken,
@@ -156,6 +158,11 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {
         showModalLogin: action.showModalLogin,
       })
+      case "FUTURE":
+        return Object.assign({}, state, {
+          navOpen: action.navOpen,
+          modules: JSON.parse(window.localStorage.getItem('modules'))
+        })
       case "SHOW_LOGIN_MODAL_FALSE":
     return Object.assign({}, state, {
       showModalLogin: action.showModalLogin,

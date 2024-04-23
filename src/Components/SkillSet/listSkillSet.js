@@ -189,15 +189,15 @@ handleAddClose = () => {
                   <tr>   
                     <th>Skill Name</th>         
                     <th className='text-left'>Language</th>
-                    <th className='text-left'>TimeZone</th>
+                    <th className='text-center'>TimeZone</th>
                     <th>Channel Type</th>         
-                    <th className='text-left'>Service Level Thresold</th>
-                    <th className='text-left'>First Call Resalution</th>
-                    <th>Short Call Thresold</th>         
-                    <th className='text-left'>Short Abandone Thresold </th>
-                    <th className='text-left'>Service Level Goal</th>
-                    <th>Abandone Rate Thresold</th>         
-                    <th className='text-left'>Count Abandone Againest SLA</th>
+                    <th className='text-left'>Service Level Threshold(%)</th>
+                    <th className='text-left'>First Call Resolution (%)</th>
+                    <th>Short Call Threshold(Sec)</th>         
+                    <th className='text-left'>Short Abandon Threshold(Sec) </th>
+                    <th className='text-left'>Service Level Goal(%)</th>
+                    <th>Abandon Rate Threshold (%) </th>         
+                    <th className='text-left'>Count Abandon Against SLA</th>
                     {/* <th className='text-left'>TimeZone</th> */}
                    
                     {/* <th>SFTP Location</th> */}

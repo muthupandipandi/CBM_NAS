@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
-import { Button, FormGroup, FormControl, InputGroup } from "react-bootstrap";
+import { Modal,Button, FormGroup, FormControl, InputGroup } from "react-bootstrap";
 // import ShowModalLogin from '../showModalLogin';
 import '../../Resources/css/loggedIn.css';
 import '../../Resources/css/loginback.css';
@@ -15,7 +15,7 @@ class PSWChange extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: "",
+      id: this.props.loggedinData.userName,
       password: "",
       oldPassword:'',
       confirmPassword:'',
@@ -25,7 +25,9 @@ class PSWChange extends Component {
       cfm_passwordtype:"password",
       clearMessage:false,
       saveMessage:false,
-      passwordStatus:false
+      passwordStatus:false,
+      loggedinData:this.props.loggedinData
+      
 
       
     };
@@ -47,7 +49,7 @@ console.log(this.props)
   }
 validateForm() {
 
-    if(this.state.id && this.state.id.length > 0  && this.state.newPassword.length > 0 && this.state.confirmPassword.length > 0){
+    if(this.state.newPassword.length > 0 && this.state.confirmPassword.length > 0){
       if (this.state.id==this.props.action.loggedinData.userName){
         return true;
       }
@@ -108,13 +110,16 @@ loginattempt = () =>{
   // encrypt.setPublicKey(publickey);
   // const encyPassword = encrypt.encrypt(this.state.password);
   // console.log(encyPassword)
-  let obj = {'userId': this.state.id , 'oldPassword': this.state.password,'newPassword': this.state.newPassword,'confirmPassword': this.state.confirmPassword}
+  let obj = {'userId': this.state.loggedinData.userName, 'oldPassword': this.state.password,'newPassword': this.state.newPassword,'confirmPassword': this.state.confirmPassword}
   // let obj = {'username': this.state.id , 'password': 'nLip4KPigzhHYNsPae+yRPUWatS+Eh/LZbTe3dsiPcwYkcfFR3P4DbhusxzWEEo014jXrrfy7KU4e8JCQi9sBbZ7zDJojnFOPQIYtRZsZ/iF18ZFtCEyLPUdJ5sVCtWTlL6ia6b5hLht73exagy6LcNAxcKL9UiKYorOH7ia4w12iRPNPLYmAR0It4r/QGRzd/9A44+U3R69qmHCkAk4z+t7A4pjpvfW7oPj2loINZiIKGs7wDkqVM/waANabsUTL9uIoMa5s8OQNPLocPdpSyjUSG+UveqRFmEyUdi7BEaF8fDna//tzzZbeIk9ftAYamXQSoUtg7nTSXHkbEO3rQ=='}
   this.setState({clicked:true})
   this.props.action.LoginChangePassword(obj)
   
   console.log(this.props)
 }
+handlePaste = (e) => {
+  e.preventDefault(); // Prevent pasting
+};
 handleBlur = () => {
   if (this.state.confirmPassword.length!=0){
     if (this.state.newPassword!==this.state.confirmPassword){
@@ -145,20 +150,35 @@ handleBlur = () => {
 //  }
     return (
       
-      <div className="login_container">
-        
+      <div>
+        {(showMessage === true) ?
+		<ShowModalLogin message={message} falseShowModalPopUp={this.props.CampaignEditErrorClose}/> : null}
+		<Modal
+            show={true}
+            onHide={this.props.closeModal}
+            dialogClassName="modal-80w"
+            size="m"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+			backdrop="static"
+    keyboard={false}
+            >
+            <Modal.Header closeButton>
+            
+            </Modal.Header>
+            <Modal.Body>
         <div class="container">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div style={{'textAlign':'center'}}>
                     <br/>
                     {/* <h1 className="loginHeader">Appointment Reminder</h1> */}
                 </div>
-                <div class="login-form">
+                <div class="login-form-psw">
                 <form onSubmit={this.handleSubmit}>
-                  <h6 className="loginHeader">Change Password</h6>          
+                  <h6 className="loginHeader-psw">Change Password</h6>          
 
-                  <FormGroup controlId="id" >          
+                  {/* <FormGroup controlId="id" >          
                     <FormControl
                       autoFocus
                       type="id"
@@ -166,7 +186,7 @@ handleBlur = () => {
                       onChange={this.handleChange}
                       placeholder = "UserName"
                     />
-                  </FormGroup>
+                  </FormGroup> */}
                   
                  
                   <FormGroup controlId="newPassword">
@@ -175,6 +195,9 @@ handleBlur = () => {
                     value={this.state.newPassword}
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
+                    onPaste={this.handlePaste}
+                          onCopy={this.handlePaste}
+                          onCut={this.handlePaste}
                     type={this.state.new_passwordtype}
                     placeholder = "New password"
                   />
@@ -193,6 +216,9 @@ handleBlur = () => {
                     value={this.state.confirmPassword}
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
+                    onPaste={this.handlePaste}
+                          onCopy={this.handlePaste}
+                          onCut={this.handlePaste}
                     type={this.state.cfm_passwordtype}
                     placeholder = "Confirm password"
                   />
@@ -226,16 +252,17 @@ handleBlur = () => {
                 :  */}
                 
                 <Button variant="primary"
+                style={{width:'40%',margin:'0 auto',fontSize:'22px',background:'#3e8ade'}}
                     block
                     disabled={!this.validateForm()}
                     type="submit"
                     className="buttonwidth"
                     onClick={this.openSaveClearMessage}
                   >
-                  Update Password
+                  Submit
                 </Button>
                 <br></br>
-                <Button type="submit" block className="buttonwidth" variant="primary" onClick={this.props.closeModal}>Close</Button>
+                
                 </form>
 
                 </div>
@@ -250,6 +277,9 @@ handleBlur = () => {
               </div>
             </div>
           </div>
+
+          </Modal.Body>
+            </Modal>
         
         
         {/* <div className='login_Content'>

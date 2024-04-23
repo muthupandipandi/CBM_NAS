@@ -306,7 +306,7 @@ export default class addContacts extends Component {
 			      </div>
             <div><br/></div>
             {historyView === true ?
-              <div>
+              <div style={{ overflowX: 'auto' }}>
                   <Table responsive striped bordered hover>
                   <thead>
                   <tr>            

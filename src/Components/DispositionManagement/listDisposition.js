@@ -24,6 +24,10 @@ export default class listDisposition extends Component {
 
   componentDidMount(){
     this.props.DispostionLoad()
+    let log_da=window.localStorage.getItem('userData')
+    if(this.props.loggedinDat===null){
+    this.props.loggedinDat=log_da?JSON.parse(log_da):[]
+    }
     // this.props.UserGroupsData()
   }
   componentDidUpdate(prevProps, prevState) {

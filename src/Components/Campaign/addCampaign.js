@@ -67,6 +67,7 @@ import { withWidth } from "@material-ui/core";
 				 campaignAssignQueue : [
 					{'id' : 15, 'label' : 'nas-neuro' },
 					{'id' : 11, 'label' : 'post-Overdue' },
+					{'id' : 12, 'label' : 'Ezdan' }
 										],
 
 				concurrrentCalls : [{'id' : 1, 'label' : '1' },
@@ -205,7 +206,7 @@ import { withWidth } from "@material-ui/core";
 // retryDelay , retryCount , campaignStatus === true , campaignActive , schedulerEnabled , selectDNCList , selectDispositionList , selectCampaign , selectCampaignQueue ,concurrentCall , selectedCampaign)
 
 		   if(campaignName && campaignName.length > 0 && startDate && startDate.length > 0 && startTime &&  !_.isEmpty(startTime)&&
-			 endDate && endDate.length > 0 && endTime && !_.isEmpty(endTime) && !_.isEmpty(weekDaysTime)&& callBefore && !_.isEmpty(callBefore)
+			 endDate && endDate.length > 0 && endTime && !_.isEmpty(endTime) && !_.isEmpty(weekDaysTime)&& callBefore && !_.isEmpty(callBefore) && !_.isEmpty(concurrentCall)
 			 &&
 			 retryDelay && retryCount && campaignStatus === true  && selectDNCList && selectDispositionList && selectCampaign && selectCampaignQueue &&concurrentCall && selectedCampaign)
 			{
@@ -623,7 +624,7 @@ import { withWidth } from "@material-ui/core";
 							<br></br>
 						</Row> */}
 						<Row className='align-items-center'>
-								<Col md={2}>Start Date-Time<span className='colorRed'>*</span></Col>
+								<Col md={2}>Schedule Date-Time<span className='colorRed'>*</span></Col>
 								<Col md={2}>
 									<DatePicker
 										selected={tempStartDate}
@@ -669,7 +670,7 @@ import { withWidth } from "@material-ui/core";
 								/>
 								</Col>
 								<Col md={1}></Col>
-								<Col md={2}>End Date-Time<span className='colorRed'>*</span></Col>
+								<Col md={2}>Schedule End Date-Time<span className='colorRed'>*</span></Col>
 								<Col md={2}>
 
 									<DatePicker

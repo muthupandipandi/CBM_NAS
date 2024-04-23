@@ -510,6 +510,7 @@ export default class Report extends Component {
                                     <DatePicker
                                         selected={tempEndDate}
                                         selectsEnd
+                                        className='myDatePicker'
                                         startDate={tempEndDate}
                                         endDate={tempEndDate}
                                         onChange={this.handleChangeEnd}
@@ -598,7 +599,7 @@ export default class Report extends Component {
                             </div>
                         : null }
                     {reportView === true ?
-                    <div>
+                    <div style={{ overflowX: 'auto' }}>
                         <Table responsive striped bordered hover>
                             <thead>
                                 <tr>

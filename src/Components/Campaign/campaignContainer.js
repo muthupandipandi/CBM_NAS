@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
 import campaignManagement from './campaignManagement';
-import { CampaignLoad,DispostionLoad,DNCLoad, addnewCampaign,UserGroupsData,editCampaign, CampaignEditErrorClose, checkCampaignStatus, uploadContacts } from './campaignActions';
-
+import { CampaignLoad,DispostionLoad,DNCLoad,startRunCampaignStatus,stopRunCampaignStatus,pauseRunCampaignStatus,resumeRunCampaignStatus, addnewCampaign,UserGroupsData,editCampaign, CampaignEditErrorClose, checkCampaignStatus, uploadContacts } from './campaignActions';
+import { setNavOpen } from  '../Login/LoginActions';
+import { add } from "lodash";
 const mapStateToProps = (state) => {
   return {
     fullScreen: state.LoginReducer.isOpen,
@@ -29,7 +30,13 @@ const mapDispatchToProps = (dispatch) => ({
   CampaignEditErrorClose:() => dispatch(CampaignEditErrorClose()),
   checkCampaignStatus:(a) => dispatch(checkCampaignStatus(a)),
   UserGroupsData: (a) => dispatch(UserGroupsData(a)),
-  uploadContacts: (a) => dispatch(uploadContacts(a))
+  uploadContacts: (a) => dispatch(uploadContacts(a)),
+  startRunCampaignStatus: (a) => dispatch(startRunCampaignStatus(a)),
+  stopRunCampaignStatus: (a) => dispatch(stopRunCampaignStatus(a)),
+  pauseRunCampaignStatus: (a) => dispatch(pauseRunCampaignStatus(a)),
+  resumeRunCampaignStatus: (a) => dispatch(resumeRunCampaignStatus(a)),
+
+  setNavOpen:(a)=>dispatch(setNavOpen(add))
 })
 
 const campaignContainer = connect(mapStateToProps, mapDispatchToProps)(campaignManagement)

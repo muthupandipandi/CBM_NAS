@@ -237,6 +237,7 @@ import MessageShow from '../mesaageShow'
                                         placeholder="Select Type"
                                         onChange={this.handleSelectUserType}
                                         closeOnSelect={true}
+										searchable={false}
                                     />
 									{/* <FormControl  type='text' id='agentType'
                                     onChange={this.handleChange} value={agentType} 

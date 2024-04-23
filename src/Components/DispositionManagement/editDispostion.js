@@ -76,7 +76,7 @@ import { Link } from "react-router-dom";
 	  checkDispositionExistence = () => {
 		const { userData, dispostionName } = this.state;
 		const dispositionExists = this.listdatas().find(item => item.dispositionName === dispostionName);
-		if (dispositionExists){
+		if (dispositionExists && this.props.edit.dispositionName!==dispostionName){
 			
 			this.setState({dispostionsStatus : false})
 		} else{

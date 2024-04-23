@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/CBM_UI/static/css/main.6be991b6.css",
+    "main.js": "/CBM_UI/static/js/main.b6ec0e6c.js",
+    "static/media/cbm_bg.jpg": "/CBM_UI/static/media/cbm_bg.1232e9182691088c4d4a.jpg",
+    "static/media/Inaipi_logo.png": "/CBM_UI/static/media/Inaipi_logo.ec1c7f2644bb8375ba53.png",
+    "static/media/ap_img.jpg": "/CBM_UI/static/media/ap_img.0a2a4141067f6a9fa0b0.jpg",
+    "index.html": "/CBM_UI/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.6be991b6.css",
+    "static/js/main.b6ec0e6c.js"
+  ]
+}

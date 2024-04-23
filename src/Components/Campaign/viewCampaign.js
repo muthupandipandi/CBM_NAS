@@ -282,7 +282,7 @@ handleClickOutside(event) {
 							<br></br>
 						</Row> */}
 						<Row className='align-items-center'>
-							<Col md={2}>Start Date-Time<span className='colorRed'>*</span></Col>
+							<Col md={2}>Schedule Date-Time<span className='colorRed'>*</span></Col>
 							<Col md={2}> 
 								<DatePicker
 									selected={tempStartDate}
@@ -323,7 +323,7 @@ handleClickOutside(event) {
 								disabled={true}
 							/>
 							</Col>
-							<Col md={2}>End Date-Time<span className='colorRed'>*</span></Col>
+							<Col md={2}>Schedule End Date-Time<span className='colorRed'>*</span></Col>
 							<Col md={2}>
 
 								<DatePicker

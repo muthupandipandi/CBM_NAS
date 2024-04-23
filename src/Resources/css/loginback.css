@@ -1,19 +1,37 @@
 .login_container{
-    background-image: url('../images/cbm_bg.png');
+    background-image: url('../images/cbm_bg.jpg');
     background-repeat: no-repeat, repeat;
-    background-position: center; /* Center the image */
-    background-size: cover; /* Resize the background image to cover the entire container */
+    /* Center the image */
+    background-size:contain; /* Resize the background image to cover the entire container */
     padding-top: 50px;
     height: 100vh;
   }
+  .login-form_design{
+    position: relative;
+  }
   .login-form{
-    background:#efeeee7a;     /*#1a11117a */
-    margin-top: 120px;
+    background:rgba(255, 255, 255, -10.5)   ;  /*#1a11117a */
+    margin: 0 auto;
     margin-bottom: 50px;
-    padding: 100px;
+    margin-top:80px !important;
+    padding: 10px;
     border-radius: 20px;
     color: white;
-    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    width:60%;
+    height: 60%;
+    box-shadow: 0px 9px 10px 10px rgb(229 216 216 / 75%);
+  }
+  .login-form-psw{
+    background:rgba(255, 255, 255, -10.5)   ;  /*#1a11117a */
+    margin: 0 auto;
+    margin-bottom: 50px;
+    margin-top:30px !important;
+    padding: 10px;
+    border-radius: 20px;
+    color: white;
+    width:60%;
+    height: 70%;
+    box-shadow: 0px 9px 10px 10px rgb(229 216 216 / 75%);
   }
   .login-heading{
     text-align: center;
@@ -95,4 +113,34 @@ table {
 
       .table td, .table th {
         padding: .45rem;
+      }
+
+      @media (min-width: 768px) {
+        .action_move {
+          margin-left: 10px; /* Margin-left for screens wider than 768px */
+        }
+        .actiontd{
+
+          width: 181px;
+        }
+      }
+      
+      @media (min-width: 992px) {
+        .action_move {
+          margin-left: 20px; /* Margin-left for screens wider than 992px */
+        }
+        .actiontd{
+
+          width: 200px;
+        }
+      }
+      
+      @media (min-width: 1200px) {
+        .action_move {
+          margin-left: 25px; /* Margin-left for screens wider than 1200px */
+        }
+        .actiontd{
+
+          width: 181px;
+        }
       }

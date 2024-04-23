@@ -232,6 +232,11 @@ import MessageShow from '../mesaageShow'
 	}
 	isValidEmailAddress = (address) => {
 		if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+			const {email} = this.state
+			if(this.props.edit.emailId!==email){
+		const obj = {'emailId': email}
+		this.props.action.checkUserEmailStatus(obj)
+			}
 			return true
 		} else {
 			return false
@@ -433,8 +438,37 @@ import MessageShow from '../mesaageShow'
 	}
 	handleUserOnBlur = (employeeId) => {
 		this.setState({ userIdIsValid: this.isValidUser(employeeId) })
-		// this.handleOnEntity()
+
+		this.checkUserStatus()
 	}
+	checkUserStatus = () => {
+		const {employeeId} = this.state
+		if(this.props.edit.userId!==employeeId){
+		const obj = {'userId': employeeId}
+		this.props.action.checkUserStatus(obj)
+		}
+	  }
+	  checkUserphoneStatus = () => {
+		const {mobileNumber} = this.state
+		if(this.props.edit.mobNum!==mobileNumber){
+		const obj = {'mobNum': mobileNumber}
+		this.props.action.checkUserPhoneStatus(obj)
+		}
+	  }
+	  checkUseremailStatus = () => {
+		const {email} = this.state
+		if(this.props.edit.emailId!==email){
+		const obj = {'emailId': email}
+		this.props.action.checkUserEmailStatus(obj)
+		}
+	  }
+	  checkUserExtnStatus = () => {
+		const {pbxExtn} = this.state
+		if(this.props.edit.pbxExtn!==pbxExtn){
+		const obj = {'pbxExtn': pbxExtn}
+		this.props.action.checkUserExtnStatus(obj)
+		}
+	  }
 	handleAllowCharacters=(event)=>{
 		const onlyLetters = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
 
@@ -502,7 +536,7 @@ import MessageShow from '../mesaageShow'
 		const {showMessage,message} = this.props.action
         const { employeeId, firstName, email,selectedUserGroup,clearMessage,
 			saveMessage, mobileNumber,selectedAgent, password,resetPsw,userActive, lastName,agent,supervisor,pbxExtn,selectedSkillGroup, emailIsValid,roleBaseSet,selctRoleOpenView, passwordIsValid, userIdIsValid, entityCheck, domain, business,selectedrole } = this.state;
-		
+		const {userIdStatus,userExtnStatus,userEmailStatus,userPhoneStatus} = _.cloneDeep(this.props.action)
 			
 		
 		
@@ -563,12 +597,15 @@ import MessageShow from '../mesaageShow'
                                     placeholder="Enter Email ID"
                                     />
                                     {emailIsValid === false ? <span className="colorRed">&nbsp;&nbsp;Please provide Correct Email Address</span> : null}
-                                </Col>  
+									{(!userEmailStatus && email?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **Email ID already exists**</span> : null }
+								</Col>  
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Mobile Number  <span className='colorRed'>*</span></Col>
                                 <Col md={4} ><FormControl  type='text' id='mobileNumber'
                                     onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={mobileNumber} maxLength={10}
                                     placeholder="Enter Mobile Numbe"
+									onBlur={()=>this.checkUserphoneStatus()}
                                     />
+									{(!userPhoneStatus && mobileNumber?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **Mobile Number already exists**</span> : null }
                                 </Col>  
 
                                 
@@ -583,7 +620,7 @@ import MessageShow from '../mesaageShow'
 										placeholder="Enter User ID"
 										/>
                                         {userIdIsValid === false ? <span className="colorRed" > &nbsp;&nbsp; Please provide valid userId with minimum 4 characters. special characters and space not allowed</span> : null}
-							            {(userEntity && employeeId?.length > 0 && entityCheck) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
+							            {(!userIdStatus && employeeId?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **User Id already exists**</span> : null }
 								</Col>
 								<Col md={2}> &nbsp;&nbsp;&nbsp;&nbsp; Password  <span className='colorRed'>*</span></Col>
                                 <Col md={4} >
@@ -702,7 +739,9 @@ import MessageShow from '../mesaageShow'
                                 <Col md={4} ><FormControl  type='number' id='pbxExtn'
                                     onChange={this.handleAllowNubers} onPaste={this.handleAllowNubers} value={pbxExtn} 
                                     placeholder="Enter PBX Extension" maxLength={15}
+									onBlur={()=>this.checkUserExtnStatus()}
                                     />
+									{(!userExtnStatus && pbxExtn?.length > 0) ? <span className="colorRed" >&nbsp;&nbsp;  **PBX Extension already exists**</span> : null }
                                 </Col>  
 								</>)}
 						

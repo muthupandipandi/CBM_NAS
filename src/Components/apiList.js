@@ -21,6 +21,10 @@ export const USER_INFO_ROLES = context_url + '/usermanagement/getRoleDetail';
 export const Agent_LIST = context_url + '/usermanagement/getAvailAgents'; 
 export const DISABLE_USER = context_url + '/user/userStatus';
 export const USER_GROUP = context_url + '/usergroup/getGrouplist';
+export const VALIDATE_USER = context_url + '/usermanagement/validateUserId';
+export const VALIDATE_USEREXTN = context_url + '/usermanagement/validateUserExtn';
+export const VALIDATE_USEREMAIL = context_url + '/usermanagement/validateUserEmail';
+export const VALIDATE_USEREPHON = context_url + '/usermanagement/validateUserPhone';
 
 export const ENTITY_EXISTS_FIND_USER = context_url + '/user/isEntityNameExists';
 
@@ -33,6 +37,10 @@ export const CAMPAIGN_INFO_LOAD_ALL = context_url +'/campaign/getCampaignDetailA
 export const CAMPAIGN_INFO_ADD =  context_url +'/campaign/createCampaign' ;
 export const CAMPAIGN_INFO_EDIT =  context_url +'/campaign/updateCampaign' ;
 export const CAMPAIGN_INFO_CHECK = context_url +'/campaign/validateCampaignName' ;
+export const CAMPAIGN_START = context_url +'/campaign/startCampaign' ;
+export const CAMPAIGN_STOP = context_url +'/campaign/stopCampaign' ;
+export const CAMPAIGN_PAUSE = context_url +'/campaign/pauseCampaign' ;
+export const CAMPAIGN_RESUME = context_url +'/campaign/resumeCampaign' ;
 export const DISABLE_CAMPAIGN = "";
 export const UPLOAD_CONTACTS_CAMPAIGN = context_url +'/campaign/uploadContactDetail';
 

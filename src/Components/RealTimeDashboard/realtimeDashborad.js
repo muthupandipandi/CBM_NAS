@@ -9,7 +9,7 @@ import Select from 'react-dropdown-select';
 import {Picky} from 'react-picky';
 import 'react-picky/dist/picky.css'; 
 import moment from "moment";
-import _ from 'lodash';
+import _, { toInteger } from 'lodash';
 
 export default class RealtimeDashboard extends Component {
     constructor(props) {
@@ -44,12 +44,13 @@ export default class RealtimeDashboard extends Component {
         // this.fetchData();
 
         // Set interval to call fetchData function every 10 seconds
-        this.interval = setInterval(this.props.RealtimeDashboard_Load, 10000);
-        this.interval = setInterval(this.props.AgentRealtimeDashboard_Load, 10000);
+        this.realtimeinterval = setInterval(this.props.RealtimeDashboard_Load, 10000);
+        this.agentinterval = setInterval(this.props.AgentRealtimeDashboard_Load, 10000);
       }
       componentWillUnmount() {
         // Clear the interval when the component unmounts to prevent memory leaks
-        clearInterval(this.interval);
+        clearInterval(this.realtimeinterval);
+        clearInterval(this.agentinterval);
     }
       componentDidUpdate(prevProps, prevState) {
         if(!_.isEqual(prevProps.userData,this.props.userData)){
@@ -237,7 +238,21 @@ export default class RealtimeDashboard extends Component {
           return _.map(userData, (val, index) => {
             if(index >= startOffset & startCount < Per_Page){
               startCount++;
-              let completedPercentage = Math.round((val.answered / val.listLength) * 100)
+              let dnd=val.dnd===null?0:val.dnd
+
+              let complete=val.completed+dnd
+              
+              let completedPercentage = Math.round((toInteger(complete)  / val.listLength) * 100)
+              let hours = 0
+              let minutes = 0
+              let seconds = 0
+              if(val.executedDuration>0){
+              let etc = (Math.round((val.executedCount / val.executedDuration) * val.pending))*60
+              hours = Math.floor(etc / 3600);
+              minutes = Math.floor((etc % 3600) / 60);
+              seconds = Math.floor(etc % 60);
+              }
+              
               console.log(completedPercentage)
               // completedPercentage=0
               if(isNaN(completedPercentage)){
@@ -248,8 +263,8 @@ export default class RealtimeDashboard extends Component {
                   <tr key={index}>
                     <td><span className='colorblack'>{val.campaignId}</span></td>
                                     <td className='text-center'><span className='colorblack '>{val.campaignName}</span></td>
-                                    <td>{moment(val.startDate).format('DD-MM-YYYY HH:mm:ss')}</td>
-                                    <td style={{width: '125px'}} className='text-center'><span className='colorblack '>{val.campaignStatus} ({completedPercentage}%)</span>
+                                    <td style={{width:'135px',padding:'0.45rem 0.1rem'}}>{moment(val.startDate).format('DD-MM-YYYY HH:mm:ss')}</td>
+                                    <td style={{width: '135px'}} className='text-center'><span className='colorblack '>{val.campaignStatus} ({completedPercentage}%)</span>
                                     <div className="status-bar">
                                     <div className="status-progress-completed" title={`${completedPercentage}% Completed`} style={{ width: `${completedPercentage}%` }}>
                                       
@@ -261,21 +276,23 @@ export default class RealtimeDashboard extends Component {
                                   </div>
                                     </td>
                                     <td className='text-center'><span className='colorblack '>{val.listLength}</span></td>
-                                    <td className='text-center'><span className='colorblack '>{val.oncall}</span></td>
+                                    
                                     
                                     <td className='text-center'><span className='colorblack '>{val.pending}</span></td>
-                                    <td className='text-center'><span className='colorblack '>{val.completed}</span></td>
+                                    <td className='text-center'><span className='colorblack '>{val.completed+dnd}</span></td>
                                     
-                                    <td className='text-center'><span className='colorblack '>{val.answered}</span></td>
+                                   
+                                    <td className='text-center'><span className='colorblack '>{val.oncall}</span></td>
                                     <td className='text-center'><span className='colorblack '>{val.linebusy}</span></td>
                                     <td className='text-center'><span className='colorblack '>{val.noanswer}</span></td>
+                                    <td className='text-center'><span className='colorblack '>{val.answered}</span></td>
                                     <td className='text-center'><span className='colorblack '>{val.error}</span></td>
 
                                     <td className='text-center'><span className='colorblack '>{val.dnd}</span></td>                                    
                     
                                     <td className='text-center'><span className='colorblack '>{val.totalline}</span></td>
-                                    <td>{moment(val.endDate).format('DD-MM-YYYY HH:mm:ss')}</td>
-                                    <td className='text-center'><span className='colorblack '>{val.etc}</span></td>
+                                    <td>{val.endDate!==null?moment(val.endDate).format('DD-MM-YYYY HH:mm:ss'):''}</td>
+                                    <td style={{width:'95px'}} className='text-center'><span className='colorblack '>{hours+':'+minutes+':'+seconds}</span></td>
 
                                     {/* <td>{moment(val.endDate).format('DD-MM-YYYY')}</td> */}
                     {/* <td>{val.maxAdvNotice.split(":")[0]}<span className='colorblue'> hr ,</span>{val.maxAdvNotice.split(":")[1]}<span className='colorblue'> min</span> </td> */}
@@ -432,31 +449,43 @@ console.log(e)
                   <tr>   
                     <th rowspan="2">Campaign Id</th>         
                     <th  rowspan="2" >Campaign Name</th>
-                    <th rowspan="2">Statrt Date</th>
+                    <th rowspan="2">Start Date</th>
                     <th rowspan="2">Status</th>
                     <th rowspan="2">List Length</th>
-                    <th rowspan="2">On Call</th>
-                    <th rowspan="2">Pending</th>
                     
+                    <th rowspan="2">Pending</th>
                     <th rowspan="2">Completed</th>
-                    <th colspan="5" className='text-center' >Call Status
+                    <th colspan="3" className='text-center' >Pending Call Details
+                    
+                    </th>
+                    
+                    <th colspan="3" className='text-center' >Completed Call Details
                     
                     </th>
                   
                     <th rowspan="2">Total Lines</th>
                     
-                    <th rowspan="2" >End Date</th>
-                    <th rowspan="2" >ETC</th>
+                    <th rowspan="2" >Completed Date</th>
+                    <th  rowspan="2" >ETC</th>
                     
                   </tr>
                   <tr>
-                    <th>Answered</th>
+                  <th>On Call</th>
                     <th>Busy</th>
                     {/* <th>SFTP Location</th> */}
                     <th>No Answer</th> 
+                    <th>Answered</th>
+                    
                     <th>Error</th>
                     <th>DNC</th> 
+                    
                     </tr>
+                  {/* <tr>
+                    <th>Answered</th>
+                    
+                    <th>Error</th>
+                    <th>DNC</th> 
+                    </tr> */}
                   
                 </thead>
                 <tbody>
