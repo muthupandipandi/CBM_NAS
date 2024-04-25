@@ -8,6 +8,7 @@ import ViewCampaign from './viewCampaign';
 import UploadContacts from './uploadContacts'
 import ShowModalLogin from '../showModalLogin';
 import moment from "moment";
+import MessageShow from '../mesaageShow'
 export default class campaignManagement extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +19,13 @@ export default class campaignManagement extends Component {
       orderBy:'asc',
       userData:props.userData,
       campignRuningStaus:'Start',
-      loggedinData:this.props.loggedinData
+      loggedinData:this.props.loggedinData,
+      cam_message:'',
+      camid:'',
+      cam_type:'',
+      cam_status:'true',
+      clearMessage:false,
+      saveMessage:false
     }
   }
 
@@ -37,6 +44,15 @@ export default class campaignManagement extends Component {
   
 			// const obj = {'campaignId': id}
 			this.props.startRunCampaignStatus(id)
+
+ }
+ activeCampaign=(id,status)=>{
+  const obj = {'campaignId': id,
+  
+  "campaignStatus" : status==="true"?'false':'true'
+
+}
+this.props.activeCampaignStatus(obj)
 
  }
  stopviewCampaign=(index,id)=>{
@@ -63,7 +79,44 @@ export default class campaignManagement extends Component {
     }
   }
  
+  openClearMessage = (msg) => {
+		console.log('thiiii')
+		this.setState({clearMessage : true})
+	  }
 
+	  closeClearMessage = () => {
+		this.setState({clearMessage : false})
+	  }
+
+	  openSaveClearMessage = (msg,camid,cam_status,cam_type) => {
+      this.setState({cam_message:'Are you sure you want to '+msg +' this Campaign?'})
+      this.setState({camid:camid})
+      this.setState({cam_type:cam_type})
+      this.setState({cam_status:cam_status})
+      // this.setState({message:'Are you sure you want to'+msg +' this Campaign?'})
+		this.setState({saveMessage : true})
+	  }
+
+	  closeSaveClearMessage = () => {
+		this.setState({saveMessage : false})
+	  }
+    handleSubmit=()=>{
+      if(this.state.cam_type==='status'){
+        this.activeCampaign(this.state.camid,this.state.cam_status)
+      }
+      else if(this.state.cam_type==='start'){
+      this.startviewCampaign(0,this.state.camid)
+      }
+      else if(this.state.cam_type==='stop'){
+        this.stopviewCampaign(0,this.state.camid)
+        }
+        else if(this.state.cam_type==='resume'){
+          this.resumetviewCampaign(0,this.state.camid)
+          }
+          else if(this.state.cam_type==='pause'){
+            this.pauseviewCampaign(0,this.state.camid)
+            }
+    }
   mappingreturnData = (startOffset, startCount, Per_Page ) => {
     const {searchval, userData,campignRuningStaus,loggedinData}= this.state
     // const {loggedinData} = this.props
@@ -90,13 +143,24 @@ export default class campaignManagement extends Component {
                 <td>{val.retryDelay}<span className='colorblue'> min</span></td>
 								<td>{val.retryCount}</td>
                 {/* <td>{val.ftpLocation}</td> */}
-                <td>{(val.campaignActive === "true")? "YES" : "NO"}
+                {/* <td>{(val.campaignActive === "true")? "YES" : "NO"}
               
-                </td>
+                </td> */}
                 <td>{(val.frontstatus === "notready")? "Created" : "File Uploaded"}
               
               </td>
 								<td className='actiontd text-left'>
+                {/* <Button style={{background:'#3e8ade',width: '38%',padding: '2px'}} onClick={()=>this.activeCampaign(index,val.campaignId,val.campaignActive)}>{(val.campaignActive === "true")? "Active" : "In Active"}</Button> */}
+                
+                {/* <span className='action_move' style={{cursor:'pointer'}} title={val.campaignActive==="true"?"Active":"Deactive"} 
+                
+                onClick={()=>this.activeCampaign(index,val.campaignId,val.campaignActive)}
+                >{val.campaignActive ==='true' ? '✔️' : '❌'}</span> */}
+                 <span className='action_move' style={{cursor:'pointer'}} title={val.campaignActive==="true"?"Active":"Deactive"} 
+                
+                onClick={()=>this.openSaveClearMessage(val.campaignActive==="true"?"Dective":"Active",val.campaignId,val.campaignActive,'status')}
+                >{val.campaignActive ==='true' ? '✔️' : '❌'}</span>
+                &nbsp;&nbsp;&nbsp;&nbsp; 
                 {_.isEqual(loggedinData.roles,"[Admin]") || _.isEqual(loggedinData.roles,"[Supervisor]")? 
                 <>
                 <MDBTooltip
@@ -104,7 +168,7 @@ export default class campaignManagement extends Component {
                 tag="span"
                 placement="top"
                 >
-                <span  className='blue-text action_move'><i className="fas fa-edit m-r-20" style={{color:'red'}}  onClick={()=>this.handleEdit(index)}></i></span>
+                <span  className='blue-text '><i className="fas fa-edit m-r-20" style={{color:'red'}}  onClick={()=>this.handleEdit(index)}></i></span>
                 <span>Edit</span></MDBTooltip>&nbsp;&nbsp;&nbsp;&nbsp; 
                 <MDBTooltip
                 domElement
@@ -116,6 +180,7 @@ export default class campaignManagement extends Component {
                 <span>Upload</span></MDBTooltip>&nbsp;&nbsp;&nbsp;&nbsp;
                 </>
                 : null}
+
                 <MDBTooltip
                 domElement
                 tag="span"
@@ -128,15 +193,15 @@ export default class campaignManagement extends Component {
                 <>  
         <span title='Start' className='blue-text'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,val.campaignId)} style={{color:'green'}} ></i> 
+          <i class="fas fa-play m-r-20" onClick={()=>this.openSaveClearMessage("Start",val.campaignId,val.campaignActive,'start')} style={{color:'green'}} ></i> 
         </span>
         </>:null
         }
         {(val.frontstatus==='notready' || val.campaignActive === "false" || val.frontstatus==='Completed') || currentDate > endDate && val.frontstatus!=='Stop'? 
                 <>  
-        <span title='Start' className='blue-text'>
+        <span title='Start' style={{cursor: 'unset'}} className='blue-text'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-play m-r-20" onClick={()=>this.startviewCampaign(index,val.campaignId)} style={{color:'grey'}} ></i> 
+          <i class="fas fa-play m-r-20"  style={{color:'grey',cursor: 'unset'}} ></i> 
         </span>
         </>:null
         }
@@ -144,21 +209,21 @@ export default class campaignManagement extends Component {
                 <>  
         <span title='Stop' >
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-stop-circle m-r-20" style={{color:'red'}} onClick={()=>this.stopviewCampaign(index,val.campaignId)}></i> 
+          <i class="fas fa-stop-circle m-r-20" style={{color:'red'}} onClick={()=>this.openSaveClearMessage("Stop",val.campaignId,val.campaignActive,'stop')}></i> 
         </span>
         </>:null}
         {val.frontstatus==='Pause' && val.campaignActive !== "false" && endDate>= currentDate? 
                 <> 
         <span title='Resume'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-play-circle m-r-20" style={{color:'green'}} onClick={()=>this.resumetviewCampaign(index,val.campaignId)}></i> 
+          <i class="fas fa-play-circle m-r-20" style={{color:'green'}} onClick={()=> this.openSaveClearMessage("Resume",val.campaignId,val.campaignActive,'resume')}></i> 
         </span>
         </>:null}
         {val.frontstatus==='Running' && val.campaignActive !== "false" && endDate>= currentDate? 
         <>
         <span title='Pause'>
         &nbsp;&nbsp;&nbsp;&nbsp;
-          <i class="fas fa-pause m-r-20" style={{color:'orange'}} onClick={()=>this.pauseviewCampaign(index,val.campaignId)}></i> 
+          <i class="fas fa-pause m-r-20" style={{color:'orange'}} onClick={()=>this.openSaveClearMessage("Pause",val.campaignId,val.campaignActive,'pause')}></i> 
         </span>
         </>:null}
              
@@ -256,7 +321,8 @@ export default class campaignManagement extends Component {
 
   render() {
     const {rolesData, fullScreen, showMessage, message,businessType, domainType, isPending, isOpen,dncData,dispostionData} = this.props;
-    const {editIndex,loggedinData, editing, add, campignRuningStaus,activePage, Per_Page, view,searchval, userData, disableUser, uploadContact} = this.state;
+    const {editIndex,loggedinData, editing, add, campignRuningStaus,activePage, Per_Page, view,searchval, userData, disableUser, uploadContact,clearMessage,
+      saveMessage} = this.state;
     let totalPages ;
     if(!_.isEmpty(userData)){
       totalPages = Math.ceil(userData.length/Per_Page)
@@ -314,7 +380,7 @@ export default class campaignManagement extends Component {
                     <th>Retry Delay</th>
                     <th>Retry Count</th>
                     {/* <th>SFTP Location</th> */}
-                    <th>Active</th> 
+                    {/* <th>Active</th>  */}
                     <th>Status</th> 
                     <th>Actions</th>
                   </tr>
@@ -333,8 +399,21 @@ export default class campaignManagement extends Component {
               <Pagination.Last disabled={activePage === totalPages} onClick={()=>this.handleSelectPagination(totalPages)}/>			
               </Pagination>
 
-        </div> }
+        </div> 
+        
+        }
+
+{clearMessage ?
+		      <MessageShow message='Are you sure you want to Close this page?' closeModal={this.closeClearMessage}
+      		onCallBack={this.props.closeModal} />
+	  	  :null}
+{saveMessage ?
+		  <MessageShow message={this.state.cam_message} closeModal={this.closeSaveClearMessage}
+      		onCallBack={this.handleSubmit} />
+	  	  :null}
+        
       </div>
+      
     );
   }
 }

@@ -1,6 +1,6 @@
 //let context_url= 'http://43.241.62.118:8080/reminder';
 // let context_url= 'http://localhost:9091/cbm';
-let context_url= 'http://192.168.45.59:8080/cbm'
+let context_url= 'http://192.168.45.59:8080/cbm2'
 let context_user= 'http://150.242.13.125:8080/userRule';
 // let context_url= 'http://150.242.13.125:8080/reminder';
 // let context_user= 'http://localhost:9091/userRule';
@@ -41,6 +41,7 @@ export const CAMPAIGN_START = context_url +'/campaign/startCampaign' ;
 export const CAMPAIGN_STOP = context_url +'/campaign/stopCampaign' ;
 export const CAMPAIGN_PAUSE = context_url +'/campaign/pauseCampaign' ;
 export const CAMPAIGN_RESUME = context_url +'/campaign/resumeCampaign' ;
+export const CAMPAIGN_ACTIVE = context_url +'/campaign/campaignStatus' ;
 export const DISABLE_CAMPAIGN = "";
 export const UPLOAD_CONTACTS_CAMPAIGN = context_url +'/campaign/uploadContactDetail';
 

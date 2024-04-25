@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import campaignManagement from './campaignManagement';
-import { CampaignLoad,DispostionLoad,DNCLoad,startRunCampaignStatus,stopRunCampaignStatus,pauseRunCampaignStatus,resumeRunCampaignStatus, addnewCampaign,UserGroupsData,editCampaign, CampaignEditErrorClose, checkCampaignStatus, uploadContacts } from './campaignActions';
+import { CampaignLoad,DispostionLoad,DNCLoad,startRunCampaignStatus,activeCampaignStatus,stopRunCampaignStatus,pauseRunCampaignStatus,resumeRunCampaignStatus, addnewCampaign,UserGroupsData,editCampaign, CampaignEditErrorClose, checkCampaignStatus, uploadContacts } from './campaignActions';
 import { setNavOpen } from  '../Login/LoginActions';
 import { add } from "lodash";
 const mapStateToProps = (state) => {
@@ -35,6 +35,7 @@ const mapDispatchToProps = (dispatch) => ({
   stopRunCampaignStatus: (a) => dispatch(stopRunCampaignStatus(a)),
   pauseRunCampaignStatus: (a) => dispatch(pauseRunCampaignStatus(a)),
   resumeRunCampaignStatus: (a) => dispatch(resumeRunCampaignStatus(a)),
+  activeCampaignStatus:(a) => dispatch(activeCampaignStatus(a)),
 
   setNavOpen:(a)=>dispatch(setNavOpen(add))
 })
